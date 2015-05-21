@@ -212,8 +212,12 @@ function IIfA.CollectAll()
 	local itemKey
 	local location = ""
 
-	for bag=0, GetMaxBags(), 1 do
-		bagItems = GetBagSize and GetBagSize(bag) or select(2, GetBagInfo(bag))
+--	d("Bank Size=" .. GetBagSize(BAG_BANK))
+--d("MaxBags: " .. GetMaxBags())
+--	GetMaxBags returns 2, but bags are numbered from 0, so run one less
+	for bag=0, GetMaxBags() + 1, 1 do
+		bagItems = GetBagSize(bag)
+--		d("Bag=" .. bag .. ", Size=" ..GetBagSize(bag))
 		if(bag == BAG_WORN)then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
 			IIfA.IN2_ResetLocationCount(GetUnitName( 'player' ))
 		elseif(bag == BAG_BANK)then
@@ -297,6 +301,7 @@ function IIfA.CollectAll()
 		end
 	end
 -- 2015-3-7 end of addition
+--	d("Collect All Completed")
 end
 
 

@@ -768,14 +768,14 @@ function IIfA.IN2_CreateIN2InventoryFrame(controlName, owner, parent)
 				self.insideScroll:SetHidden(true)
 				self.FilterControl:SetHidden(true)
 				self.SearchControl:SetHidden(true)
-				self.exportCSVDataBtn:SetHidden(true)
+--				self.exportCSVDataBtn:SetHidden(true)
 				PlaySound(SOUNDS.BACKPACK_WINDOW_CLOSE)
 			elseif(self:GetHeight() > 30 and self.minimized == true)then
 				self.minimized = false
 				self.insideScroll:SetHidden(false)
 				self.FilterControl:SetHidden(false)
 				self.SearchControl:SetHidden(false)
-				self.exportCSVDataBtn:SetHidden(false)
+--				self.exportCSVDataBtn:SetHidden(false)
 				PlaySound(SOUNDS.BACKPACK_WINDOW_OPEN)
 				self.minimized = false
 			end
@@ -786,7 +786,7 @@ function IIfA.IN2_CreateIN2InventoryFrame(controlName, owner, parent)
 	frame.FrameClose = IIfA.IN2_CreateIN2FrameRemoveFromSceneButton(frame)
 	frame.FrameLock = IIfA.IN2_CreateIN2FrameLock(frame)
 
-
+--[[
 	frame.exportCSVDataBtn = WINDOW_MANAGER:CreateControlFromVirtual(controlName.."ExportCSVDataButton", frame, "ZO_DefaultButton")
 	local exportCSVDataBtn = frame.exportCSVDataBtn
 	exportCSVDataBtn:SetAnchor(BOTTOM, exportCSVDataLbl, BOTTOM, 0, -7)
@@ -800,6 +800,7 @@ function IIfA.IN2_CreateIN2InventoryFrame(controlName, owner, parent)
 	exportCSVDataBtn:SetEnabled(false)
 	exportCSVDataBtn:SetAlpha(0)
 	-----------------------------------------------------
+--]]
 
 	function frame:SaveFrameSceneLocation()
 		local scene = self.ActiveScene
@@ -847,7 +848,7 @@ function IIfA.IN2_CreateIN2InventoryFrame(controlName, owner, parent)
 		self.insideScroll:SetHidden(self.minimized)
 		self.FilterControl:SetHidden(self.minimized)
 		self.SearchControl:SetHidden(self.minimized)
-		self.exportCSVDataBtn:SetHidden(self.minimized)
+--		self.exportCSVDataBtn:SetHidden(self.minimized)
 	end
 
 	return frame
@@ -1062,7 +1063,6 @@ function IIfA.IN2_SetupIN2InventoryBackpack( setup, released )
 	if( setup ) then -- if the inventory frame is supposed to be displayed
 		IN2_CURRENTLY_VISIBLE_INVENTORY_LIST = IIfA.data.in2DefaultInventoryFrameView
 
-
 		-- first run
 		if(IN2_INVENTORY_FRAME == nil) then -- the frame is not initialized, first startup
 
@@ -1072,17 +1072,13 @@ function IIfA.IN2_SetupIN2InventoryBackpack( setup, released )
 			IN2_INVENTORY_FRAME = IN2_INVENTORY_FRAME
 
 			if( released ) then -- is not locked, can be moved around
-
 				IIfA.IN2_InitDefaultUIForInventoryFrameDocking(false)
 				IN2_INVENTORY_FRAME:ClearAnchors()
 				IN2_INVENTORY_FRAME:SetAnchor(CENTER, GuiRoot, CENTER, 0, 0)
-
 			else
-
 				IIfA.IN2_InitDefaultUIForInventoryFrameDocking(true, IN2_INVENTORY_FRAME:GetWidth())
 				IN2_INVENTORY_FRAME:ClearAnchors()
 				IN2_INVENTORY_FRAME:SetAnchor(CENTER, ZO_SharedThinLeftPanelBackground, CENTER, -25, 20)
-
 			end
 
 			IN2_INVENTORY_FRAME:SetMovable(released)
@@ -1096,22 +1092,18 @@ function IIfA.IN2_SetupIN2InventoryBackpack( setup, released )
 
 
 		-- second run
-		else -- the inventory is not nil, this is at least the 2nd boot up
+		else -- the inventory is not nil, this is at least the 2nd load up
 
 			local IN2_INVENTORY_FRAME = IN2_INVENTORY_FRAME
 
 			if( released ) then
-
 				IIfA.IN2_InitDefaultUIForInventoryFrameDocking(false)
 				IN2_INVENTORY_FRAME:ClearAnchors()
 				IN2_INVENTORY_FRAME:SetAnchor(CENTER, GuiRoot, CENTER, 0, 0)
-
 			else
-
 				IIfA.IN2_InitDefaultUIForInventoryFrameDocking(true, IN2_INVENTORY_FRAME:GetWidth())
 				IN2_INVENTORY_FRAME:ClearAnchors()
 				IN2_INVENTORY_FRAME:SetAnchor(CENTER, ZO_SharedThinLeftPanelBackground, TOPRIGHT, -25, 20)
-
 			end
 
 			IN2_INVENTORY_FRAME:SetMovable(not released)
@@ -1164,6 +1156,7 @@ function IIfA.IN2_SetupIN2InventoryBackpack( setup, released )
 			IN2_INVENTORY_FRAME:SetHidden(true)
 			IIfA.IN2_InitDefaultUIForInventoryFrameDocking(false)
 		end
+--[[
 		if(IN2_INVENTORY_DROPDOWN_CONTROL ~= nil) then
 			IN2_INVENTORY_DROPDOWN_CONTROL:SetHidden(true)
 		end
@@ -1173,7 +1166,7 @@ function IIfA.IN2_SetupIN2InventoryBackpack( setup, released )
 		if(IN2_INVENTORY_SEARCHBOX_CONTROL ~= nil) then
 			IN2_INVENTORY_SEARCHBOX_CONTROL:SetHidden(true)
 		end
-
+--]]
 	end
 
 end

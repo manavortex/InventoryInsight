@@ -846,10 +846,17 @@ end
 
 --end
 
+function IIfA.BankItemChange(Evt, bankslot, p2, p3, p4, p5, p6, p7)
+	d("Bank item change")
+	d(Evt)
+	d(bankslot)
+end
 
 
 function IIfA.IIfA_Initialized()
 	EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA.IIfA_Loaded)
+--	EVENT_MANAGER:RegisterForEvent("IIfABanked", EVENT_GUILD_BANK_ITEM_ADDED, IIfA.BankItemChange)
+--	EVENT_MANAGER:RegisterForEvent("IIfABanked", EVENT_GUILD_BANK_ITEM_REMOVED, IIfA.BankItemChange)
 end
 
 IIfA.IIfA_Initialized()

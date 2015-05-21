@@ -6,7 +6,7 @@ function IIfA.IN2_RegisterForEvents()
 	-- 2015-3-7 AssemblerManiac - added EVENT_PLAYER_DEACTIVATED event
 	EVENT_MANAGER:RegisterForEvent("IN2_PLAYER_UNLOADED_EVENTS", EVENT_PLAYER_DEACTIVATED , IIfA.IN2_PlayerUnLoadedEvents)
 	-- Events for data collection
-	EVENT_MANAGER:RegisterForEvent("IN2_ALPUSH", EVENT_ACTION_LAYER_PUSHED, IIfA.IN2_ActionLayerInventoryUpdate)
+--	EVENT_MANAGER:RegisterForEvent("IN2_ALPUSH", EVENT_ACTION_LAYER_PUSHED, IIfA.IN2_ActionLayerInventoryUpdate)
 	-- on opening guild bank:
 	EVENT_MANAGER:RegisterForEvent("IN2_GUILDBANK_LOADED", EVENT_GUILD_BANK_ITEMS_READY, IIfA.IN2_GuildBankDelayReady)
 	-- on adding or removing an item from the guild bank:
