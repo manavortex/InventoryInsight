@@ -1,0 +1,8 @@
+v1.??
+
+- materials no longer show up differently depending on what level they
+have (for some reason ZO has decided that materials have a
+level rating in them, even though level in a material has no bearing on
+anything)
+- all code associated with "worn" indicators removed
+- stolen items will now display tooltips for non-stolen versions

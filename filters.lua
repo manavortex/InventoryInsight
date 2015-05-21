@@ -1,0 +1,79 @@
+-- if(DBv2)then
+		-- for itemLink, item in pairs(IIfA.data.DBv2) do
+			-- if (itemLink ~= "") then
+				-- link = itemLink
+				-- local itemType = GetItemLinkItemType(string itemLink) 
+				-- itemName = item.attributes.itemName
+				-- --local iconFile = GetItemLinkInfo(link) --deprecitated in DBV2
+				-- iconFile = item.attributes.iconFile
+				-- itemTypeFilter = nil
+				-- if(item.attributes.filterType)then
+					-- itemTypeFilter = item.attributes.filterType
+				-- end
+				-- itemQuality = item.attributes.itemQuality
+				-- itemCount = 0
+				-- for locationName, location in pairs(item) do
+					-- if(locationName ~= "attributes")  then
+						-- if(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "All") then
+							-- itemCount = itemCount + location.itemCount
+						-- elseif(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "All Banks") then
+							-- if(location.locationType == BAG_BANK or location.locationType == BAG_GUILDBANK)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- elseif(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "All Guild Banks") then
+							-- if(location.locationType == BAG_GUILDBANK)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- elseif(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "All Characters") then
+							-- if(location.locationType == BAG_BACKPACK or location.locationType == BAG_WORN)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- elseif(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "Bank and Characters") then
+							-- if(location.locationType == BAG_BANK or location.locationType == BAG_BACKPACK)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- elseif(IN2_CURRENTLY_VISIBLE_INVENTORY_LIST == "Bank Only") then
+							-- if(location.locationType == BAG_BANK)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- else --Not a preset, must be a specific guildbank or character
+							-- if(locationName == IN2_CURRENTLY_VISIBLE_INVENTORY_LIST)then
+								-- itemCount = itemCount + location.itemCount
+							-- end
+						-- end
+					-- end
+				-- end
+				
+				-- -- todo: work more filter magic here
+				-- tempDataLine = { link = itemLink, amt = itemCount, icon = iconFile, name = itemName, quality = itemQuality }
+				-- if(itemCount > 0)then
+					-- if(IN2_INVENTORY_FRAME.SortControl.activeSortFilter.filterType == 0) then
+						-- if( searchFilter ~= nil) then
+								-- --local _, name = IIfA.IN2_DissectItemLink(itemLink)
+								-- if( zo_strformat("<<Z:1>>", itemName):find(zo_strformat("<<Z:1>>", searchFilter)) ~= nil ) then
+									-- table.insert(DataLines, tempDataLine)
+								-- end
+						-- else
+							-- table.insert(DataLines, tempDataLine)
+						-- end
+						
+					-- -- todo: Here be filters
+					
+					-- if not itemTypeFilter then 
+						-- itemFilterType = itemType or 0
+					-- end
+					
+					-- elseif(itemTypeFilter == IN2_INVENTORY_FRAME.SortControl.activeSortFilter.filterType) then
+						-- if( searchFilter ~= nil) then
+								-- --local _, name = IIfA.IN2_DissectItemLink(itemLink)
+								-- if( zo_strformat("<<Z:1>>", itemName):find(zo_strformat("<<Z:1>>", searchFilter)) ~= nil ) then
+									-- table.insert(DataLines, tempDataLine)
+								-- end
+						-- else
+							-- table.insert(DataLines, tempDataLine)
+						-- end
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
