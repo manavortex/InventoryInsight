@@ -1,0 +1,48 @@
+## Title: InventoryInsightFromAshes
+## Author: manavortex, AssemblerManiac
+## Version: 2.19
+## APIVersion: 100021
+## SavedVariables: IIfA_Settings IIfA_Data
+## OptionalDependsOn: libFilters
+
+libs\LibStub\LibStub.lua
+libs\LibCustomTitles\LibCustomTitles.lua
+libs\LibScroll\LibScroll.lua
+libs\LibMediaProvider-1.0\LibMediaProvider-1.0.lua
+libs\LibAddonMenu-2.0\LibAddonMenu-2.0.lua
+libs\LibAddonMenu-2.0\controls\panel.lua
+libs\LibAddonMenu-2.0\controls\submenu.lua
+libs\LibAddonMenu-2.0\controls\button.lua
+libs\LibAddonMenu-2.0\controls\checkbox.lua
+libs\LibAddonMenu-2.0\controls\colorpicker.lua
+libs\LibAddonMenu-2.0\controls\custom.lua
+libs\LibAddonMenu-2.0\controls\description.lua
+libs\LibAddonMenu-2.0\controls\dropdown.lua
+libs\LibAddonMenu-2.0\controls\editbox.lua
+libs\LibAddonMenu-2.0\controls\header.lua
+libs\LibAddonMenu-2.0\controls\slider.lua
+libs\LibAddonMenu-2.0\controls\texture.lua
+libs\LibAddonMenu-2.0\controls\iconpicker.lua
+libs\LibAddonMenu-2.0\controls\divider.lua
+libs\LibCustomMenu\LibCustomMenu.lua
+
+IIfA.xml
+Bindings.xml
+CharCurrencyTooltip.lua
+CharBagSpaceTooltip.lua
+IIfA.lua
+Bindings.lua
+IIfAEvents.lua
+IIfATooltip.lua
+IIfABackpack.lua
+IIfASceneFuncs.lua
+IIfAMenu.lua
+IIfADataCollection.lua
+IIfA_xml_adapter.lua
+
+; DISCLOSURE:
+; This Add-on is not created by, affiliated with or sponsored by ZeniMax
+; Media Inc. or its affiliates. The Elder Scrolls® and related logos are
+; registered trademarks or trademarks of ZeniMax Media Inc. in the United
+; States and/or other countries. All rights reserved.
+; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms

@@ -1,0 +1,225 @@
+local CharBagFrame = ZO_Object:Subclass()
+if IIfA == nil then IIfA = {} end
+IIfA.CharBagFrame = CharBagFrame
+
+--[[ not currently used
+local function HexToN(sHexVal)
+	local Nibble1=0
+	local Nibble2=0
+	Nibble1, Nibble2=string.byte(sHexVal,1,2)
+	if Nibble1>=65 then
+		Nibble1=Nibble1-55
+	else
+		Nibble1=Nibble1-48
+	end
+	if Nibble2>=65 then
+		Nibble2=Nibble2-55
+	else
+		Nibble2=Nibble2-48
+	end
+	local Byte=Nibble1*16+Nibble2
+	return Byte/255
+end
+--]]
+
+local function nToHex(Byte)
+--	local Byte=nVal * 255
+	local Nibble1=math.floor(Byte/16)
+	local Nibble2=Byte-(Nibble1*16)
+	local Part1=string.char(Nibble1+48)
+	local Part2=string.char(Nibble2+48)
+	if Nibble1>9 then
+		Part1=string.char(Nibble1+55)
+	end
+	if Nibble2>9 then
+		Part2=string.char(Nibble2+55)
+	end
+	return Part1 .. Part2
+end
+
+function CharBagFrame:rgb2hex(ay)
+	local rtn
+	rtn = nToHex(ay.r * 255) .. nToHex(ay.g * 255) .. nToHex(ay.b * 255)
+	return rtn
+end
+
+local function ColorStart(colorHTML)
+	return "|c"..string.sub(colorHTML,1,6)
+end
+
+function CharBagFrame:ComputeColorAndText(spaceCurr, spaceMax)
+	local usedBagPercent = tonumber(spaceCurr) * 100 / tonumber(spaceMax)
+	local cs = ""
+	if spaceCurr == spaceMax then
+		cs = ColorStart(self.ColorFull)
+	else
+		if usedBagPercent >= self.parent.BagSpaceAlert.threshold then
+			cs = ColorStart(self.ColorAlert)
+		else
+			if usedBagPercent >= self.parent.BagSpaceWarn.threshold then
+				cs = ColorStart(self.ColorWarn)
+			end
+		end
+	end
+	return cs .. spaceCurr
+end
+
+
+function CharBagFrame:SetQty(control, field, qty)
+	local ctl = control:GetNamedChild(field)
+	ctl:SetText(qty)
+end
+
+function CharBagFrame:UpdateAssets()
+	if self.currAssets ~= nil then
+		self.currAssets.spaceUsed = GetNumBagUsedSlots(BAG_BACKPACK)
+		self.currAssets.spaceMax = GetBagSize(BAG_BACKPACK)
+	end
+end
+
+function CharBagFrame:FillCharAndBank()
+	self:UpdateAssets()
+
+	local spaceUsed = self.currAssets.spaceUsed
+	local spaceMax = self.currAssets.spaceMax
+	local bankMax = GetBagSize(BAG_BANK)
+	if IsESOPlusSubscriber() then
+		bankMax = bankMax + GetBagSize(BAG_SUBSCRIBER_BANK)
+	end
+	local bankUsed = GetNumBagUsedSlots(BAG_BANK)
+	bankUsed = bankUsed + GetNumBagUsedSlots(BAG_SUBSCRIBER_BANK)
+
+	self:SetQty(self.charControl, "spaceUsed", self:ComputeColorAndText(spaceUsed, spaceMax))
+	self:SetQty(self.charControl, "spaceMax", spaceMax)
+
+	self:SetQty(self.bankControl, "spaceUsed", self:ComputeColorAndText(bankUsed, bankMax))
+	self:SetQty(self.bankControl, "spaceMax", bankMax)
+
+	spaceUsed = spaceUsed + bankUsed + self.totSpaceUsed
+	spaceMax = spaceMax + bankMax + self.totSpaceMax
+
+	self:SetQty(self.totControl, "spaceUsed", spaceUsed)
+	self:SetQty(self.totControl, "spaceMax", spaceMax)
+end
+
+function CharBagFrame:RepaintSpaceUsed()
+	-- loop through characters
+	local assets = self.parent.assets
+	for i=1, GetNumCharacters() do
+		local _, _, _, _, _, _, charId, _ = GetCharacterInfo(i)
+		tControl = GetControl("IIFA_GUI_Bag_Grid_Row_" .. i)
+		if charId ~= currId then
+			if assets[charId] ~= nil then
+				if assets[charId].spaceUsed ~= nil then
+					self:SetQty(tControl, "spaceUsed", self:ComputeColorAndText(assets[charId].spaceUsed, assets[charId].spaceMax))
+					self:SetQty(tControl, "spaceMax", assets[charId].spaceMax)
+				end
+			end
+		end
+	end
+end
+
+
+function CharBagFrame:Initialize(objectForAssets)
+	local function ComputeSpaceUsedText(spaceUsed, spaceMax)
+		-- returns color coded
+	end
+
+	self.frame = IIFA_CharBagFrame
+	local tControl
+	local prevControl = self.frame
+	local currId = GetCurrentCharacterId()
+
+	if objectForAssets.assets == nil then
+		objectForAssets.assets = {}
+	end
+	local assets = objectForAssets.assets
+	self.parent = objectForAssets
+
+	if assets[currId] == nil then
+		assets[currId] = {}
+		assets[currId].spaceUsed = 0
+		assets[currId].spaceMax = 0
+	else
+		if assets[currId].spaceUsed == nil then
+			assets[currId].spaceUsed = 0
+		end
+		if assets[currId].spaceMax == nil then
+			assets[currId].spaceMax = 0
+		end
+	end
+	if objectForAssets.BagSpaceWarn == nil then
+		objectForAssets.BagSpaceWarn = { threshold = 85, r = 230 / 255, g = 130 / 255, b = 0 }
+		objectForAssets.BagSpaceAlert = { threshold = 95, r = 1, g = 1, b = 0 }
+		objectForAssets.BagSpaceFull = { r = 1, g = 0, b = 0 }
+	end
+
+	self.ColorWarn = self:rgb2hex(objectForAssets.BagSpaceWarn)
+	self.ColorAlert = self:rgb2hex(objectForAssets.BagSpaceAlert)
+	self.ColorFull = self:rgb2hex(objectForAssets.BagSpaceFull)
+
+	self.currAssets = objectForAssets.assets[currId]
+
+	self.frame:SetAnchor(TOPLEFT, IIFA_GUI_Header_BagButton, TOPRIGHT, 5, 0)
+	self.totSpaceUsed = 0
+	self.totSpaceMax = 0
+
+	for i=1, GetNumCharacters() do
+		local charName, _, _, _, _, _, charId, _ = GetCharacterInfo(i)
+		charName = charName:sub(1, charName:find("%^") - 1)
+		tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Grid_Row_" .. i, self.frame, "IIFA_CharBagRow")
+		if i == 1 then
+			tControl:SetAnchor(TOPLEFT, prevControl:GetNamedChild("_Title"), BOTTOMLEFT, 0, 26)
+		else
+			tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 2)
+		end
+		tControl:GetNamedChild("charName"):SetText(charName)
+		if charId == currId then
+			self.charControl = tControl
+		else
+			if assets[charId] ~= nil then
+				if assets[charId].spaceUsed ~= nil then
+					self.totSpaceUsed = self.totSpaceUsed + assets[charId].spaceUsed
+					self.totSpaceMax = self.totSpaceMax + assets[charId].spaceMax
+
+					self:SetQty(tControl, "spaceUsed", self:ComputeColorAndText(assets[charId].spaceUsed, assets[charId].spaceMax))
+					self:SetQty(tControl, "spaceMax", assets[charId].spaceMax)
+				end
+			end
+		end
+		prevControl = tControl
+	end
+	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Bank", self.frame, "IIFA_CharBagRow")
+	tControl:GetNamedChild("charName"):SetText("Bank")
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	self.bankControl = tControl
+
+	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Tots", self.frame, "IIFA_CharBagRow")
+	tControl:GetNamedChild("charName"):SetText("Totals")
+	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	self.totControl = tControl
+
+	self.frame:SetHeight((GetNumCharacters() + 4) * 26)	-- numchars + 4 represents # chars + bank + total + title and col titles
+
+	self:FillCharAndBank()
+
+	self.isInitialized = true
+end
+
+function CharBagFrame:Show(control)
+	if self.isInitialized == nil then return end
+	if not self.isShowing then
+		self.isShowing = true
+		self:FillCharAndBank()
+		self.frame:SetHidden(false)
+	end
+end
+
+function CharBagFrame:Hide(control)
+	if self.isInitialized == nil then return end
+	if self.isShowing then
+		self.isShowing = false
+		self.frame:SetHidden(true)
+	end
+end
+
