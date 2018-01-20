@@ -47,6 +47,37 @@ local IIFA_COLORDEF_DEFAULT = ZO_ColorDef:New("3399FF")
 --	Global Variables and external functions
 -- --------------------------------------------------------------
 
+IIfA.trackedBags = {
+	[BAG_WORN] = true,
+	[BAG_BACKPACK] = true,
+	[BAG_BANK] = true,
+	[BAG_GUILDBANK] = true,
+}
+IIfA.dropdownBankNames = { 
+	"All", 
+	"All Banks",
+	"All Guild Banks", 
+	"All Characters", 
+	"Bank and Characters", 
+	"Bank and Current Character", 
+	"Bank Only", 
+	"Craft Bag" 
+}
+
+if GetAPIVersion() == 100022 then	
+	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_THREE] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_FOUR] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_FIVE] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_SIX] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_SEVEN] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_EIGHT] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_NINE] = true
+	IIfA.trackedBags[BAG_HOUSE_BANK_TEN] = true
+	table.insert(IIfA.dropdownBankNames, "Housing Storage")
+end
+
 function IIfA:GetItemID(itemLink)
 	local ret = nil
 	if (itemLink) then

@@ -355,7 +355,7 @@ function IIfA:CreateOptionsMenu()
 			type = "dropdown",
 			name =  "Default Inventory Frame View",
 			tooltip =  "The default view (in the dropdown) set when the inventory frame loads",
-			choices = { "All", "All Banks", "All Guild Banks", "All Characters", "Bank and Characters", "Bank and Current Character", "Bank Only", "Craft Bag" },
+			choices = IIfA.dropdownBankNames,
 			default = IIfA:GetSettings().in2DefaultInventoryFrameView,
 			getFunc = function() return IIfA:GetSettings().in2DefaultInventoryFrameView end,
 			setFunc = function( value )

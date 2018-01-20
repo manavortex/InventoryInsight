@@ -92,7 +92,6 @@ function IIfA:SetInventoryListFilter(value)
 end
 
 
-
 --[[----------------------------------------------------------------------]]
 --[[----------------------------------------------------------------------]]
 --[[------ GUI functions  ------------------------------------------------]]
@@ -117,12 +116,15 @@ end
 
 
 local function DoesInventoryMatchList(locationName, location)
+	local bagId = location.bagID
+	
 --	if locationName == "attributes" then return false end
 	if( IIfA.InventoryListFilter == "All" ) then
 		return true
 
 	elseif(IIfA.InventoryListFilter == "All Banks") then
-		return (location.bagID == BAG_BANK or location.bagID == BAG_GUILDBANK or location.bagID == BAG_SUBSCRIBER_BANK)
+		return nil ~= bagId and bagId ~= BAG_BACKPACK and bagId ~= BAG_BANK and IIfA.trackBags[bagId]
+		-- (location.bagID == BAG_BANK or location.bagID == BAG_GUILDBANK or location.bagID == BAG_SUBSCRIBER_BANK)
 
 	elseif(IIfA.InventoryListFilter == "All Guild Banks") then
 		return (location.bagID == BAG_GUILDBANK)
@@ -530,7 +532,8 @@ function IIfA:CreateInventoryScroll()
 end
 
 function IIfA:GetAccountInventoryList()
-	local accountInventories = { "All", "All Banks", "All Guild Banks", "All Characters", "Bank and Characters", "Bank and Current Character", "Bank Only", "Craft Bag" }
+	local accountInventories = IIfA.dropdownBankNames
+	
 
 -- get character names, will present in same order as character selection screen
 	for i=1, GetNumCharacters() do

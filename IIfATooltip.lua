@@ -101,9 +101,10 @@ IIfA.racialTextures = {
 	[61] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(61)), styleTexture = getTex("bloodforge")}, 			-- Bloodforge
 	[62] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(62)), styleTexture = getTex("dreadhorn")}, 			-- Dreadhorn / Falkreath
 	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex("")}, 					-- Unused
-	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex("")}, 					-- Unused
-	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("apostle")}, 			-- Apostle
-	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("ebonshadow")}, 			-- Ebonshadow
+
+	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex("apostle")}, 			-- Apostle
+	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("ebonshadow")}, 			-- Ebonshadow
+	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("")},					-- Unused
 	[67] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(67)), styleTexture = getTex("")}, 					-- Unused
 	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex("")}, 					-- Unused
 	[69] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(69)), styleTexture = getTex("")}, 					-- Unused
@@ -364,6 +365,7 @@ function IIfA:getMouseoverLink()
 		name == 'ZO_SmithingTopLevelDeconstructionPanelInventoryBackpackContents' or
 		name == 'ZO_SmithingTopLevelImprovementPanelInventoryBackpackContents' or
 		name == 'ZO_SmithingTopLevelRefinementPanelInventoryBackpackContents' or
+		name == 'ZO_HouseBankBackpackContents' or
 		name == 'ZO_PlayerInventoryBackpackContents' then
 		if not mouseOverControl.dataEntry then return end
 		data = mouseOverControl.dataEntry.data
