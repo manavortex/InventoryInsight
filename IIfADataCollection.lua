@@ -311,8 +311,8 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey)
 			-- we're looking at the right guild bank
 			    data.bagID == BAG_VIRTUAL or
 				data.bagID == BAG_BANK or
-				data.bagID == BAG_SUBSCRIBER_BANK or
-				nil ~= GetCollectibleForHouseBankBag(data.bagID) or -- is housing bank, manaeeee
+				data.bagID == BAG_SUBSCRIBER_BANK or 
+				nil ~= GetCollectibleForHouseBankBag and nil ~= GetCollectibleForHouseBankBag(data.bagID) or -- is housing bank, manaeeee
 			   ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locName == GetCurrentCharacterId()) then
 --		d(locName)
 --		d(data)
@@ -350,7 +350,7 @@ function IIfA:CollectAll()
 			IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 		elseif(bagId == BAG_VIRTUAL)then
 			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-		else -- 20.1. mana: bag bag bag
+		elseif GetAPIVersion() >= 100022 then -- 20.1. mana: bag bag bag
 			local collectibleId = GetCollectibleForHouseBankBag(bagId)
 			if IsCollectibleUnlocked(collectibleId) then
 				local name = GetCollectibleNickname(collectibleId) or GetCollectibleName(collectibleId)

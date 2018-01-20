@@ -64,17 +64,17 @@ IIfA.dropdownBankNames = {
 	"Craft Bag" 
 }
 
-if GetAPIVersion() == 100022 then	
-	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_THREE] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_FOUR] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_FIVE] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_SIX] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_SEVEN] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_EIGHT] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_NINE] = true
-	IIfA.trackedBags[BAG_HOUSE_BANK_TEN] = true
+if GetAPIVersion() >= 100022 then	
+	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_THREE]	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_FOUR] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_FIVE] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_SIX] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_SEVEN] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_EIGHT] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_NINE] 	= true
+	IIfA.trackedBags[BAG_HOUSE_BANK_TEN] 	= true
 	table.insert(IIfA.dropdownBankNames, "Housing Storage")
 end
 
