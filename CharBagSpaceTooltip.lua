@@ -165,15 +165,18 @@ function CharBagFrame:Initialize(objectForAssets)
 	self.totSpaceMax = 0
 
 	for i=1, GetNumCharacters() do
-		local charName, _, _, _, _, _, charId, _ = GetCharacterInfo(i)
+		local charName, _, _, _, _, alliance, charId, _ = GetCharacterInfo(i)
 		charName = charName:sub(1, charName:find("%^") - 1)
 		tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Grid_Row_" .. i, self.frame, "IIFA_CharBagRow")
 		if i == 1 then
-			tControl:SetAnchor(TOPLEFT, prevControl:GetNamedChild("_Title"), BOTTOMLEFT, 0, 26)
+			tControl:SetAnchor(TOPLEFT, prevControl:GetNamedChild("_Title"), BOTTOMLEFT, 0, 30)
+			prevControl:GetNamedChild("_Title"):SetText("Bag Space")
+			prevControl:GetNamedChild("_TitleCharName"):SetText(GetString(SI_GROUP_LIST_PANEL_NAME_HEADER))
 		else
 			tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 2)
 		end
-		tControl:GetNamedChild("charName"):SetText(charName)
+		tControl:GetNamedChild("charName"):SetWrapMode(TEXT_WRAP_MODE_ELLIPSIS)
+		tControl:GetNamedChild("charName"):SetText(GetAllianceColor(alliance):Colorize(charName))
 		if charId == currId then
 			self.charControl = tControl
 		else
@@ -189,14 +192,27 @@ function CharBagFrame:Initialize(objectForAssets)
 		end
 		prevControl = tControl
 	end
+
+	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider1", self.frame, "ZO_Options_Divider")
+	tControl:SetDimensions(288, 3)
+    tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+    tControl:SetAlpha(1)
+	self.divider1 = tControl
+
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Bank", self.frame, "IIFA_CharBagRow")
-	tControl:GetNamedChild("charName"):SetText("Bank")
-	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:GetNamedChild("charName"):SetText(GetString(SI_CURRENCYLOCATION1))
+	tControl:SetAnchor(TOPLEFT, self.divider1, BOTTOMLEFT, 0, 0)
 	self.bankControl = tControl
+
+	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider2", self.frame, "ZO_Options_Divider")
+	tControl:SetDimensions(288, 3)
+    tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+    tControl:SetAlpha(1)
+	self.divider2 = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Tots", self.frame, "IIFA_CharBagRow")
 	tControl:GetNamedChild("charName"):SetText("Totals")
-	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 0, 0)
 	self.totControl = tControl
 
 	self.frame:SetHeight((GetNumCharacters() + 4) * 26)	-- numchars + 4 represents # chars + bank + total + title and col titles

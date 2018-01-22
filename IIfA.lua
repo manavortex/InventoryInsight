@@ -20,7 +20,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name = "Inventory Insight"
-IIfA.version = "2.16a"
+IIfA.version = "2.20"
 IIfA.author = "AssemblerManiac & manavortex"
 IIfA.defaultAlertType = UI_ALERT_CATEGORY_ALERT
 IIfA.defaultAlertSound = nil
@@ -53,18 +53,18 @@ IIfA.trackedBags = {
 	[BAG_BANK] = true,
 	[BAG_GUILDBANK] = true,
 }
-IIfA.dropdownBankNames = { 
-	"All", 
+IIfA.dropdownBankNames = {
+	"All",
 	"All Banks",
-	"All Guild Banks", 
-	"All Characters", 
-	"Bank and Characters", 
-	"Bank and Current Character", 
-	"Bank Only", 
-	"Craft Bag" 
+	"All Guild Banks",
+	"All Characters",
+	"Bank and Characters",
+	"Bank and Current Character",
+	"Bank Only",
+	"Craft Bag"
 }
 
-if GetAPIVersion() >= 100022 then	
+if GetAPIVersion() >= 100022 then
 	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] 	= true
 	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] 	= true
 	IIfA.trackedBags[BAG_HOUSE_BANK_THREE]	= true
@@ -231,8 +231,19 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA.settings = ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
 	IIfA.data = ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
+--	IIfA.testdata = ZO_SavedVars:NewAccountWide("IIfA_TestData", 1, "Data", defaultGlobal, "ProfileHere", "NotAnAccountName")
 	--                                      top level, version, bottom level, array of default data)
 --[[
+
+adding 2 more parms in newaccountwide call *shoud* allow using of global data spanning accounts
+- but no way to test, and not sure if it would zap data when toons go missing
+
+function ZO_SavedVars:NewAccountWide(savedVariableTable, version, namespace, defaults, profile, displayName)
+    displayName = displayName or GetDisplayName()
+    return GetNewSavedVars(savedVariableTable, version, namespace, defaults, profile, displayName)
+end
+local globalVars = ZO_SavedVars:NewAccountWide("yourSavedVar", 1, nil, defaults, nil, "$(global)")
+
 IIfA_Data =
 {
     ["Default"] =
@@ -243,6 +254,15 @@ IIfA_Data =
             {
                 ["Data"] =
                 {
+
+IIfA_TestData =
+{
+    ["ProfileHere"] =
+    {
+        ["NotAnAccountName"] =
+        {
+            ["$AccountWide"] =
+
 --]]
 
 	local ObjSettings = IIfA:GetSettings()

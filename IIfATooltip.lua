@@ -101,10 +101,9 @@ IIfA.racialTextures = {
 	[61] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(61)), styleTexture = getTex("bloodforge")}, 			-- Bloodforge
 	[62] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(62)), styleTexture = getTex("dreadhorn")}, 			-- Dreadhorn / Falkreath
 	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex("")}, 					-- Unused
-
-	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex("apostle")}, 			-- Apostle
-	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("ebonshadow")}, 			-- Ebonshadow
-	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("")},					-- Unused
+	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex("")},					-- Unused
+	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("apostle")},				-- Apostle
+	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("ebonshadow")},			-- Ebonshadow
 	[67] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(67)), styleTexture = getTex("")}, 					-- Unused
 	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex("")}, 					-- Unused
 	[69] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(69)), styleTexture = getTex("")}, 					-- Unused
@@ -256,7 +255,13 @@ local function getStyleIntel(itemLink)
 		itemIsBound,
 		itemChargeStatus = zo_strsplit(':', data)
 
-	return IIfA.racialTextures[tonumber(itemStyle)]
+	itemStyle = tonumber(itemStyle)
+
+	if itemStyle == ITEMSTYLE_UNIVERSAL then
+		return nil
+	else
+		return IIfA.racialTextures[itemStyle]
+	end
 end
 
 function IIfA:AnchorFrame(frame, parentTooltip)

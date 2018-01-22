@@ -1018,33 +1018,33 @@
 
 
 			<TopLevelControl name="IIFA_CharCurrencyFrame" clampedToScreen="true" hidden="true">
-				<Dimensions x="467" />
+				<Dimensions x="467" />				
 				<Controls>
 					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
-					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="Gold / Telvar Stones / Alliance Points / Writ Vouchers Info" horizontalAlignment="CENTER">
+					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
 						<Dimensions x="467" y="26" />
 					</Label>
-					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="Char Name">
+					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
 						<Dimensions x="165" y="24" />
 					</Label>
-					<Label name="$(parent)_TitleGold" font="ZoFontGameShadow" text="Gold" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="0" offsetY="0" />
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)_TitleTV" font="ZoFontGameShadow" text="TV" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleGold" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)_TitleAP" font="ZoFontGameShadow" text="AP" horizontalAlignment="RIGHT" >
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleTV" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)_TitleWV" font="ZoFontGameShadow" text="WV" horizontalAlignment="RIGHT" >
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleAP" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
-						<Dimensions x="68" y="24" />
-					</Label>
+					<Texture name="$(parent)CURT_MONEY">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="54" offsetY="4" />
+					</Texture>
+					<Texture name="$(parent)CURT_TELVAR_STONES">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_MONEY" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)CURT_ALLIANCE_POINTS">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_TELVAR_STONES" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)CURT_WRIT_VOUCHERS">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_ALLIANCE_POINTS" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="490" y="3" />
+					</Texture>
 				</Controls>
 			</TopLevelControl>
 
@@ -1078,11 +1078,11 @@
 				<Dimensions x="274" />
 				<Controls>
 					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
-					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="BackPack Used/Tot Space" horizontalAlignment="CENTER">
+					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
 						<Dimensions x="274" y="26" />
 					</Label>
-					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="Char Name">
+					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
 						<Dimensions x="165" y="24" />
 					</Label>
@@ -1094,6 +1094,10 @@
 						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleUsed" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
 						<Dimensions x="55" y="24" />
 					</Label>
+					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="288" y="3" />
+					</Texture>
 				</Controls>
 			</TopLevelControl>
 

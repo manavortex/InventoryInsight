@@ -743,8 +743,8 @@ function IIfA:FMC(control, WhoSeesIt)
 -- |H1:achievement:1318:16383:1431113493|h|h
 	local motifAchieves =
 		{
-		[15] = 1144,	-- dwemer
-		[16] = 1319, 	-- glass
+		[15] = 1144,	-- Dwemer
+		[16] = 1319, 	-- Glass
 		[17] = 1181,	-- Xivkyn
 		[18] = 1318,	-- Akaviri
 		[19] = 1348,	-- Mercenary
@@ -768,7 +768,7 @@ function IIfA:FMC(control, WhoSeesIt)
 		[37] = 1798,	-- Ebony
 		[38] = 1715,	-- Draugr
 		[39] = 1662,	-- Minotaur
-		[40] = 1660,	-- Order Hour/skinchanger
+		[40] = 1660,	-- Order Hour
 		[41] = 1714,	-- Celestial
 		[42] = 1545,	-- Hollowjack
 --		[43] = 0,		-- Harlequin
@@ -778,9 +778,13 @@ function IIfA:FMC(control, WhoSeesIt)
 		[47] = 1934,	-- Bouyant Armiger
 		[48] = 1932,	-- Ashlander
 		[49] = 1935,	-- Militant Ordinator
-		[50] = 2022,	-- Telvani
+		[50] = 2023,	-- Telvani
 		[51] = 2021,	-- Hlaalu
-		[52] = 2023,	-- Redoran
+		[52] = 2022,	-- Redoran
+		[54] = 2098,	-- Bloodforge
+		[55] = 2097,	-- Dreadhorn
+		[56] = 2044,	-- Apostle
+		[57] = 2045,	-- Ebonshadow
 		}
 
 --		local i, a

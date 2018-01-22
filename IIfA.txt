@@ -1,7 +1,7 @@
-## Title: InventoryInsightFromAshes
+## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 2.19
-## APIVersion: 100021
+## Version: 2.20
+## APIVersion: 100021 100022
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## OptionalDependsOn: libFilters
 
