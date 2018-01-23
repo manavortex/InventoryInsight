@@ -5,12 +5,16 @@ local LAM = LibStub("LibAddonMenu-2.0")
 local LMP = LibStub("LibMediaProvider-1.0")
 
 local function getCharacterInventories()
+	
 	local accountInventories = {}
-	if(IIfA.data.accountCharacters) then
-		for characterName, character in pairs(IIfA.data.accountCharacters) do
+	
+	if nil ~= IIfA:GetCharacterList() then
+		for characterName, character in pairs(IIfA:GetCharacterList()) do
+			d("inserting " .. characterName)
 			table.insert(accountInventories, characterName)
 		end
 	end
+	
 	return accountInventories
 end
 
@@ -21,7 +25,6 @@ local function getGuildBanks()
 			if guildData.bCollectData == nil then
 				guildData.bCollectData = true
 			end
-
 			table.insert(guildBanks, guildName)
 		end
 	end
@@ -67,7 +70,7 @@ local function setGuildBankKeepDataSetting(guildNum, newSetting)
 end
 
 function IIfA:CreateOptionsMenu()
-	local deleteChar, deleteGBank
+	local deleteChar, deleteGBank, undeleteChar
 
 	local optionsData = {
 		{	type = "header",
@@ -95,27 +98,72 @@ function IIfA:CreateOptionsMenu()
 			name = "Manage Collected Data",
 			tooltip = "Manage collected Characters and Guild Banks. Delete data you no longer need (old guilds or deleted characters)",	--(optional)
 			controls = {
+				{	type 	= "description", 
+					title 	= "Ignore or delete characters",
+					text 	= "removes or un-tracks a character. \nWarning: This change will be applied immediately.",
+				},
 				{
-					type = "dropdown",
-					name = "Character To Delete",
-					choices = getCharacterInventories(),
+					type 	= "dropdown",
+					name 	= "characters to delete or un-track",
+					choices = IIfA:GetCharacterList(),
 					getFunc = function() return end,
 					setFunc = function(choice) deleteChar = nil; deleteChar = choice end
 				}, --dropdown end
 
 				{  -- button begin
 					type = "button",
+					width = "half",
 					name = "Delete Character",
 					tooltip = "Delete Inventory Insight data for the character selected above",
-					warning = "All data for the selected character above will be deleted!",
 					func = function() IIfA:DeleteCharacterData(deleteChar) end,
 
 				}, -- button end
+				{  -- button begin
+					type = "button",
+					width = "half",
+					name = "Ignore Equipment",
+					tooltip = "All items equipped by the current character will be ignored",
+					func = function() IIfA:IgnoreCharacterEquip(deleteChar, true) end,
 
+				}, -- button end
+				{  -- button begin
+					type = "button",
+					width = "half",
+					name = "Ignore Inventory",
+					tooltip = "This character's carried inventory will be ignored",
+					func = function() IIfA:IgnoreCharacterInventory(deleteChar, true) end,
+				}, -- button end
+				
+				{	type 	= "description", 
+					title 	= "Unignore characters",
+					text 	= "Adds an ignored character back to the tracking lists",
+				},
+				{
+					type = "dropdown",
+					name = "Character to unignore",
+					choices = IIfA:GetIgnoredCharacterList(),
+					getFunc = function() return end,
+					setFunc = function(choice) undeleteChar = nil; undeleteChar = choice end
+				}, --dropdown end
+				
+				{  -- button begin
+					type = "button",
+					width = "half",
+					name = "Unignore",
+					tooltip = "All items equipped by the current character will be tracked again",
+					func = function() 
+						IIfA:IgnoreCharacterEquip(undeleteChar, false) 
+						IIfA:IgnoreCharacterInventory(undeleteChar, false)
+					end,
+				}, -- button end
+				
+				{	type 	= "description", 
+					title 	= "Guild Bank To Delete",
+					text 	= "Delete Inventory Insight data for guild. \nWarning: This change will be applied immediately.",
+				},
 				{ -- dropdown begin
 					 type = "dropdown",
 					 name = 'Guild Bank To Delete',
-					 tooltip = 'Delete Inventory Insight data for guild',
 					 choices = getGuildBanks(),
 					 getFunc = function() return end,
 					 setFunc = function(choice) deleteGBank = nil; deleteGBank = choice end
@@ -126,7 +174,6 @@ function IIfA:CreateOptionsMenu()
 					type = "button",
 					name = "Delete Guild Bank",
 					tooltip = "Delete Inventory Insight data for the guild selected above",
-					warning = "All data for the selected guild bank above will be deleted!",
 					func = function() IIfA:DeleteGuildData(deleteGBank) end,
 				}, -- button end
 
@@ -237,19 +284,15 @@ function IIfA:CreateOptionsMenu()
 					choices = {"Always", "IIfA", "Never" },
 					tooltip = "Choose when to display IIfA info on Tooltips",
 					getFunc = function() return IIfA:GetSettings().showToolTipWhen end,
-					setFunc = function(value)
-						IIfA:GetSettings().showToolTipWhen = value
-					end,
+					setFunc = function(value) 	IIfA:GetSettings().showToolTipWhen = value end,
 				}, -- checkbox end
 
 				{
 					type = "checkbox",
 					name = "Show Info in Separate Frame",
 					tooltip = "Enables/Disables display of Style Info and Location info in a separate frame, or within the tooltip",
-					getFunc = function() return IIfA:GetSettings().bInSeparateFrame end,
-					setFunc = function(value)
-						IIfA:GetSettings().bInSeparateFrame = value
-					end,
+					getFunc = function() return 	IIfA:GetSettings().bInSeparateFrame end,
+					setFunc = function(value)		IIfA:GetSettings().bInSeparateFrame = value end,
 				}, -- checkbox end
 
 				{
@@ -257,47 +300,9 @@ function IIfA:CreateOptionsMenu()
 					name = "Show Style Info",
 					tooltip = "Enables/Disables display of Style Info on the tooltips",
 					getFunc = function() return IIfA:GetSettings().showStyleInfo end,
-					setFunc = function(value)
-						IIfA:GetSettings().showStyleInfo = value
-					end,
-				}, -- checkbox end
---[[
-				{
-					type = "checkbox",
-					name = "Use Default Tooltips",
-					tooltip = "Enables/Disables inventory insight data added to the default tooltips. (Turning this feature on will disable the IIfA Tooltips)",
-					-- 3-29-15 - AssemblerManiac - changed .data. to :GetSettings(). next 3 occurances
-					getFunc = function() return IIfA:GetSettings().in2ToggleDefaultTooltips end,
-					setFunc = function(value)
-						IIfA:GetSettings().in2ToggleDefaultTooltips = value
-						IIfA:GetSettings().in2ToggleIN2Tooltips = not value
-					end,
-
-
+					setFunc = function(value) 	IIfA:GetSettings().showStyleInfo = value end,
 				}, -- checkbox end
 
-				{
-					type = "checkbox",
-					name = "Use IIfA Tooltips",
-					tooltip = "Enables/Disables inventory insight data added to the IIfA tooltips. (Turning this feature on will disable adding data to the default Tooltips",
-					-- 3-29-15 - AssemblerManiac - changed .data. to :GetSettings(). next 3 occurances
-					getFunc = function() return IIfA:GetSettings().in2ToggleIN2Tooltips end,
-					setFunc = function(value)
-						IIfA:GetSettings().in2ToggleIN2Tooltips = value
-						IIfA:GetSettings().in2ToggleDefaultTooltips = not value
-					end,
-
-				}, -- checkbox end
-
-				{
-					type = "checkbox",
-					name = 'Hide Redundant Item Information',
-					tooltip = 'Option to enable/disable showing information on ItemTooltips (inventory and bank) when already viewing that bag. (i.e., If you mouse over an item in your inventory you can already see how many you have.)',
-					-- 3-29-15 - AssemblerManiac - changed .data. to :GetSettings(). next 2 occurances
-					getFunc = function() return IIfA:GetSettings().HideRedundantInfo end,
-					setFunc = function(value) IIfA:GetSettings().HideRedundantInfo = value end,
-				}, -- checkbox end
---]]
 				 {
 					type = "colorpicker",
 					name = 'Tooltip Inventory Information Text Color',
@@ -477,7 +482,10 @@ function IIfA:CreateOptionsMenu()
 						tooltip = "Enables/Disables data collection for all guild banks on this account",
 						warning = "Guild bank information will not be updated if this option is turned off!",
 						getFunc = function() return IIfA.data.bCollectGuildBankData end,
-						setFunc = function(value) IIfA.data.bCollectGuildBankData = value end,
+						setFunc = function(value) 
+							IIfA.data.bCollectGuildBankData = value
+							IIfA.trackedBags[BAG_GUILDBANK] = value
+						end,
 					}
 				for i = 1, GetNumGuilds() do
 					local id = GetGuildId(i)

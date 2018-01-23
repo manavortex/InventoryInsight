@@ -123,7 +123,7 @@ local function DoesInventoryMatchList(locationName, location)
 		return true
 
 	elseif(IIfA.InventoryListFilter == "All Banks") then
-		return nil ~= bagId and bagId ~= BAG_BACKPACK and bagId ~= BAG_BANK and IIfA.trackBags[bagId]
+		return nil ~= bagId and bagId ~= BAG_BACKPACK and bagId ~= BAG_BANK and IIfA.trackedBags[bagId]
 		-- (location.bagID == BAG_BANK or location.bagID == BAG_GUILDBANK or location.bagID == BAG_SUBSCRIBER_BANK)
 
 	elseif(IIfA.InventoryListFilter == "All Guild Banks") then
@@ -531,17 +531,29 @@ function IIfA:CreateInventoryScroll()
 	return IIFA_GUI_ListHolder.lines
 end
 
+function IIfA:GetCharacterList()
+	local charInventories = {}
+	for i=1, GetNumCharacters() do
+		local charName, _, _, _, _, _, _, _ = GetCharacterInfo(i)
+		charName = charName:sub(1, charName:find("%^") - 1)
+		if (nil == charInventories[charName]) then 
+			table.insert(charInventories, charName)
+		end
+	end
+	return charInventories
+end
+
 function IIfA:GetAccountInventoryList()
 	local accountInventories = IIfA.dropdownBankNames
 	
 
 -- get character names, will present in same order as character selection screen
-	for i=1, GetNumCharacters() do
-		local charName, _, _, _, _, _, _, _ = GetCharacterInfo(i)
-		charName = charName:sub(1, charName:find("%^") - 1)
-		table.insert(accountInventories, charName)
+	for idx, charName in ipairs(IIfA:GetCharacterList()) do
+		if (nil == accountInventories[charName]) then 
+			table.insert(accountInventories, charName)
+		end
 	end
-
+	
 -- banks are same as toons, same order as player normally sees them
 	if IIfA.data.bCollectGuildBankData then
 		for i = 1, GetNumGuilds() do

@@ -26,12 +26,15 @@ libs\LibAddonMenu-2.0\controls\iconpicker.lua
 libs\LibAddonMenu-2.0\controls\divider.lua
 libs\LibCustomMenu\LibCustomMenu.lua
 
+StringRegistration.lua
+
 IIfA.xml
 Bindings.xml
 CharCurrencyTooltip.lua
 CharBagSpaceTooltip.lua
 IIfA.lua
 Bindings.lua
+IIfASettingsAdapter.lua
 IIfAEvents.lua
 IIfATooltip.lua
 IIfABackpack.lua

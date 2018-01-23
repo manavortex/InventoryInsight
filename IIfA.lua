@@ -19,20 +19,20 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
-IIfA.name = "Inventory Insight"
-IIfA.version = "2.20"
-IIfA.author = "AssemblerManiac & manavortex"
-IIfA.defaultAlertType = UI_ALERT_CATEGORY_ALERT
-IIfA.defaultAlertSound = nil
-IIfA.PlayerLoadedFired = false
-IIfA.CharacterNames = {}
-IIfA.colorHandler = nil
-IIfA.isGuildBankReady = false
-IIfA.TooltipLink = nil
-IIfA.CurrSceneName = "hud"
-IIfA.bFilterOnSetName = false
-IIfA.searchFilter = ""
-IIfA.searchFilterLower = ""
+IIfA.name 				= "Inventory Insight"
+IIfA.version 			= "2.20"
+IIfA.author 			= "AssemblerManiac & manavortex"
+IIfA.defaultAlertType 	= UI_ALERT_CATEGORY_ALERT
+IIfA.defaultAlertSound 	= nil
+IIfA.PlayerLoadedFired 	= false
+IIfA.CharacterNames 	= {}
+IIfA.colorHandler 		= nil
+IIfA.isGuildBankReady 	= false
+IIfA.TooltipLink 		= nil
+IIfA.CurrSceneName 		= "hud"
+IIfA.bFilterOnSetName 	= false
+IIfA.searchFilter 		= ""
+IIfA.searchFilterLower 	= ""
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -48,10 +48,11 @@ local IIFA_COLORDEF_DEFAULT = ZO_ColorDef:New("3399FF")
 -- --------------------------------------------------------------
 
 IIfA.trackedBags = {
-	[BAG_WORN] = true,
-	[BAG_BACKPACK] = true,
-	[BAG_BANK] = true,
+	[BAG_WORN] 		= true,
+	[BAG_BACKPACK] 	= true,
+	[BAG_BANK] 		= true,
 	[BAG_GUILDBANK] = true,
+	[BAG_VIRTUAL] 	= true,
 }
 IIfA.dropdownBankNames = {
 	"All",
@@ -63,7 +64,6 @@ IIfA.dropdownBankNames = {
 	"Bank Only",
 	"Craft Bag"
 }
-
 if GetAPIVersion() >= 100022 then
 	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] 	= true
 	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] 	= true
@@ -77,6 +77,7 @@ if GetAPIVersion() >= 100022 then
 	IIfA.trackedBags[BAG_HOUSE_BANK_TEN] 	= true
 	table.insert(IIfA.dropdownBankNames, "Housing Storage")
 end
+
 
 function IIfA:GetItemID(itemLink)
 	local ret = nil
@@ -142,6 +143,11 @@ function IIfA:StatusAlert(message)
 	end
 end
 
+local function onFirstOpen()
+	IIfA:OnFirstInventoryOpen()
+end
+
+
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
 		return
@@ -157,11 +163,12 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	-- initializing default values
 	local defaultGlobal = {
-		saveSettingsGlobally = true,
-		bDebug = false,
-		in2TextColors = IIFA_COLORDEF_DEFAULT:ToHex(),
-		showItemCountOnRight = true,
-
+		saveSettingsGlobally 	= true,
+		bDebug 					= false,
+		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
+		showItemCountOnRight 	= true,
+		ignoredCharEquipment	= {},
+		ignoredCharInventories	= {},
 		frameSettings =
 			{
 			["bank"] =			{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
@@ -176,13 +183,13 @@ function IIfA_onLoad(eventCode, addOnName)
 			["alchemy"] =   	{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth }
 			},
 
-		bCollectGuildBankData = false,
-		in2DefaultInventoryFrameView = "All",
-		in2AgedGuildBankDataWarning = true,
-		in2TooltipsFont = "ZoFontGame",
-		in2TooltipsFontSize = 16,
-		ShowToolTipWhen = "Always",
-		DBv3 = {},
+		bCollectGuildBankData 			= false,
+		in2DefaultInventoryFrameView 	= "All",
+		in2AgedGuildBankDataWarning 	= true,
+		in2TooltipsFont 				= "ZoFontGame",
+		in2TooltipsFontSize 			= 16,
+		ShowToolTipWhen 				= "Always",
+		DBv3 							= {},
 		}
 
 	-- initializing default values
@@ -226,44 +233,24 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA.filterGroup = "All"
 	IIfA.filterTypes = nil
+	
+	-- grabs data from bagpack, and worn bag when we first open the inventory
+	ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen) 
+	ZO_PreHook(BACKPACK_GUILD_BANK_LAYOUT_FRAGMENT, "ApplyBackpackLayout", IIfA.CollectGuildBank) 
+	
+	-- ZO_PreHook(SHARED_INVENTORY, "GetOrCreateBagCache", function(self, bagId) 
+		-- d("SHARED_INVENTORY: GetOrCreateBagCache: " .. tostring(bagId))
+	-- end)
+	-- ZO_PreHook(SHARED_INVENTORY, "PerformFullUpdateOnBagCache", function(self, bagId) 
+		-- d("SHARED_INVENTORY: PerformFullUpdateOnBagCache: " .. tostring(bagId))
+	-- end)
 
+	
 	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67
 
-	IIfA.settings = ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
-	IIfA.data = ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
---	IIfA.testdata = ZO_SavedVars:NewAccountWide("IIfA_TestData", 1, "Data", defaultGlobal, "ProfileHere", "NotAnAccountName")
-	--                                      top level, version, bottom level, array of default data)
---[[
+	IIfA.settings 	= ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
+	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
 
-adding 2 more parms in newaccountwide call *shoud* allow using of global data spanning accounts
-- but no way to test, and not sure if it would zap data when toons go missing
-
-function ZO_SavedVars:NewAccountWide(savedVariableTable, version, namespace, defaults, profile, displayName)
-    displayName = displayName or GetDisplayName()
-    return GetNewSavedVars(savedVariableTable, version, namespace, defaults, profile, displayName)
-end
-local globalVars = ZO_SavedVars:NewAccountWide("yourSavedVar", 1, nil, defaults, nil, "$(global)")
-
-IIfA_Data =
-{
-    ["Default"] =
-    {
-        ["@AssemblerManiac"] =
-        {
-            ["$AccountWide"] =
-            {
-                ["Data"] =
-                {
-
-IIfA_TestData =
-{
-    ["ProfileHere"] =
-    {
-        ["NotAnAccountName"] =
-        {
-            ["$AccountWide"] =
-
---]]
 
 	local ObjSettings = IIfA:GetSettings()
 	if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
@@ -475,6 +462,8 @@ IIfA_TestData =
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
+	IIfA:ScanCurrentCharacter()
+	IIfA:ScanBank()
 end
 
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
@@ -545,7 +534,8 @@ function IIfA:ConvertNameToId()
 	-- remaining items are character names (or should be)
 	-- if found in CharNameToId, convert it, otherwise erase whole entry (since it's an orphan)
 	-- do same for settings
-
+	local tbl = IIfA.data.DBv2
+	if nil == tbl or {} == tbl then return end
 	for itemLink, DBItem in pairs(IIfA.data.DBv2) do
 		for itemDetailName, itemInfo in pairs(DBItem) do
 			local bagID = itemInfo.locationType

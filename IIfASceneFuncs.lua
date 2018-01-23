@@ -40,9 +40,9 @@ function IIfA:RegisterForSceneChanges()
 end
 
 function IIfA:GetSceneSettings(sceneName)
-	if sceneName == nil then
-		sceneName = IIfA:GetCurrentSceneName()
-	end
+	
+	sceneName = sceneName or IIfA:GetCurrentSceneName()
+	
 
 	local settings = IIfA:GetSettings().frameSettings
 
@@ -63,33 +63,19 @@ function IIfA:GetSceneSettings(sceneName)
 
 end
 
+
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
+	
+	
+	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState))
 	if (tostring(newState) == "shown") then
-
 		sceneName = IIfA:GetCurrentSceneName()
-
 		local settings = IIfA:GetSceneSettings(sceneName)
-
 		self:RePositionFrame(settings)
---[[
-		IIFA_GUI.hidden = settings.hidden
-		IIFA_GUI.locked = settings.locked
-		IIFA_GUI.minimized = settings.minimized
-		IIFA_GUI.docked = settings.docked
-
-		if IIFA_GUI.minimized then
-			IIfA:GUIMinimize(true)
-		else
-			IIfA:GuiReloadDimensions(settings, sceneName)
-		end
-		IIfA:GuiDock(settings.docked)
-		IIFA_GUI:SetHidden(settings.hidden)
---]]
-	end
-
-	if (tostring(newState) == "hidden") then
+		
+	elseif (tostring(newState) == "hidden") then
 		IIFA_GUI:SetHidden(true)
-	end
+	end	
 end
 
 
@@ -124,6 +110,7 @@ end
 function IIfA:ToggleInventoryFrame()
 	IIFA_GUI:SetHidden(not IIFA_GUI:IsControlHidden())
 	if not IIFA_GUI:IsControlHidden() then
+		IIfA:OnFirstInventoryOpen()
 		-- get current camera mode so when we toggle off, we put it back to where it was (maybe, can think of some weird circumstances where it might screw it up)
 		SetGameCameraUIMode(true)
 		IIfA:GuiResizeScroll()

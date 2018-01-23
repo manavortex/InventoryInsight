@@ -34,24 +34,24 @@ local function nToHex(Byte)
 	if Nibble2>9 then
 		Part2=string.char(Nibble2+55)
 	end
-	return Part1 .. Part2
+	return string.format("%s%s", Part1, Part2)
 end
 
 function CharBagFrame:rgb2hex(ay)
-	local rtn
-	rtn = nToHex(ay.r * 255) .. nToHex(ay.g * 255) .. nToHex(ay.b * 255)
-	return rtn
+	-- local rtn
+	return string.format("%s%s%s", nToHex(ay.r * 255), nToHex(ay.g * 255), nToHex(ay.b * 255))
+	-- return rtn
 end
 
 local function ColorStart(colorHTML)
-	return "|c"..string.sub(colorHTML,1,6)
+	return string.format("%s%s", "|c",string.sub(colorHTML,1,6))
 end
 
 function CharBagFrame:ComputeColorAndText(spaceCurr, spaceMax)
 	local usedBagPercent = tonumber(spaceCurr) * 100 / tonumber(spaceMax)
 	local cs = ""
 	if spaceCurr == spaceMax then
-		cs = ColorStart(self.ColorFull)
+		return ColorStart(self.ColorFull)
 	else
 		if usedBagPercent >= self.parent.BagSpaceAlert.threshold then
 			cs = ColorStart(self.ColorAlert)

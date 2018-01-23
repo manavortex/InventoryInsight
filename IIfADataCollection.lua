@@ -25,6 +25,11 @@ function IIfA:DeleteGuildData(name)
 end
 
 function IIfA:CollectGuildBank()
+	
+
+	-- add roomba support
+	if Roomba and Roomba.WorkInProgress and Roomba.WorkInProgress() then return  end
+	 
 	local curGB = GetSelectedGuildBankId()
 
 	if not IIfA.data.bCollectGuildBankData or curGB == nil then
@@ -59,6 +64,54 @@ function IIfA:CollectGuildBank()
 		IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
 	end
 --	d("IIfA - Guild Bank Collected - " .. curGuild)
+end
+
+	
+local function grabBagContent(bagId)
+	local bagItems = GetBagSize(BAG_BAGPACK)
+	for slotNum=0, bagItems, 1 do
+		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
+	end
+end
+
+local function scanBags()
+	local playerName = GetUnitName('player')
+	
+	IIfA.data.accountCharacters 			= IIfA.data.accountCharacters or {}
+	IIfA.data.accountCharacters[playerName] = IIfA.data.accountCharacters[playerName] or {}
+	
+
+			
+	IIfA:ClearLocationData(IIfA.currentCharacterId)
+	
+	if not IIfA:IsCharacterEquipIgnored(playerName) then 
+		grabBagContent(BAG_WORN)
+	end	
+	if not IIfA:IsCharacterInventoryIgnored(playerName) then 
+		grabBagContent(BAG_BACKPACK)
+	end		
+end
+IIfA.ScanCurrentCharacter = scanBags
+
+function IIfA:ScanBank()
+	IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+	grabBagContent(BAG_BANK)
+	local slotNum = nil
+	if HasCraftBagAccess() then		
+			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+		slotNum = GetNextVirtualBagSlotId(slotNum)
+		while slotNum ~= nil do
+			IIfA:EvalBagItem(BAG_VIRTUAL, slotNum)
+			slotNum = GetNextVirtualBagSlotId(slotNum)
+		end
+	end
+end
+
+-- only grabs the content of bagpack and worn on the first login - hence we set the function to insta-return below.
+function IIfA:OnFirstInventoryOpen()
+	scanBags()
+	IIfA:ScanBank()	
+	IIfA.OnFirstInventoryOpen = function() return end	
 end
 
 
@@ -375,6 +428,10 @@ function IIfA:CollectAll()
 
 	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
 	IIfA:ClearUnowned()
+end
+
+function IIfA:TrySaveBagInfo()
+	
 end
 
 function IIfA:ClearUnowned()
