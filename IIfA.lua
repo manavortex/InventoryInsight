@@ -48,11 +48,12 @@ local IIFA_COLORDEF_DEFAULT = ZO_ColorDef:New("3399FF")
 -- --------------------------------------------------------------
 
 IIfA.trackedBags = {
-	[BAG_WORN] 		= true,
-	[BAG_BACKPACK] 	= true,
-	[BAG_BANK] 		= true,
-	[BAG_GUILDBANK] = true,
-	[BAG_VIRTUAL] 	= true,
+	[BAG_WORN] 					= true,
+	[BAG_BACKPACK] 				= true,
+	[BAG_BANK] 					= true,
+	[BAG_SUBSCRIBER_BANK] 		= true,
+	[BAG_GUILDBANK] 			= true,
+	[BAG_VIRTUAL] 				= true,
 }
 IIfA.dropdownBankNames = {
 	"All",

@@ -96,9 +96,11 @@ IIfA.ScanCurrentCharacter = scanBags
 function IIfA:ScanBank()
 	IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 	grabBagContent(BAG_BANK)
+	
 	local slotNum = nil
 	if HasCraftBagAccess() then		
-			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+		grabBagContent(BAG_SUBSCRIBER_BANK)
+		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 		slotNum = GetNextVirtualBagSlotId(slotNum)
 		while slotNum ~= nil do
 			IIfA:EvalBagItem(BAG_VIRTUAL, slotNum)
