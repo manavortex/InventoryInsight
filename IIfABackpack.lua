@@ -123,7 +123,7 @@ local function DoesInventoryMatchList(locationName, location)
 		return true
 
 	elseif(IIfA.InventoryListFilter == "All Banks") then
-		return nil ~= bagId and bagId ~= BAG_BACKPACK and bagId ~= BAG_BANK and IIfA.trackedBags[bagId]
+		return nil ~= bagId and bagId ~= BAG_BACKPACK and IIfA.trackedBags[bagId]
 		-- (location.bagID == BAG_BANK or location.bagID == BAG_GUILDBANK or location.bagID == BAG_SUBSCRIBER_BANK)
 
 	elseif(IIfA.InventoryListFilter == "All Guild Banks") then
