@@ -22,17 +22,13 @@ if IIfA == nil then IIfA = {} end
 IIfA.name 				= "Inventory Insight"
 IIfA.version 			= "2.20"
 IIfA.author 			= "AssemblerManiac & manavortex"
-IIfA.defaultAlertType 	= UI_ALERT_CATEGORY_ALERT
 IIfA.defaultAlertSound 	= nil
-IIfA.PlayerLoadedFired 	= false
-IIfA.CharacterNames 	= {}
 IIfA.colorHandler 		= nil
 IIfA.isGuildBankReady 	= false
 IIfA.TooltipLink 		= nil
 IIfA.CurrSceneName 		= "hud"
 IIfA.bFilterOnSetName 	= false
 IIfA.searchFilter 		= ""
-IIfA.searchFilterLower 	= ""
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -140,7 +136,7 @@ end
 
 function IIfA:StatusAlert(message)
 	if (IIfA.data.bDebug) then
-		ZO_Alert(IIfA.defaultAlertType, IIfA.defaultAlertSound, message)
+		ZO_Alert(UI_ALERT_CATEGORY_ALERT, IIfA.defaultAlertSound, message)
 	end
 end
 

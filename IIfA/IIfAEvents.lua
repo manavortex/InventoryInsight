@@ -32,6 +32,19 @@ local function IIfA_OnRightClickUp(rowControl)
 	IIfA:ProcessRightClick(rowControl)
 end
 
+local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
+	if justUnlocked then return end
+	if GetAPIVersion() < 100022 then return end
+	
+	local collectibleData = ZO_COLLECTIBLE_DATA_MANAGER:GetCollectibleDataById(collectibleId)
+    if not collectibleData:IsCategoryType(COLLECTIBLE_CATEGORY_TYPE_HOUSE_BANK) then return end
+	local name 		= GetCollectibleName(collectibleId)
+	local nickName 	= GetCollectibleNickname(collectibleId)
+	
+	
+
+end
+
 
 local function IIfA_EventProc(...)
 	--d(...)
@@ -102,6 +115,10 @@ function IIfA:RegisterForEvents()
 --	SHARED_INVENTORY:RegisterCallback("SlotRemoved", IIfA_EventDump)
 --	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIfA_EventDump)
 
+	-- react to players possibly renaming their storage chests
+	EVENT_MANAGER:RegisterForEvent("IIFA_Collectible_Updated", EVENT_COLLECTIBLE_UPDATED, IIfA_CollectibleUpdate)
+	
+	
 	-- Events for data collection
 	EVENT_MANAGER:RegisterForEvent("IIFA_ALPUSH", EVENT_ACTION_LAYER_PUSHED, IIfA_ActionLayerInventoryUpdate)
 
@@ -129,22 +146,6 @@ function IIfA:RegisterForEvents()
 
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA_OnRightClickUp(rowControl) end)
 end
-
---[[ maybe revisit this in the future
-function IIfA_EventOnPlayerloaded()
-	--Do these things only on the first load
-	if(not IIfA.PlayerLoadedFired)then
-		--if(IIfA.data.in2AgedGuildBankDataWarning) then IIfA:CheckForAgedGuildBankData() end
-		--Set PlayerLoadedFired = true to prevent future execution during this session
-		IIfA.PlayerLoadedFired = true
-	end
-	--Do these things on any load
-	--Do a little dance...
-	--Make a little love...
-	--Get down tonight...
-end
- --]]
-
 
 
 --[[ registerfilter & events

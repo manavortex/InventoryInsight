@@ -259,15 +259,14 @@ end
 
 function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 	if not IIfA.trackedBags[bagId] then return end
+	
+	IIfA.data.DBv3 = IIfA.data.DBv3 or {}
 	local DBv3 = IIfA.data.DBv3
+
 	if fromXfer == nil then
 		fromXfer = false
 	end
 
-	if(not DBv3)then
-		IIfA.data.DBv3 = {}
-		DBv3 = IIfA.data.DBv3
-	end
 	itemName = GetItemName(bagId, slotNum) or EMPTY_STRING
 
 	IIfA:DebugOut(zo_strformat("EvalBagItem - <<1>>/<<2>> <<3>>", bagId, slotNum, itemName))
@@ -312,9 +311,10 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 			location = GetGuildName(GetSelectedGuildBankId())
 		else
 			local collectibleId = GetCollectibleForHouseBankBag(GetBankingBag())
-			location = GetCollectibleNickname(collectibleId) 
+			location = GetCollectibleNickname(collectibleId)
 			if location == EMPTY_STRING then location = GetCollectibleName(collectibleId) end
 		end
+		
 		if(DBitem) then
 			DBitemlocation = DBitem.locations[location]
 			if DBitemlocation then
@@ -358,7 +358,7 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey)
 	else
 		itemLink = itemKey
 	end
-	IIfA:DebugOut("ValidateItemCounts: <<1>>x<<3>> in <<2>>", itemLink, bagID, slotNum)
+	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>>x<<3>> in <<2>>", itemLink, bagID, slotNum))
 
 	for locName, data in pairs(dbItem.locations) do
 --		if data.bagID ~= nil then	-- it's an item, not attribute
