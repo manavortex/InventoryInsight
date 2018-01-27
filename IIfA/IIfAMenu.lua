@@ -392,7 +392,7 @@ function IIfA:CreateOptionsMenu()
 			setFunc = function(value)
 				IIfA:GetSettings().bFilterOnSetName = value
 				IIfA.bFilterOnSetName = value
-				IIFA_GUI_SetNameOnly_Checked:SetHidden(not value)
+				-- IIFA_GUI_SetNameOnly_Checked:SetHidden(not value)
 			end,
 		}, -- checkbox end
 

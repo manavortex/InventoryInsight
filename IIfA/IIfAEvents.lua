@@ -42,6 +42,24 @@ local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
 	local nickName 	= GetCollectibleNickname(collectibleId)
 	
 	
+	-- TODO: Check this!
+	-- function ZO_SharedInventoryManager:HandleSlotCreationOrUpdate(bagCache, bagId, slotIndex, isNewItem)
+		-- local existingSlotData = bagCache[slotIndex]
+		-- local slotData, result = self:CreateOrUpdateSlotData(existingSlotData, bagId, slotIndex, isNewItem)
+		-- bagCache[slotIndex] = slotData
+
+		-- if result == SHARED_INVENTORY_SLOT_RESULT_REMOVED then
+			-- self:FireCallbacks("SlotRemoved", bagId, slotIndex, existingSlotData)
+		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_ADDED then
+			-- self:FireCallbacks("SlotAdded", bagId, slotIndex, slotData)
+		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_UPDATED then
+			-- self:FireCallbacks("SlotUpdated", bagId, slotIndex, slotData)
+		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_REMOVE_AND_ADD then
+			-- self:FireCallbacks("SlotRemoved", bagId, slotIndex, existingSlotData)
+			-- self:FireCallbacks("SlotAdded", bagId, slotIndex, slotData)
+		-- end
+	-- end
+	
 
 end
 

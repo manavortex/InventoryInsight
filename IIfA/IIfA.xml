@@ -131,11 +131,19 @@
 
 						<Control name="$(parent)_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" >
 							<Dimensions x="200" y="30" />
-							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="110" offsetY="40"/>
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_BagButton" relativePoint="TOPRIGHT" offsetX="10" />
 
 							<OnShow>	IIfA:GuiSetupDropdown(self)</OnShow>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+						</Control>
+
+						<Control name="$(parent)_Dropdown_Quality" inherits="ZO_ComboBox" mouseEnabled="true" >
+							<Dimensions x="140" y="30" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown" relativePoint="TOPRIGHT" offsetX="10" />
+							<OnShow>		IIfA:GuiSetupQualityDropdown(self)</OnShow>
+							<OnMouseEnter>	IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
+							<OnMouseExit>	IIfA:GuiHideTooltip(self)</OnMouseExit>
 						</Control>
 
 						<Control name="$(parent)_Filter" mouseEnabled="true">
@@ -852,17 +860,35 @@
 					</Controls>
 				</Control>
 
-				<Control name="$(parent)_Search" mouseEnabled="true" resizeToFitDescendents="true">
-
-					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="16" offsetY="-30"/>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-16" offsetY="-30"/>
+				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
+					<DimensionConstraints  minY="52"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="15" offsetY="150"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-27" offsetY="-55"/>
+					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
 
 					<Controls>
+						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="0"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="20" offsetY="-20"/>
 
+							<OnMouseDown>self.locked = false</OnMouseDown>
+							<OnMouseUp>self.locked = true</OnMouseUp>
+							<OnValueChanged>IIfA:GuiOnSliderUpdate(self, value)</OnValueChanged>
+						</Slider>
+
+					</Controls>
+
+				</Control>
+				
+				<Control name="$(parent)_Search" mouseEnabled="true" resizeToFitDescendents="true">
+
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_ListHolder" relativePoint="BOTTOMLEFT" offsetX="16" offsetY="10"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-56" offsetY="-20"/>
+
+					<Controls>
 						<EditBox name="$(parent)Box"  inherits="ZO_InventorySearchBox" >
-
-							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="20"/>
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="20"/>
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="5"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="5"/>
 
 							<OnTextChanged>IIfA:GuiOnSearchboxText(self)</OnTextChanged>
 							<Controls>
@@ -870,8 +896,9 @@
 								</Backdrop>
 							</Controls>
 						</EditBox>
+						
 						<Button name="$(parent)_Clear">
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-1" offsetY="22"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-1" offsetY="7"/>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Clear Search Text")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 							<OnMouseUp>IIfA:GuiOnSearchBoxClear()</OnMouseUp>
@@ -884,54 +911,20 @@
 					</Controls>
 				</Control>
 
-				<Control name="$(parent)_SetNameOnly" mouseEnabled="true">
-					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)_Search" relativePoint="TOPLEFT" offsetX="0" offsetY="-8"/>
-					<Controls>
-						<Button name="$(parent)_Box">
-							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
-							<Dimensions x="20" y="20"/>
-							<OnMouseUp>IIfA:SetNameFilterToggle()</OnMouseUp>
-							<Textures
-								normal = "esoui/art/buttons/swatchframe_down.dds"
-							 />
-						</Button>
-						<Button name="$(parent)_Checked" hidden="true">
-							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
-							<Dimensions x="20" y="20"/>
-							<OnMouseUp>IIfA:SetNameFilterToggle()</OnMouseUp>
-							<Textures
-								normal = "esoui/art/buttons/decline_up.dds"
-							 />
-						</Button>
-						<Label name="$(parent)_Label" mouseEnabled="true" font="ZoFontGame" text="|cC5C29EFilter on Set Name only|r">
-							<Anchor point="TOPLEFT" relativeTo="$(parent)_Box" relativePoint="TOPRIGHT" offsetX="5" offsetY="-3"/>
-							<OnMouseUp>IIfA:SetNameFilterToggle()</OnMouseUp>
-						</Label>
-
-					</Controls>
-				</Control>
-
-				<Control name="$(parent)_ListHolder" mouseEnabled="true">
-					<DimensionConstraints  minY="52"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="15" offsetY="150"/>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-27" offsetY="-75"/>
-					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
-
-					<Controls>
-						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="0"/>
-							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="16" offsetY="0"/>
-
-							<OnMouseDown>self.locked = false</OnMouseDown>
-							<OnMouseUp>self.locked = true</OnMouseUp>
-							<OnValueChanged>IIfA:GuiOnSliderUpdate(self, value)</OnValueChanged>
-						</Slider>
-
-					</Controls>
-
-				</Control>
-
-
+				<Button name="$(parent)_SetNameOnly">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Search" relativePoint="TOPRIGHT" offsetX="5" offsetY="-5"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-5" offsetY="-5" />
+					
+					<OnMouseUp>		IIfA:SetNameFilterToggle()</OnMouseUp>
+					<OnMouseEnter>	IIfA:GuiShowTooltip(self, "Filter on set name only")</OnMouseEnter>
+					<OnMouseExit>	IIfA:GuiHideTooltip(self)</OnMouseExit>
+					<Textures
+						normal="esoui/art/dye/dyes_tabicon_costumedye_up.dds"
+						pressed="esoui/art/dye/dyes_tabicon_costumedye_down.dds"
+						mouseOver="esoui/art/dye/dyes_tabicon_costumedye_over.dds"
+					 />
+				</Button>
+				
 			</Controls>
 
 		</TopLevelControl>
@@ -972,7 +965,6 @@
 				</Texture>
 			</Controls>
 		</Control>
-
 
 
 			<!-- tooltips -->

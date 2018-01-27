@@ -309,7 +309,7 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 			location =GetString(IIFA_BAG_CRAFTBAG)
 		elseif(bagId == BAG_GUILDBANK) then
 			location = GetGuildName(GetSelectedGuildBankId())
-		else
+		elseif GetAPIVersion() >= 100022 then
 			local collectibleId = GetCollectibleForHouseBankBag(GetBankingBag())
 			location = GetCollectibleNickname(collectibleId)
 			if location == EMPTY_STRING then location = GetCollectibleName(collectibleId) end

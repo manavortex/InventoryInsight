@@ -156,6 +156,11 @@ function IIfA:GuiSetupDropdown(dropdown)
 	dropdown.comboBox:SetSelectedItem(selectedItem)
 end
 
+function IIfA:GuiSetupQualityDropdown(dropdown)
+	local selectedItem = IIfA:GetInventoryListFilterQuality()
+	dropdown.comboBox:SetSelectedItem(selectedItem)
+end
+
 -- click functions
 function IIfA:GuiOnFilterButton(control, filterGroup, filterTypes, filterTypeNames)
 	-- identify if this is main or sub filter clicked
@@ -249,9 +254,10 @@ function IIfA:GuiOnFilterButton(control, filterGroup, filterTypes, filterTypeNam
 	newAnchor:SetOffsets(IIFA_GUI_ListHolder.savedAnchor1[X_OFFSET_INDEX], IIFA_GUI_ListHolder.savedAnchor1[Y_OFFSET_INDEX] + IIFA_GUI_Header_Subfilter:GetHeight())
 	newAnchor:AddToControl(IIFA_GUI_ListHolder)
 
-	newAnchor = ZO_Anchor:New(unpack(IIFA_GUI_ListHolder.savedAnchor2))
-	newAnchor:SetOffsets(IIFA_GUI_ListHolder.savedAnchor2[X_OFFSET_INDEX], IIFA_GUI_ListHolder.savedAnchor2[Y_OFFSET_INDEX])
-	newAnchor:AddToControl(IIFA_GUI_ListHolder)
+	IIFA_GUI_ListHolder:SetAnchor(BOTTOMRIGHT, IIFA_GUI, BOTTOMRIGHT, -27, -55)
+	-- newAnchor = ZO_Anchor:New(unpack(IIFA_GUI_ListHolder.savedAnchor2))
+	-- newAnchor:SetOffsets(IIFA_GUI_ListHolder.savedAnchor2[X_OFFSET_INDEX], IIFA_GUI_ListHolder.savedAnchor2[Y_OFFSET_INDEX])
+	-- newAnchor:AddToControl(IIFA_GUI_ListHolder)
 
 	IIfA:GuiResizeScroll()
 
@@ -560,9 +566,8 @@ function IIfA:RePositionFrame(settings)
 	IIFA_GUI:SetHidden(settings.hidden)
 end
 
+
+
 function IIfA:SetNameFilterToggle()
-	IIFA_GUI_SetNameOnly_Checked:SetHidden(IIfA.bFilterOnSetName)
-	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+	IIfA:SetSetNameFilterOnly(not IIfA.bFilterOnSetName)
 end

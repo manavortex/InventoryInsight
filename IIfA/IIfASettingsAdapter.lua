@@ -35,3 +35,50 @@ function IIfA:GetIgnoredCharacterList()
 	end
 	return ret
 end
+
+function IIfA:SetSetNameFilterOnly(value)
+	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
+	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName	
+    IIfA:UpdateScrollDataLinesData()
+    IIfA:UpdateInventoryScroll()
+end
+
+
+-- Get pointer to current settings based on user pref (global or per char)
+function IIfA:GetSettings()
+	if IIfA.data.saveSettingsGlobally then return IIfA.data end
+	return IIfA.settings
+end
+
+-- this is for the dropdown menu
+function IIfA:GetInventoryListFilter()
+	if not IIfA.InventoryListFilter then return "All" end
+	return IIfA.InventoryListFilter
+end
+
+
+function IIfA:SetInventoryListFilter(value)
+	if not value or value == "" then value = "All" end
+	IIfA.InventoryListFilter = value
+
+	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
+
+	IIfA:UpdateScrollDataLinesData()
+	IIfA:UpdateInventoryScroll()
+end
+
+-- this is for the dropdown menu
+function IIfA:GetInventoryListFilterQuality()
+	return IIfA.InventoryListFilterQuality or 99
+end
+
+
+-- this is for the dropdown menu
+function IIfA:SetInventoryListFilterQuality(value)
+	IIfA.InventoryListFilterQuality = value
+	
+	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
+	
+	IIfA:UpdateScrollDataLinesData()
+    IIfA:UpdateInventoryScroll()
+end

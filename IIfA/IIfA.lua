@@ -359,7 +359,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.bFilterOnSetName = false
 		ObjSettings.bFilterOnSetName = false
 	end
-	IIFA_GUI_SetNameOnly_Checked:SetHidden(not IIfA.bFilterOnSetName)
+	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(not IIfA.bFilterOnSetName)
 
 	IIFA_GUI_Header_Filter_Button0:SetState(BSTATE_PRESSED)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0

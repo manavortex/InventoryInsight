@@ -7,19 +7,8 @@ IIfA.ActiveFilter = 0
 IIfA.ActiveSubFilter = 0
 IIfA.InventoryFilter = "All"
 
-IIfA.InventoryListFilter = "All"
-
--- Get pointer to current settings based on user pref (global or per char)
-function IIfA:GetSettings()
-	if IIfA.data.saveSettingsGlobally then return IIfA.data end
-	return IIfA.settings
-end
-
--- this is for the dropdown menu
-function IIfA:GetInventoryListFilter()
-	if not IIfA.InventoryListFilter then return "All" end
-	return IIfA.InventoryListFilter
-end
+IIfA.InventoryListFilter = "Any"
+IIfA.InventoryListFilterQuality = 99
 
 
 -- this is for the buttons
@@ -80,16 +69,6 @@ function IIfA:SetActiveSubFilter(value)
 	IIfA:UpdateScrollDataLinesData()
 end
 
-
-function IIfA:SetInventoryListFilter(value)
-	if not value or value == "" then value = "All" end
-	IIfA.InventoryListFilter = value
-
-	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
-
-	IIfA:UpdateScrollDataLinesData()
-	IIfA:UpdateInventoryScroll()
-end
 
 
 --[[----------------------------------------------------------------------]]
@@ -174,17 +153,35 @@ local function matchCurrentInventory(locationName)
 	return (IIfA:GetInventoryListFilter() == "All")
 end
 
+local qualityDictionary
+local function getColoredString(color, s)
+	local c = ZO_ColorDef:New(GetInterfaceColor(INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, color))
+	return c:Colorize(s)
+end
+local function getQualityDict()
+
+	if nil == qualityDictionary then
+		qualityDictionary = {}
+		qualityDictionary["Any"] = 99
+		qualityDictionary[getColoredString(ITEM_QUALITY_TRASH,  "Junk")] 			= ITEM_QUALITY_TRASH
+		qualityDictionary[getColoredString(ITEM_QUALITY_NORMAL, "Normal")] 			= ITEM_QUALITY_NORMAL
+		qualityDictionary[getColoredString(ITEM_QUALITY_MAGIC,  "Magic")] 			= ITEM_QUALITY_MAGIC
+		qualityDictionary[getColoredString(ITEM_QUALITY_ARCANE, "Arcane")] 			= ITEM_QUALITY_ARCANE
+		qualityDictionary[getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact")] 		= ITEM_QUALITY_ARTIFACT
+		qualityDictionary[getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary")] 	= ITEM_QUALITY_LEGENDARY		
+	end
+	return qualityDictionary
+end
+
 local function matchFilter(itemName, itemLink)
     local ret = true
 	local itemMatch = false
 	local hasSetInfo, setName
 
 	local searchFilter = IIfA.searchFilter
--- 17-7-30 AM - moved lowercasing to when it's created, it's an extra var overall, but will cut down filtering because it's one less call to lowercase for every item
---    if not searchFilter then searchFilter = "" end
---	searchFilter = string.lower(searchFilter)
-    local name = string.lower(itemName)
-    if not name then name = "" end
+	-- 17-7-30 AM - moved lowercasing to when it's created, one less call to lowercase for every item
+	
+    local name = string.lower(itemName) or ""
 
 	-- text filter takes precedence
 	-- 3-6-17 AM - you're either filtering on a set name, or not - much less confusing (hopefully)
@@ -209,6 +206,7 @@ local function matchFilter(itemName, itemLink)
 	local bWorn = false
 	local equipType = 0
 	local itemType = 0
+	local itemQuality = ITEM_QUALITY_NORMAL
 	local subType
 
 	if IIfA.filterGroup ~= "All" and ret then		-- it's not everything, and text search matches, filter by some more stuff
@@ -294,7 +292,10 @@ local function matchFilter(itemName, itemLink)
 	end
     return ret
 end
-
+local function matchQuality(itemQuality)
+	local quality = IIfA.InventoryListFilterQuality
+	return 99 == quality or itemQuality == quality
+end
 
 --sort datalines
 local function IIfA_FilterCompareUp(a, b)
@@ -367,7 +368,7 @@ function IIfA:UpdateScrollDataLinesData()
 					worn = bWorn
 				}
 
-				if(itemCount > 0) and matchFilter(item.itemName, iLink) and match then
+				if(itemCount > 0) and matchFilter(item.itemName, iLink) and matchQuality(item.itemQuality) and match then
 					table.insert(dataLines, tempDataLine)
 				end
 				match = false
@@ -649,7 +650,7 @@ function IIfA:QueryAccountInventory(itemLink)
 	return queryItem
 end
 
-function IIfA:CreateInventoryDropdown()
+local function createInventoryDropdown()
 	local comboBox, i
 
 	if IIFA_GUI_Header_Dropdown.comboBox ~= nil then
@@ -680,6 +681,41 @@ function IIfA:CreateInventoryDropdown()
 	return IIFA_GUI_Header_Dropdown
 end
 
+
+local function createInventoryDropdownQuality()
+	local comboBox, i
+
+	IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
+
+	local validChoices =  {}
+	table.insert(validChoices, "Any")
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_NORMAL, "Normal"))
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_MAGIC, "Magic"))
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_ARCANE, "Arcane"))
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact"))
+	table.insert(validChoices, getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary"))
+
+	local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox	
+
+	function OnItemSelect(_, choiceText, choice)
+		IIfA:SetInventoryListFilterQuality(getQualityDict()[choiceText])
+	  	PlaySound(SOUNDS.POSITIVE_CLICK)
+	end
+
+	comboBox:SetSortsItems(false)
+
+	for i = 1, #validChoices do
+       	entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)		
+		comboBox:AddItem(entry)
+		if getQualityDict()[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
+			comboBox:SetSelectedItem(validChoices[i])
+		end
+	end
+
+	return IIFA_GUI_Header_Dropdown
+end
+
 function IIfA:SetSceneVisible(name, value)
 	IIfA:GetSettings().frameSettings[name].hidden = not value
 end
@@ -695,20 +731,16 @@ end
 function IIfA:SetupBackpack()
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
 	IIfA:CreateInventoryScroll()
-	IIfA:CreateInventoryDropdown()
+	createInventoryDropdown()
+	createInventoryDropdownQuality()
 	IIfA:GuiOnSort(true)
 end
 
 function IIfA:ProcessRightClick(control)
-	if control == nil then
-		return
-	end
+	if control == nil then return end
 
 	control = control:GetParent()
-	if control:GetName():match("IIFA_ListItem") == nil or
-		control.itemLink == nil then
-		return
-	end
+	if control:GetName():match("IIFA_ListItem") == nil or control.itemLink == nil then return end
 
 	-- it's an IIFA list item, lets see if it has data, and allow menu if it does
 
@@ -882,7 +914,7 @@ function IIfA:FilterByItemName(control)
 	itemName = GetItemLinkName(control.itemLink)
 
 	IIfA.searchFilter = itemName
-	IIFA_GUI_SetNameOnly_Checked:SetHidden(true)
+	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(true)
 	IIFA_GUI_SearchBox:SetText(itemName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
@@ -909,7 +941,7 @@ function IIfA:FilterByItemSet(control)
 	end
 
 	IIfA.searchFilter = setName
-	IIFA_GUI_SetNameOnly_Checked:SetHidden(false)
+	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(false)
 	IIFA_GUI_SearchBox:SetText(setName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = true
