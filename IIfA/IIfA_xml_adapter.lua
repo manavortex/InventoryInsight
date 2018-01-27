@@ -162,10 +162,23 @@ function IIfA:GuiSetupQualityDropdown(dropdown)
 end
 
 -- click functions
-function IIfA:GuiOnFilterButton(control, filterGroup, filterTypes, filterTypeNames)
+function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, filterTypeNames)
 	-- identify if this is main or sub filter clicked
+	
 	local b_isMain = control:GetName():find("Sub") == nil
-
+	
+	if mouseButton == MOUSE_BUTTON_INDEX_RIGHT then
+		if b_isMain then
+			IIfA.LastFilterControl = control
+			return IIfA:GuiOnFilterButton(IIFA_GUI_Header_Filter:GetChild(1), MOUSE_BUTTON_INDEX_LEFT, "All", nil)
+		else
+			IIfA.LastSubFilterControl = control
+			local parentIdx = control:GetParent():GetName():gsub("IIFA_GUI_Header_Subfilter_", "")
+			local parentControl = IIFA_GUI_Header_Filter:GetChild(parentIdx+1)			
+			return IIfA:GuiOnFilterButton(parentControl, MOUSE_BUTTON_INDEX_LEFT, parentControl.filterText)
+		end
+	end	
+	
 	if b_isMain then
 		if IIfA.LastFilterControl ~= nil then
 			IIfA.LastFilterControl:SetState(BSTATE_NORMAL)

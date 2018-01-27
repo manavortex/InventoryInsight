@@ -37,8 +37,8 @@ function IIfA:GetIgnoredCharacterList()
 end
 
 function IIfA:SetSetNameFilterOnly(value)
-	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
 	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName	
+	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
     IIfA:UpdateScrollDataLinesData()
     IIfA:UpdateInventoryScroll()
 end

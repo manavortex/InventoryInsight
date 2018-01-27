@@ -728,6 +728,8 @@ function IIfA:GetSceneVisible(name)
 	end
 end
 
+
+
 function IIfA:SetupBackpack()
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
 	IIfA:CreateInventoryScroll()
