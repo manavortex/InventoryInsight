@@ -287,7 +287,6 @@ end
 function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
 
 	local location = houseCollectibleId
-	d(zo_strformat("IIfA:AddOrRemoveFurnitureItem( <<1>>, <<2>>, <<3>> )", itemLink, itemCount, location))
 	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 end
 
@@ -428,7 +427,6 @@ function IIfA:GetHouseList()
 		IIfA.HouseList = {}
 		for index=1,GetTotalCollectiblesByCategoryType(COLLECTIBLE_CATEGORY_TYPE_HOUSE) do 			
 			local collectibleId = GetCollectibleIdFromType(COLLECTIBLE_CATEGORY_TYPE_HOUSE, index)
-			d(zo_strformat("<<1>>: <<2>>", index, collectibleId))
 			if IsCollectibleUnlocked(collectibleId) then 
 				local name = GetCollectibleNickname(collectibleId)
 				if name == EMPTY_STRING then name = GetCollectibleName(collectibleId) end
