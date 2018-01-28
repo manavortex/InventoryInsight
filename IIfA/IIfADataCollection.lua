@@ -228,6 +228,34 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotNum, isNewItem, itemSoun
 --	end
 end
 
+
+
+function IIfA:ScanHouse()
+	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
+	
+	local function getAllPlacedFurniture()
+		local ret = {}
+		 while(true) do
+			furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
+			if(not furnitureId) then return ret end
+			local itemLink = GetPlacedFurnitureLink(furnitureId, LINK_STYLE_BRACKETS)
+			if not ret[itemLink] then 
+				ret[itemLink] = 1
+			else
+				ret[itemLink] = ret[itemLink] +1
+			end
+		end	
+	end
+	
+	local houseCollectibleId =  GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	local items = getAllPlacedFurniture()
+	for itemLink, itemCount in pairs(items) do
+		IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
+	end
+	IIfA.Furniture = items
+end
+
 local function assertValue(value, itemLink, getFunc)
 	if value then return value end
 	if getFunc == EMPTY_STRING then return EMPTY_STRING end
@@ -256,8 +284,14 @@ local function setItemFileEntry(array, key, value)
 	array[key] = value
 end
 
+function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
 
-function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
+	local location = houseCollectibleId
+	d(zo_strformat("IIfA:AddOrRemoveFurnitureItem( <<1>>, <<2>>, <<3>> )", itemLink, itemCount, location))
+	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+end
+
+function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
 	if not IIfA.trackedBags[bagId] then return end
 	
 	IIfA.data.DBv3 = IIfA.data.DBv3 or {}
@@ -267,12 +301,12 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 		fromXfer = false
 	end
 
-	itemName = GetItemName(bagId, slotNum) or EMPTY_STRING
+	itemName = itemName or GetItemName(bagId, slotNum) or EMPTY_STRING
 
 	IIfA:DebugOut(zo_strformat("EvalBagItem - <<1>>/<<2>> <<3>>", bagId, slotNum, itemName))
 
 	if itemName > EMPTY_STRING then
-		itemLink = GetItemLink(bagId, slotNum, LINK_STYLE_BRACKETS)
+		itemLink = itemLink or GetItemLink(bagId, slotNum, LINK_STYLE_BRACKETS)
 		itemKey = itemLink
 		local usedInCraftingType, itemType, extraInfo1, extraInfo2, extraInfo3 = GetItemCraftingInfo(bagId, slotNum)
 
@@ -294,11 +328,11 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 			end
 		end
 
-		local itemIconFile, itemCount, _, _, _, equipType, _, itemQuality = GetItemInfo(bagId, slotNum)
+		local _, qty, _, _, _, equipType, _, itemQuality = GetItemInfo(bagId, slotNum)
 		itemCount = itemCount or qty
 		itemFilterType = GetItemFilterTypeInfo(bagId, slotNum) or 0
 		DBitem = DBv3[itemKey]
-		location = EMPTY_STRING
+		location = locationID or EMPTY_STRING
 		if(equipType == 0 or bagId ~= BAG_WORN) then equipType = false end
 		if(bagId == BAG_BACKPACK or bagId == BAG_WORN) then
 			location = IIfA.currentCharacterId
@@ -328,7 +362,6 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 			end
 		else
 			DBv3[itemKey] = {}
-			DBv3[itemKey].iconFile = itemIconFile
 			DBv3[itemKey].filterType = itemFilterType
 			DBv3[itemKey].itemQuality = itemQuality
 			DBv3[itemKey].itemName = itemName
@@ -342,7 +375,7 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 			DBv3[itemKey].itemLink = itemLink
 		end
 		if (IIfA.trackedBags[bagId]) and fromXfer then
-			IIfA:ValidateItemCounts(bagId, slotNum, DBv3[itemKey], itemKey)
+			IIfA:ValidateItemCounts(bagId, slotNum, DBv3[itemKey], itemKey, itemLink, true)
 		end
 
 	  	return DBv3[itemKey], itemKey
@@ -351,10 +384,10 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, qty)
 	end
 end
 
-function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey)
+function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverride, override)
 	local itemLink, itemLinkCheck
 	if zo_strlen(itemKey) < 10 then
-		itemLink = dbItem.itemLink
+		itemLink = GetItemLink(bagID, slotNum) or dbItem.itemLink or (override and itemLinkOverride)
 	else
 		itemLink = itemKey
 	end
@@ -374,7 +407,7 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey)
 --		d(GetItemLink(data.bagID, data.bagSlot, LINK_STYLE_BRACKETS))
 				itemLinkCheck = GetItemLink(data.bagID, data.bagSlot, LINK_STYLE_BRACKETS)
 				if itemLinkCheck == nil then
-					itemLinkCheck = EMPTY_STRING
+					itemLinkCheck = (override and itemLinkOverride) or EMPTY_STRING
 				end
 --				d("ItemlinkCheck = " .. itemLinkCheck)
 				if itemLinkCheck ~= itemLink then
@@ -389,12 +422,39 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey)
 	end
 end
 
+IIfA.HouseList = nil
+function IIfA:GetHouseList()
+	if not IIfA.HouseList then 
+		IIfA.HouseList = {}
+		for index=1,GetTotalCollectiblesByCategoryType(COLLECTIBLE_CATEGORY_TYPE_HOUSE) do 			
+			local collectibleId = GetCollectibleIdFromType(COLLECTIBLE_CATEGORY_TYPE_HOUSE, index)
+			d(zo_strformat("<<1>>: <<2>>", index, collectibleId))
+			if IsCollectibleUnlocked(collectibleId) then 
+				local name = GetCollectibleNickname(collectibleId)
+				if name == EMPTY_STRING then name = GetCollectibleName(collectibleId) end
+				IIfA.HouseList[name] = collectibleId
+			end
+		end	
+	end
+	return IIfA.HouseList
+end
+
+function IIfA:BuildHouseList()
+	for houseName, collectibleId in pairs(IIfA:GetHouseList()) do
+		if nil == IIfA.data.collectHouseData[collectibleId] then
+			IIfA.data.collectHouseData[collectibleId] = IIfA.data.collectHouseData.All			
+		end
+		IIfA.trackedBags[collectibleId] = IIfA.data.collectHouseData[collectibleId]	
+	end	
+end
+
+
 function IIfA:CollectAll()
 	local bagItems = nil
 	local itemLink, dbItem = nil
 	local itemKey
 	local location = EMPTY_STRING
-	local BagList = IIfA.trackedBags -- 20.1. mana: Iterating over a list now
+	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
 	for bagId, tracked in ipairs(BagList) do
 		

@@ -50,6 +50,26 @@ local function getGuildBankName(guildNum)
 	return GetGuildName(id)
 end
 
+local function getHouseNames()
+	local ret = {}
+	for houseName, houseId in pairs(IIfA:GetHouseList()) do
+		if IIfA:GetTrackedBags()[houseId] then
+			table.insert(ret, houseName)
+		end
+	end
+	return ret
+end
+
+local function getIgnoredHouseNames()
+	local ret = {}
+	for houseName, houseId in pairs(IIfA:GetHouseList()) do
+		if not IIfA:GetTrackedBags()[houseId] then
+			table.insert(ret, houseName)
+		end
+	end
+	return ret
+end
+
 local function getGuildBankKeepDataSetting(guildNum)
 	guildName = getGuildBankName(guildNum)
 
@@ -116,8 +136,8 @@ function IIfA:CreateOptionsMenu()
 					name = "Delete Character",
 					tooltip = "Delete Inventory Insight data for the character selected above",
 					func = function() IIfA:DeleteCharacterData(deleteChar) end,
-
 				}, -- button end
+				
 				{  -- button begin
 					type = "button",
 					width = "half",
@@ -155,7 +175,7 @@ function IIfA:CreateOptionsMenu()
 						IIfA:IgnoreCharacterEquip(undeleteChar, false) 
 						IIfA:IgnoreCharacterInventory(undeleteChar, false)
 					end,
-				}, -- button end
+				}, -- button end							
 				
 				{	type 	= "description", 
 					title 	= "Guild Bank To Delete",
@@ -188,7 +208,55 @@ function IIfA:CreateOptionsMenu()
 			tooltip = "Manage data collection options for Guild Banks",
 			controls = {}
 		},
-
+	
+		{
+			type = "submenu", 
+			name = "Houses", 
+			controls = {
+				
+				{
+					type = "checkbox",
+					name = "Collect furniture in houses",
+					tooltip = "Enables/Disables collection of furniture inside houses",
+					getFunc = function() return 	IIfA:GetCollectingHouseData() end,
+					setFunc = function(value)		IIfA:SetCollectingHouseData(value) end,
+				}, -- checkbox end
+				
+				{	type 	= "description", 
+					title 	= "Ignore or delete houses",
+					text 	= "removes or un-tracks a house. \nWarning: This change will be applied immediately.",
+				},
+				{
+					type 	= "dropdown",
+					name 	= "houses to delete or un-track",
+					choices = getHouseNames(),
+					getFunc = function() return end,
+					setFunc = function(choice) deleteHouse = nil; deleteHouse = choice end
+				}, --dropdown end
+				{  -- button begin
+					type = "button",
+					width = "half",
+					name = "Ignore house",
+					tooltip = "All furniture items in the currently selected house will be untracked",
+					func = function() IIfA:SetCollectHouseStatus(deleteHouse, false) end,
+				}, -- button end
+				{
+					type 	= "dropdown",
+					name 	= "houses to re-track",
+					choices = getIgnoredHouseNames(),
+					getFunc = function() return end,
+					setFunc = function(choice) restoreHouse = nil; restoreHouse = choice end
+				}, --dropdown end
+				{  -- button begin
+					type = "button",
+					width = "half",
+					name = "Unignore house",
+					tooltip = "All furniture items in the currently selected house will be tracked again",
+					func = function() IIfA:SetCollectHouseStatus(restoreHouse, true) end,
+				}, -- button end	
+			},
+		},
+		
 		{
 			type = "submenu",
 			name = "Pack Use/Size highlites",
@@ -272,6 +340,9 @@ function IIfA:CreateOptionsMenu()
 			type = "header",
 			name = "Global/Per Char settings",
 		},
+		
+			
+		
 
 		{
 			type = "submenu",
@@ -340,7 +411,6 @@ function IIfA:CreateOptionsMenu()
 				},
 
 			}, -- controls end
-
 
 		}, -- tooltipOptionsSubWindow end
 

@@ -26,6 +26,9 @@ libs\LibAddonMenu-2.0\controls\iconpicker.lua
 libs\LibAddonMenu-2.0\controls\divider.lua
 libs\LibCustomMenu\LibCustomMenu.lua
 
+
+libs/LibSaveHouse/LibSaveHouse.lua
+
 IIfA_Preload.lua
 
 IIfA.xml

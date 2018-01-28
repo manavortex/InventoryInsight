@@ -452,7 +452,15 @@ function IIfA:UpdateTooltip(tooltip)
 						d(location)
 						textOut = 'Error occurred'
 					else
-						textOut = location.name .. " x" .. location.itemsFound
+						if tonumber(location.name) == location.name then
+							local loc = GetCollectibleNickname(location.name)
+							 if loc == "" then
+								loc = GetCollectibleName(location.name)		
+							 end
+							textOut = loc .. " x" .. location.itemsFound
+						else
+							textOut = location.name .. " x" .. location.itemsFound
+						end
 					end
 					IIfA:DebugOut(textOut)
 					if location.worn then

@@ -93,6 +93,13 @@ local function getItemLinkFromDB(itemLink, item)
 	return iLink
 end
 
+local function getHouseIds()
+	local ret = {}
+	for houseName, houseId in pairs(IIfA:GetHouseList()) do
+		table.insert(ret, houseId)
+	end
+	return ret
+end
 
 local function DoesInventoryMatchList(locationName, location)
 	local bagId = location.bagID
@@ -130,7 +137,11 @@ local function DoesInventoryMatchList(locationName, location)
 
 	elseif(IIfA.InventoryListFilter == "Craft Bag") then
 		return (location.bagID == BAG_VIRTUAL)
-
+		
+	elseif(IIfA.InventoryListFilter == "All Houses") then
+		return nil ~= getHouseIds()[location.bagID]
+	elseif(nil ~= IIfA:GetHouseList()[IIfA.InventoryListFilter]) then
+		return (location.bagID == IIfA:GetHouseList()[IIfA.InventoryListFilter])
 	else --Not a preset, must be a specific guildbank or character
 		if location.bagID == BAG_BACKPACK or location.bagID == BAG_WORN then
 			-- it's a character name, convert to Id, check that against location Name in the dbv3 table
@@ -348,6 +359,7 @@ function IIfA:UpdateScrollDataLinesData()
 
 				itemCount = 0
 				bWorn = false
+				local itemIcon = GetItemLinkIcon(iLink)
 
 				local locationName, locData
 				for locationName, locData in pairs(item.locations) do
@@ -357,11 +369,10 @@ function IIfA:UpdateScrollDataLinesData()
 					end
 					bWorn = bWorn or (locData.bagID == BAG_WORN)
 				end
-
 				tempDataLine = {
 					link = iLink, 		-- getItemLinkFromDB(itemLink, item),
 					qty = itemCount,
-					icon = item.iconFile,
+					icon = itemIcon,
 					name = item.itemName,
 					quality = item.itemQuality,
 					filter = itemTypeFilter,
@@ -571,6 +582,16 @@ function IIfA:GetAccountInventoryList()
 			end
 		end
 	end
+	
+	if IIfA.data.collectHouseData.All then
+		table.insert(accountInventories, "All Houses")
+		for houseName, houseId in pairs(IIfA:GetHouseList()) do
+			if IIfA:GetTrackedBags()[houseId] then
+				table.insert(accountInventories, houseName)
+			end
+		end
+	end
+	
 	return accountInventories
 end
 
@@ -627,20 +648,27 @@ function IIfA:QueryAccountInventory(itemLink)
 				locationName = IIfA.CharIdToName[locationName]
 			end
 			if locationName ~= nil then
+				
 				for x, QILocation in pairs(queryItem.locations) do
 					if (QILocation.name == locationName)then
 						QILocation.itemsFound = QILocation.itemsFound + location.itemCount
 						AlreadySavedLoc = true
 					end
 				end
-				if location.itemCount then
+				
+				if nil ~= location.itemCount then
 					if (not AlreadySavedLoc) and (location.itemCount > 0) then
 						newLocation = {}
 						newLocation.name = locationName
-						newLocation.itemsFound = location.itemCount
-						if location.bagID == BAG_WORN then
-							newLocation.worn = true
+						
+						if locationName == location.bagID then -- location is a collectible
+							newLocation.name = GetCollectibleNickname(locationName)
+							if newLocation.name == "" then newLocation.name = GetCollectibleName(locationName) end
 						end
+						
+						newLocation.itemsFound = location.itemCount
+						newLocation.worn = location.bagID == BAG_WORN
+						
 						table.insert(queryItem.locations, newLocation)
 					end
 				end

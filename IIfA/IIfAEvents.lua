@@ -63,6 +63,25 @@ local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
 
 end
 
+local function IIfA_FurnitureAdd(eventCode, furnitureId, collectibleId)
+	if nil == furnitureId then return end
+	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
+	IIfA:AddOrRemoveFurnitureItem(itemLink, 1, houseCollectibleId, 	true)
+end
+
+local function IIfA_FurnitureRemove(eventCode, furnitureId, collectibleId)
+	if nil == furnitureId then return end
+	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end	
+	IIfA:AddOrRemoveFurnitureItem(itemLink, -1, houseCollectibleId, true)	
+end
+
+local function IIfA_HouseEntered(eventCode, wasOwner)
+	if not wasOwner then return end
+	IIfA:ScanHouse()
+end
+
 
 local function IIfA_EventProc(...)
 	--d(...)
@@ -153,6 +172,13 @@ function IIfA:RegisterForEvents()
 	-- on adding or removing an item from the guild bank:
 	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_ADDED", EVENT_GUILD_BANK_ITEM_ADDED, IIfA_GuildBankAddRemove)
 	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_REMOVED", EVENT_GUILD_BANK_ITEM_REMOVED, IIfA_GuildBankAddRemove)
+
+	 
+	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", EVENT_HOUSING_PLAYER_INFO_CHANGED, IIfA_HouseEntered)
+	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_FURNITURE_REMOVED", EVENT_HOUSING_FURNITURE_REMOVED, IIfA_FurnitureRemove)
+	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_FURNITURE_PLACED", EVENT_HOUSING_FURNITURE_PLACED, IIfA_FurnitureAdd)
+	
+	
 
 	local function RebuildOptionsMenu()
 		self:CreateOptionsMenu()

@@ -140,10 +140,6 @@ function IIfA:StatusAlert(message)
 	end
 end
 
-local function onFirstOpen()
-	IIfA:OnFirstInventoryOpen()
-end
-
 
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
@@ -164,6 +160,9 @@ function IIfA_onLoad(eventCode, addOnName)
 		bDebug 					= false,
 		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight 	= true,
+		collectHouseData		= {
+			["All"]				= true,
+		},
 		ignoredCharEquipment	= {},
 		ignoredCharInventories	= {},
 		frameSettings =
@@ -244,10 +243,14 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	
 	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67
+	-- build house list array
+	IIfA:GetHouseList()	
+	
 
 	IIfA.settings 	= ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
 	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
 
+	IIfA:BuildHouseList()
 
 	local ObjSettings = IIfA:GetSettings()
 	if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
@@ -435,7 +438,6 @@ function IIfA_onLoad(eventCode, addOnName)
 			dbv3[itemLink].locations = {}
 			dbv3[itemLink].itemQuality = DBItem.attributes.itemQuality
 			dbv3[itemLink].itemName    = DBItem.attributes.itemName
-			dbv3[itemLink].iconFile    = DBItem.attributes.iconFile
 			dbv3[itemLink].filterType  = DBItem.attributes.filterType
 			if DBItem.attributes.itemLink ~= nil then
 				dbv3[itemLink].itemLink = DBItem.attributes.itemLink
@@ -455,11 +457,12 @@ function IIfA_onLoad(eventCode, addOnName)
 	if not ObjSettings.frameSettings.hud.hidden then
 		IIfA:ProcessSceneChange("hud", "showing", "shown")
 	end
---	IIfA:MakeBSI()
+	--	IIfA:MakeBSI()
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 	IIfA:ScanCurrentCharacter()
+	IIfA:BuildHouseList() -- write house list into array
 	IIfA:ScanBank()
 end
 

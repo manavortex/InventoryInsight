@@ -11,7 +11,11 @@ end
 
 function IIfA:IgnoreCharacterEquip(ignoreChar, value)
 	IIfA.data.ignoredCharEquipment[ignoreChar] = value
-	IIfA:ScanCurrentCharacter()
+	if value then
+		IIfA:ScanCurrentCharacter()
+	else
+		IIfA:ClearLocationData(IIfA.currentCharacterId)
+	end
 end
 function IIfA:IgnoreCharacterInventory(ignoreChar, value)
 	IIfA.data.ignoredCharInventories[ignoreChar] = value
@@ -81,4 +85,25 @@ function IIfA:SetInventoryListFilterQuality(value)
 	
 	IIfA:UpdateScrollDataLinesData()
     IIfA:UpdateInventoryScroll()
+end
+function IIfA:GetCollectingHouseData()
+	return IIfA.data.collectHouseData.All
+end
+function IIfA:SetCollectingHouseData(value)
+	IIfA.data.collectHouseData.All = value
+	for houseName, houseId in pairs(IIfA:GetHouseList()) do
+		IIfA:SetCollectHouseStatus(houseName, value)
+	end
+end
+function IIfA:SetCollectHouseStatus(houseName, value)
+	local houseId = IIfA:GetHouseList()[houseName]
+	IIfA.data.collectHouseData[houseId] = value
+	IIfA:GetTrackedBags()[houseId] 		= value
+	if not value then
+		IIfA:ClearLocationData(houseId)
+	end
+end
+
+function IIfA:GetTrackedBags()
+	return IIfA.trackedBags
 end
