@@ -135,7 +135,7 @@ local function DoesInventoryMatchList(locationName, location)
 				 location.bagID == BAG_WORN) and
 				 locationName == IIfA.currentCharacterId))
 				 
-	elseif(IIfA.InventoryListFilter == "Bank and all but current Character") then
+	elseif(IIfA.InventoryListFilter == "Bank and other characters") then
 		return not isHouse(location) and (location.bagID == BAG_BANK or
 				location.bagID == BAG_SUBSCRIBER_BANK or
 				((location.bagID == BAG_BACKPACK or

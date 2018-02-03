@@ -59,7 +59,7 @@ IIfA.dropdownBankNames = {
 	"All Characters",
 	"Bank and Characters",
 	"Bank and Current Character",
-	"Bank and all but current Character",
+	"Bank and other characters",
 	"Bank Only",
 	"Craft Bag"
 }
