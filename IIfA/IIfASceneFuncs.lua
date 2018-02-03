@@ -116,6 +116,7 @@ function IIfA:ToggleInventoryFrame()
 		IIfA:GuiResizeScroll()
     	IIfA:UpdateScrollDataLinesData()
     	IIfA:UpdateInventoryScroll()
+		IIFA_GUI_SearchBox:TakeFocus()
 	end
 
 	IIfA:SaveFrameInfo("ToggleInventoryFrame")
