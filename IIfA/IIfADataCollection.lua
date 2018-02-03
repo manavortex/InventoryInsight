@@ -199,6 +199,11 @@ function IIfA:ActionLayerInventoryUpdate()
 end
 
 
+function IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
+
+	local location = houseCollectibleId
+	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+end
 --[[
 Data collection notes:
 	Currently crafting items are coming back from getitemlink with level info in them.
