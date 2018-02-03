@@ -105,7 +105,7 @@ local function DoesInventoryMatchList(locationName, location)
 	local bagId = location.bagID
 	
 	local function isHouse(location)
-		return nil == getHouseIds()[location.bagID]
+		return nil ~= getHouseIds()[location.bagID]
 	end
 	
 --	if locationName == "attributes" then return false end
