@@ -446,6 +446,15 @@ function IIfA:CreateOptionsMenu()
 
 		{
 			type = "checkbox",
+			name = "Don't focus search box on UI toggle?",
+			tooltip = "If you open the UI, the edit control will take focus. Check this box to disable it.",
+			getFunc = function() return IIfA.defaults.dontFocusSearch end,
+			setFunc = function(value)
+				IIfA.defaults.dontFocusSearch = value
+			end,
+		}, -- checkbox end
+		{
+			type = "checkbox",
 			name = "Search Set Names when using Text Filter",
 			tooltip = "Enables/Disables set name inclusion in searches",
 			getFunc = function() return IIfA:GetSettings().bFilterOnSetNameToo end,

@@ -59,6 +59,7 @@ IIfA.dropdownBankNames = {
 	"All Characters",
 	"Bank and Characters",
 	"Bank and Current Character",
+	"Bank and all but current Character",
 	"Bank Only",
 	"Craft Bag"
 }
@@ -187,6 +188,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2TooltipsFontSize 			= 16,
 		ShowToolTipWhen 				= "Always",
 		DBv3 							= {},
+		dontFocusSearch					= false
 		}
 
 	-- initializing default values

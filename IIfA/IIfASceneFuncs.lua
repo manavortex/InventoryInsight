@@ -118,8 +118,9 @@ function IIfA:ToggleInventoryFrame()
     	IIfA:UpdateInventoryScroll()
 		IIFA_GUI_SearchBox:TakeFocus()
 	end
-
-	IIfA:SaveFrameInfo("ToggleInventoryFrame")
+	if not IIfA.data.dontFocusSearch then 
+		IIfA:SaveFrameInfo("ToggleInventoryFrame")
+	end
 end
 
 

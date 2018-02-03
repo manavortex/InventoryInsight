@@ -104,6 +104,10 @@ end
 local function DoesInventoryMatchList(locationName, location)
 	local bagId = location.bagID
 	
+	local function isHouse(location)
+		return nil == getHouseIds()[location.bagID]
+	end
+	
 --	if locationName == "attributes" then return false end
 	if( IIfA.InventoryListFilter == "All" ) then
 		return true
@@ -128,11 +132,18 @@ local function DoesInventoryMatchList(locationName, location)
 		return (location.bagID == BAG_BANK or
 				location.bagID == BAG_SUBSCRIBER_BANK or
 				((location.bagID == BAG_BACKPACK or
-				  location.bagID == BAG_WORN) and
+				 location.bagID == BAG_WORN) and
 				 locationName == IIfA.currentCharacterId))
+				 
+	elseif(IIfA.InventoryListFilter == "Bank and all but current Character") then
+		return not isHouse(location) and (location.bagID == BAG_BANK or
+				location.bagID == BAG_SUBSCRIBER_BANK or
+				((location.bagID == BAG_BACKPACK or
+				 location.bagID == BAG_WORN) and				 
+				 locationName ~= IIfA.currentCharacterId))
 
 	elseif(IIfA.InventoryListFilter == "Bank Only") then
-		return (location.bagID == BAG_BANK or
+		return  (location.bagID == BAG_BANK or
 				location.bagID == BAG_SUBSCRIBER_BANK)
 
 	elseif(IIfA.InventoryListFilter == "Craft Bag") then
