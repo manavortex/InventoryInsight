@@ -68,7 +68,7 @@ end
 
 	
 local function grabBagContent(bagId)
-	local bagItems = GetBagSize(BAG_BAGPACK)
+	local bagItems = GetBagSize(bagId)
 	for slotNum=0, bagItems, 1 do
 		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
 	end
@@ -79,8 +79,6 @@ local function scanBags()
 	
 	IIfA.data.accountCharacters 			= IIfA.data.accountCharacters or {}
 	IIfA.data.accountCharacters[playerName] = IIfA.data.accountCharacters[playerName] or {}
-	
-
 			
 	IIfA:ClearLocationData(IIfA.currentCharacterId)
 	
@@ -115,7 +113,6 @@ function IIfA:OnFirstInventoryOpen()
 	IIfA:ScanBank()	
 	IIfA.OnFirstInventoryOpen = function() return end	
 end
-
 
 function IIfA:CheckForAgedGuildBankData( days )
 	local results = false
@@ -230,9 +227,15 @@ end
 
 
 
-function IIfA:ScanHouse()
+function IIfA:ScanHouse(reset)
+	
 	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
+
+	if reset then 
+		IIfA:ClearLocationData(houseCollectibleId)
+	end
+
 	
 	local function getAllPlacedFurniture()
 		local ret = {}
@@ -251,9 +254,9 @@ function IIfA:ScanHouse()
 	local houseCollectibleId =  GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	local items = getAllPlacedFurniture()
 	for itemLink, itemCount in pairs(items) do
-		IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
+		IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
 	end
-	IIfA.Furniture = items
+	
 end
 
 local function assertValue(value, itemLink, getFunc)
@@ -285,7 +288,7 @@ local function setItemFileEntry(array, key, value)
 end
 
 function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
-
+	-- d(zo_strformat("trying to add/remove <<1>> x <<2>> from houseCollectibleId <<3>>", itemLink, itemCount, houseCollectibleId))
 	local location = houseCollectibleId
 	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 end
@@ -326,8 +329,14 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemNam
 				itemKey = IIfA:GetItemID(itemLink)
 			end
 		end
-
-		local _, qty, _, _, _, equipType, _, itemQuality = GetItemInfo(bagId, slotNum)
+		local qty, equipType, itemQuality
+		if not itemLink then 
+			_, qty, _, _, _, equipType, _, itemQuality = GetItemInfo(bagId, slotNum)
+		else
+			qty = 1
+			equipType =  GetItemLinkEquipType(itemLink)
+			itemQuality = GetItemLinkQuality(itemLink)
+		end
 		itemCount = itemCount or qty
 		itemFilterType = GetItemFilterTypeInfo(bagId, slotNum) or 0
 		DBitem = DBv3[itemKey]

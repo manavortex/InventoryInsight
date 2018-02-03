@@ -63,27 +63,18 @@ local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
 
 end
 
-local function IIfA_FurnitureAdd(eventCode, furnitureId, collectibleId)
-	if nil == furnitureId then return end
-	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
-	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
-	IIfA:AddOrRemoveFurnitureItem(itemLink, 1, houseCollectibleId, 	true)
+local function IIfA_ScanHouse(eventCode, oldMode, newMode)
+	if newMode == "showing" or newMode == "shown" then return end
+	IIfA:ScanHouse(true)
 end
-
-local function IIfA_FurnitureRemove(eventCode, furnitureId, collectibleId)
-	if nil == furnitureId then return end
-	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
-	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end	
-	IIfA:AddOrRemoveFurnitureItem(itemLink, -1, houseCollectibleId, true)	
-end
-
-local function IIfA_HouseEntered(eventCode)
-	
+local function IIfA_HouseEntered(eventCode)	
 	if not IsOwnerOfCurrentHouse() then return end
 	IIfA:ScanHouse()
 end
 
-
+local function IIfA_ScanBank()
+	IIfA:ScanBank()
+end
 local function IIfA_EventProc(...)
 	--d(...)
 	local l = {...}
@@ -159,6 +150,7 @@ function IIfA:RegisterForEvents()
 	
 	-- Events for data collection
 	EVENT_MANAGER:RegisterForEvent("IIFA_ALPUSH", EVENT_ACTION_LAYER_PUSHED, IIfA_ActionLayerInventoryUpdate)
+	EVENT_MANAGER:RegisterForEvent("IIFA_ON_BANK_OPEN", EVENT_OPEN_BANK , IIfA_ScanBank)
 
 	-- on opening guild bank:
 	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_LOADED", EVENT_GUILD_BANK_ITEMS_READY, IIfA_GuildBankDelayReady)
@@ -171,24 +163,21 @@ function IIfA:RegisterForEvents()
 
 
 	-- on adding or removing an item from the guild bank:
-	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_ADDED", EVENT_GUILD_BANK_ITEM_ADDED, IIfA_GuildBankAddRemove)
+	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_ADDED", 	EVENT_GUILD_BANK_ITEM_ADDED, IIfA_GuildBankAddRemove)
 	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_REMOVED", EVENT_GUILD_BANK_ITEM_REMOVED, IIfA_GuildBankAddRemove)
 
 	 
-	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", EVENT_PLAYER_ACTIVATED , IIfA_HouseEntered)
-	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_FURNITURE_REMOVED", EVENT_HOUSING_FURNITURE_REMOVED, IIfA_FurnitureRemove)
-	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_FURNITURE_PLACED", EVENT_HOUSING_FURNITURE_PLACED, IIfA_FurnitureAdd)
+	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", 	EVENT_PLAYER_ACTIVATED, 			IIfA_HouseEntered)
 	
-	
+	EVENT_MANAGER:RegisterForEvent("IIfA_HOUSE_MANAGER_MODE_CHANGED", 	EVENT_HOUSING_EDITOR_MODE_CHANGED, 	IIfA_ScanHouse)
 
 	local function RebuildOptionsMenu()
 		self:CreateOptionsMenu()
 	end
 	EVENT_MANAGER:RegisterForEvent("IIFA_GuildJoin", EVENT_GUILD_SELF_JOINED_GUILD, RebuildOptionsMenu)
 	EVENT_MANAGER:RegisterForEvent("IIFA_GuildLeave", EVENT_GUILD_SELF_LEFT_GUILD, RebuildOptionsMenu)
-
---    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)
-
+	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIFA_OnSingleSlotInventoryUpdate)
+--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)	
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA_OnRightClickUp(rowControl) end)
 end
 

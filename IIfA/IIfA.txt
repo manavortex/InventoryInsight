@@ -3,9 +3,10 @@
 ## Version: 2.20
 ## APIVersion: 100021 100022
 ## SavedVariables: IIfA_Settings IIfA_Data
-## OptionalDependsOn: libFilters
+## OptionalDependsOn: libFilters pChat
 
 libs\LibStub\LibStub.lua
+libs\LibAsync\LibAsync.lua
 libs\LibCustomTitles\LibCustomTitles.lua
 libs\LibScroll\LibScroll.lua
 libs\LibMediaProvider-1.0\LibMediaProvider-1.0.lua

@@ -29,6 +29,7 @@ IIfA.TooltipLink 		= nil
 IIfA.CurrSceneName 		= "hud"
 IIfA.bFilterOnSetName 	= false
 IIfA.searchFilter 		= ""
+IIfA.dirtyHouses		= {}
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -161,7 +162,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight 	= true,
 		collectHouseData		= {
-			["All"]				= true,
+			["All"]				= false,
 		},
 		ignoredCharEquipment	= {},
 		ignoredCharInventories	= {},
@@ -175,7 +176,7 @@ function IIfA_onLoad(eventCode, addOnName)
 			["stables"] = 		{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
 			["trade"] = 		{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
 			["inventory"] = 	{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
-			["hud"] =   		{ hidden = true, docked = false, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
+			["hud"] =   		{ hidden = true,  docked = false,     locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth },
 			["alchemy"] =   	{ hidden = false, docked = valDocked, locked = valLocked, minimized = valMinimized, lastX = valLastX, lastY = valLastY, height = valHeight, width = valWidth }
 			},
 
