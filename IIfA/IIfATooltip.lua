@@ -454,17 +454,15 @@ function IIfA:UpdateTooltip(tooltip)
 					else
 						if tonumber(location.name) == location.name then
 							local loc = GetCollectibleNickname(location.name)
-							 if loc == "" then
-								loc = GetCollectibleName(location.name)		
-							 end
-							textOut = loc .. " x" .. location.itemsFound
+							 if loc == "" then loc = GetCollectibleName(location.name)end
+							textOut = string.format("%s x %s", loc, location.itemsFound)
 						else
-							textOut = location.name .. " x" .. location.itemsFound
+							textOut = string.format("%s x %s", location.name, location.itemsFound)
 						end
 					end
 					IIfA:DebugOut(textOut)
 					if location.worn then
-						textOut = textOut .. " *"
+						textOut = string.format("%s *", textOut)
 					end
 					textOut = IIfA.colorHandler:Colorize(textOut)
 					tooltip:AddLine(textOut)
@@ -524,10 +522,10 @@ function IIfA:UpdateTooltip(tooltip)
 						d(location)
 						textOut = 'Error occurred'
 					else
-						textOut = location.name .. " x" .. location.itemsFound
+						textOut = string.format("%s x %s", location.name, location.itemsFound)
 					end
 					if location.worn then
-						textOut = textOut .. " *"
+						textOut = string.format("%s *", textOut)
 					end
 					textOut = IIfA.colorHandler:Colorize(textOut)
 					tooltip:AddLine(textOut)

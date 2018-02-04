@@ -143,6 +143,9 @@ local function DoesInventoryMatchList(locationName, location)
 
 	elseif(filter == "Craft Bag") then
 		return (bagId == BAG_VIRTUAL)
+	
+	elseif(filter == "Housing Storage") then
+		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0 
 		
 	elseif(filter == "All Houses") then
 		return IIfA.data.collectHouseData[bagId]
@@ -875,10 +878,7 @@ function IIfA:FMC(control, WhoSeesIt)
 	local langChapNames = {}
 	langChapNames["EN"] = {"Axes", "Belts", "Boots", "Bows", "Chests", "Daggers", "Gloves", "Helmets", "Legs", "Maces", "Shields", "Shoulders", "Staves", "Swords" }
 	langChapNames["DE"] = {"Äxte", "Gürtel", "Stiefel", "Bogen", "Torsi", "Dolche", "Handschuhe", "Helme", "Beine", "Keulen", "Schilde", "Schultern", "Stäbe", "Schwerter" }
-	local chapnames = langChapNames[GetCVar("language.2")]
-	if chapnames == nil then
-		chapnames = langChapNames["EN"]
-	end
+	local chapnames = langChapNames[GetCVar("language.2")] or langChapNames["EN"]
 
 	if control.itemLink == nil or control.itemLink == "" then
 		d("Invalid item. Right-Click ignored.")
@@ -918,7 +918,7 @@ function IIfA:FMC(control, WhoSeesIt)
 			if s == "" then
 				s = val
 			else
-				s = s .. ", " .. val
+				s = string.format("%s, %s", s, val)
 			end
 		end
 	end
@@ -928,7 +928,7 @@ function IIfA:FMC(control, WhoSeesIt)
 	else
 		-- incomplete motif achieve
 		-- |H1:achievement:1416:0:0|h|h
-		local motifStr = "|H1:achievement:" .. motifAchieves[motifNum] .. ":" .. chapVal .. ":0|h|h"
+		local motifStr = string.format("|H1:achievement:%s:%s:0|h|h", motifAchieves[motifNum], chapVal)
 
 		if WhoSeesIt == "Private" then
 			d("Missing " .. motifStr .. " chapters: " .. s)

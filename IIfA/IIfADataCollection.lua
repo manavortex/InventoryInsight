@@ -1,6 +1,14 @@
 local IIfA = IIfA
 local EMPTY_STRING = ""
 
+	
+local function grabBagContent(bagId)
+	local bagItems = GetBagSize(bagId)
+	for slotNum=0, bagItems, 1 do
+		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
+	end
+end
+
 function IIfA:DeleteCharacterData(name)
 	if (name) then
 		--delete selected character
@@ -68,13 +76,7 @@ function IIfA:CollectGuildBank()
 --	d("IIfA - Guild Bank Collected - " .. curGuild)
 end
 
-	
-local function grabBagContent(bagId)
-	local bagItems = GetBagSize(bagId)
-	for slotNum=0, bagItems, 1 do
-		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
-	end
-end
+
 
 local function scanBags()
 	local playerName = GetUnitName('player')
@@ -93,7 +95,25 @@ local function scanBags()
 end
 IIfA.ScanCurrentCharacter = scanBags
 
+local function tryScanHouseBank()
+	if GetAPIVersion() < 100022 then return end
+	local bagId = GetBankingBag()
+	if not bagId then return end
+	local collectibleId = GetCollectibleForHouseBankBag(bagId)
+
+	
+	if IsCollectibleUnlocked(collectibleId) then
+		local collectibleName = GetCollectibleNickname(collectibleId)
+		if collectibleName == EMPTY_STRING then collectibleName = GetCollectibleName(collectibleId) end
+		IIfA:ClearLocationData(bagId)
+		grabBagContent(bagId)
+	end
+	
+	return true
+end
+
 function IIfA:ScanBank()
+	if tryScanHouseBank() then return end
 	IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 	grabBagContent(BAG_BANK)
 	
@@ -357,10 +377,13 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemNam
 			location =GetString(IIFA_BAG_CRAFTBAG)
 		elseif(bagId == BAG_GUILDBANK) then
 			location = GetGuildName(GetSelectedGuildBankId())
-		elseif GetAPIVersion() >= 100022 then
-			local collectibleId = GetCollectibleForHouseBankBag(GetBankingBag())
-			location = GetCollectibleNickname(collectibleId)
-			if location == EMPTY_STRING then location = GetCollectibleName(collectibleId) end
+		elseif GetAPIVersion() >= 100022 and 0 < GetCollectibleForHouseBankBag(bagId) then
+			location = GetCollectibleForHouseBankBag(bagId)
+		
+		-- elseif GetAPIVersion() >= 100022 then
+			-- local collectibleId = GetCollectibleForHouseBankBag(GetBankingBag())
+			-- location = GetCollectibleNickname(collectibleId)
+			-- if location == EMPTY_STRING then location = GetCollectibleName(collectibleId) end
 		end
 		
 		if(DBitem) then
