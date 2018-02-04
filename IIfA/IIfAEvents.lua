@@ -1,5 +1,5 @@
-local IIfA = IIfA
-
+local IIfA 	= IIfA
+local em 	= EVENT_MANAGER
 -- 2016-7-26 AM - added global funcs for events
 -- the following functions are all globals, not tied to the IIfA class, but call the IIfA class member functions for event processing
 
@@ -12,24 +12,8 @@ local function IIfA_EventOnPlayerUnloaded()
 	IIfA.CharBagFrame:UpdateAssets()
 end
 
-local function IIfA_GuildBankDelayReady()
-	IIfA:GuildBankDelayReady()
-end
-
-local function IIfA_GuildBankAddRemove(...)
-	IIfA:GuildBankAddRemove(...)
-end
-
-local function IIfA_ActionLayerInventoryUpdate()
-	IIfA:ActionLayerInventoryUpdate()
-end
-
 local function IIfA_InventorySlotUpdate(...)
 	IIfA:InventorySlotUpdate(...)
-end
-
-local function IIfA_OnRightClickUp(rowControl)
-	IIfA:ProcessRightClick(rowControl)
 end
 
 local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
@@ -41,39 +25,31 @@ local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
 	local name 		= GetCollectibleName(collectibleId)
 	local nickName 	= GetCollectibleNickname(collectibleId)
 	
-	
-	-- TODO: Check this!
-	-- function ZO_SharedInventoryManager:HandleSlotCreationOrUpdate(bagCache, bagId, slotIndex, isNewItem)
-		-- local existingSlotData = bagCache[slotIndex]
-		-- local slotData, result = self:CreateOrUpdateSlotData(existingSlotData, bagId, slotIndex, isNewItem)
-		-- bagCache[slotIndex] = slotData
-
-		-- if result == SHARED_INVENTORY_SLOT_RESULT_REMOVED then
-			-- self:FireCallbacks("SlotRemoved", bagId, slotIndex, existingSlotData)
-		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_ADDED then
-			-- self:FireCallbacks("SlotAdded", bagId, slotIndex, slotData)
-		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_UPDATED then
-			-- self:FireCallbacks("SlotUpdated", bagId, slotIndex, slotData)
-		-- elseif result == SHARED_INVENTORY_SLOT_RESULT_REMOVE_AND_ADD then
-			-- self:FireCallbacks("SlotRemoved", bagId, slotIndex, existingSlotData)
-			-- self:FireCallbacks("SlotAdded", bagId, slotIndex, slotData)
-		-- end
-	-- end
-	
 
 end
 
 local function IIfA_ScanHouse(eventCode, oldMode, newMode)
 	if newMode == "showing" or newMode == "shown" then return end
-	IIfA:ScanHouse(true)
-end
-local function IIfA_HouseEntered(eventCode)	
-	if not IsOwnerOfCurrentHouse() then return end
-	IIfA:ScanHouse()
+	-- are we listening? 
+	if not IIfA:GetCollectingHouseData() then return end
+	
+	IIfA:RescanHouse(GetCollectibleIdForHouse(GetCurrentZoneHouseId()))
 end
 
-local function IIfA_ScanBank()
-	IIfA:ScanBank()
+local function IIfA_HouseEntered(eventCode)	
+	if not IsOwnerOfCurrentHouse() then return end
+	
+	-- are we listening? 
+	if not IIfA:GetCollectingHouseData() then return end
+	
+	-- is the house registered? 
+	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())	
+	
+	if nil == IIfA.data.collectHouseData[houseCollectibleId] then
+		IIfA:SetTrackingForHouse(houseCollectibleId, true)		
+	end
+	
+	IIfA:RescanHouse(houseCollectibleId)
 end
 local function IIfA_EventProc(...)
 	--d(...)
@@ -101,8 +77,6 @@ local function finv1(...)
 	d("inventory open error")
 	IIfA_EventDump(...)
 end
-
-
 local function fgb1(...)
 	d("gb open error")
 	IIfA_EventDump(...)
@@ -126,67 +100,63 @@ end
 
 function IIfA:RegisterForEvents()
 	-- 2016-6-24 AM - commented this out, doing nothing at the moment, revisit later
-	-- EVENT_MANAGER:RegisterForEvent("IIFA_PLAYER_LOADED_EVENTS", EVENT_PLAYER_ACTIVATED, IIfA_EventOnPlayerloaded)
+	-- em:RegisterForEvent("IIFA_PLAYER_LOADED_EVENTS", EVENT_PLAYER_ACTIVATED, IIfA_EventOnPlayerloaded)
 
 	-- 2015-3-7 AssemblerManiac - added EVENT_PLAYER_DEACTIVATED event
-	EVENT_MANAGER:RegisterForEvent("IIFA_PLAYER_UNLOADED_EVENTS", EVENT_PLAYER_DEACTIVATED, IIfA_EventOnPlayerUnloaded)
+	em:RegisterForEvent("IIFA_PLAYER_UNLOADED_EVENTS", 	EVENT_PLAYER_DEACTIVATED, IIfA_EventOnPlayerUnloaded)
 
 	-- when item comes into inventory
-	EVENT_MANAGER:RegisterForEvent("IIFA_InventorySlotUpdate", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, IIfA_InventorySlotUpdate)
-	EVENT_MANAGER:AddFilterForEvent("IIFA_InventorySlotUpdate", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
+	em:RegisterForEvent( "IIFA_InventorySlotUpdate", 	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, IIfA_InventorySlotUpdate)
+	em:AddFilterForEvent("IIFA_InventorySlotUpdate", 	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
 
---	EVENT_MANAGER:RegisterForEvent("IIFA_unknown", EVENT_ITEM_SLOT_CHANGED, IIfA_EventDump)
---	EVENT_MANAGER:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_USED, IIfA_EventDump)	-- arg 1 = event id, arg 2 = 27 (no clue)
---	EVENT_MANAGER:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_DESTROYED, IIfA_EventDump)
---	EVENT_MANAGER:RegisterForEvent("IIFA_unknown", EVENT_JUSTICE_FENCE_UPDATE, IIfA_EventDump) -- # sold, # laundered is sent to event handler
+--	em:RegisterForEvent("IIFA_unknown", EVENT_ITEM_SLOT_CHANGED, IIfA_EventDump)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_USED, IIfA_EventDump)	-- arg 1 = event id, arg 2 = 27 (no clue)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_DESTROYED, IIfA_EventDump)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_JUSTICE_FENCE_UPDATE, IIfA_EventDump) -- # sold, # laundered is sent to event handler
 
 -- not helpful, no link at all on this callback
 --	SHARED_INVENTORY:RegisterCallback("SlotRemoved", IIfA_EventDump)
 --	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIfA_EventDump)
 
 	-- react to players possibly renaming their storage chests
-	EVENT_MANAGER:RegisterForEvent("IIFA_Collectible_Updated", EVENT_COLLECTIBLE_UPDATED, IIfA_CollectibleUpdate)
+	em:RegisterForEvent("IIFA_Collectible_Updated", 	EVENT_COLLECTIBLE_UPDATED, IIfA_CollectibleUpdate)
 	
 	
 	-- Events for data collection
-	EVENT_MANAGER:RegisterForEvent("IIFA_ALPUSH", EVENT_ACTION_LAYER_PUSHED, IIfA_ActionLayerInventoryUpdate)
-	EVENT_MANAGER:RegisterForEvent("IIFA_ON_BANK_OPEN", EVENT_OPEN_BANK , IIfA_ScanBank)
+	em:RegisterForEvent("IIFA_ALPUSH", 		EVENT_ACTION_LAYER_PUSHED, 	function() IIfA:ActionLayerInventoryUpdate() end)
+	em:RegisterForEvent("IIFA_BANK_OPEN",	EVENT_OPEN_BANK, 			function() IIfA:ScanBank() end)
 
 	-- on opening guild bank:
-	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_LOADED", EVENT_GUILD_BANK_ITEMS_READY, IIfA_GuildBankDelayReady)
+	em:RegisterForEvent("IIFA_GUILDBANK_LOADED", EVENT_GUILD_BANK_ITEMS_READY, function() IIfA:GuildBankDelayReady() end)
 
---	EVENT_MANAGER:RegisterForEvent("IIFA_gb1", EVENT_GUILD_BANK_OPEN_ERROR, fgb1)
-	EVENT_MANAGER:RegisterForEvent("IIFA_gb2", EVENT_GUILD_BANK_UPDATED_QUANTITY, fgb2)
---	EVENT_MANAGER:RegisterForEvent("IIFA_gb3", EVENT_GUILD_BANK_SELECTED, fgb3)
---	EVENT_MANAGER:RegisterForEvent("IIFA_gb4", EVENT_GUILD_BANK_DESELECTED, fgb4)
---	EVENT_MANAGER:RegisterForEvent("IIFA_gb5", EVENT_GUILD_BANK_ITEMS_READY, fgb5)
+--	em:RegisterForEvent("IIFA_gb1", EVENT_GUILD_BANK_OPEN_ERROR, fgb1)
+	em:RegisterForEvent("IIFA_gb2", EVENT_GUILD_BANK_UPDATED_QUANTITY, fgb2)
+--	em:RegisterForEvent("IIFA_gb3", EVENT_GUILD_BANK_SELECTED, fgb3)
+--	em:RegisterForEvent("IIFA_gb4", EVENT_GUILD_BANK_DESELECTED, fgb4)
+--	em:RegisterForEvent("IIFA_gb5", EVENT_GUILD_BANK_ITEMS_READY, fgb5)
 
 
 	-- on adding or removing an item from the guild bank:
-	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_ADDED", 	EVENT_GUILD_BANK_ITEM_ADDED, IIfA_GuildBankAddRemove)
-	EVENT_MANAGER:RegisterForEvent("IIFA_GUILDBANK_ITEM_REMOVED", EVENT_GUILD_BANK_ITEM_REMOVED, IIfA_GuildBankAddRemove)
+	em:RegisterForEvent("IIFA_GUILDBANK_ITEM_ADDED", 	EVENT_GUILD_BANK_ITEM_ADDED, 	function(...) IIfA:GuildBankAddRemove(...) end)
+	em:RegisterForEvent("IIFA_GUILDBANK_ITEM_REMOVED", 	EVENT_GUILD_BANK_ITEM_REMOVED, 	function(...) IIfA:GuildBankAddRemove(...) end)
 
-	 
-	EVENT_MANAGER:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", 	EVENT_PLAYER_ACTIVATED, 			IIfA_HouseEntered)
-	
-	EVENT_MANAGER:RegisterForEvent("IIfA_HOUSE_MANAGER_MODE_CHANGED", 	EVENT_HOUSING_EDITOR_MODE_CHANGED, 	IIfA_ScanHouse)
+	-- Housing
+	em:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", EVENT_PLAYER_ACTIVATED, 			IIfA_HouseEntered)	
+	em:RegisterForEvent("IIfA_HOUSE_MANAGER_MODE_CHANGED", 	EVENT_HOUSING_EDITOR_MODE_CHANGED, 	IIfA_ScanHouse)
 
-	local function RebuildOptionsMenu()
-		self:CreateOptionsMenu()
-	end
-	EVENT_MANAGER:RegisterForEvent("IIFA_GuildJoin", EVENT_GUILD_SELF_JOINED_GUILD, RebuildOptionsMenu)
-	EVENT_MANAGER:RegisterForEvent("IIFA_GuildLeave", EVENT_GUILD_SELF_LEFT_GUILD, RebuildOptionsMenu)
-	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIFA_OnSingleSlotInventoryUpdate)
---    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)	
-	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA_OnRightClickUp(rowControl) end)
+	em:RegisterForEvent("IIFA_GuildJoin", EVENT_GUILD_SELF_JOINED_GUILD, 	function() IIfA:CreateOptionsMenu() end)
+	em:RegisterForEvent("IIFA_GuildLeave", EVENT_GUILD_SELF_LEFT_GUILD, 	function() IIfA:CreateOptionsMenu() end)
+
+	--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)	
+	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA:ProcessRightClick(rowControl) end)
 end
 
 
 --[[ registerfilter & events
 define HOW to listen for events (minimize # of calls to event handler, less overhead of eso internals)
-EVENT_MANAGER:RegisterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, OnInventorySlotUpdate)
-EVENT_MANAGER:AddFilterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE,  REGISTER_FILTER_BAG_ID, BAG_BACKPACK)
-EVENT_MANAGER:AddFilterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE,  REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
+em:RegisterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, OnInventorySlotUpdate)
+em:AddFilterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE,  REGISTER_FILTER_BAG_ID, BAG_BACKPACK)
+em:AddFilterForEvent(ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE,  REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
 --]]
 
 

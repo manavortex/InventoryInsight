@@ -95,71 +95,68 @@ end
 
 local function getHouseIds()
 	local ret = {}
-	for houseName, houseId in pairs(IIfA:GetHouseList()) do
+	for houseName, houseId in pairs(IIfA:GetTrackedHouses()) do
 		table.insert(ret, houseId)
 	end
 	return ret
 end
 
+
 local function DoesInventoryMatchList(locationName, location)
-	local bagId = location.bagID
+	local bagId 	= location.bagID
+	local filter 	= IIfA.InventoryListFilter
 	
-	local function isHouse(location)
-		return nil ~= getHouseIds()[location.bagID]
+	local function isHouse()
+		return IIfA:GetTrackingWithHouseNames()[locationName]
+	end
+	
+	local function isOneOf(value, comp1, comp2, comp3, comp4, comp5, comp6)
+		return nil ~= value and (value == comp6) or (value == comp5) or (value == comp4) or (value == comp3) or (value == comp2) or value == comp1 
 	end
 	
 --	if locationName == "attributes" then return false end
-	if( IIfA.InventoryListFilter == "All" ) then
+	if (filter == "All") then
 		return true
 
-	elseif(IIfA.InventoryListFilter == "All Banks") then
-		return nil ~= bagId and bagId ~= BAG_BACKPACK and IIfA.trackedBags[bagId]
-		-- (location.bagID == BAG_BANK or location.bagID == BAG_GUILDBANK or location.bagID == BAG_SUBSCRIBER_BANK)
+	elseif (filter == "All Banks") then
+		return isOneOf(bagId, BAG_SUBSCRIBER_BANK, BAG_GUILDBANK) and IIfA.trackedBags[bagId]
 
-	elseif(IIfA.InventoryListFilter == "All Guild Banks") then
-		return (location.bagID == BAG_GUILDBANK)
+	elseif (filter == "All Guild Banks") then
+		return isOneOf(bagId, BAG_GUILDBANK)
 
-	elseif(IIfA.InventoryListFilter == "All Characters") then
-		return (location.bagID == BAG_BACKPACK or location.bagID == BAG_WORN)
+	elseif (filter == "All Characters") then
+		return isOneOf(bagId, BAG_BACKPACK, BAG_WORN)
 
-	elseif(IIfA.InventoryListFilter == "Bank and Characters") then
-		return (location.bagID == BAG_BANK or
-				location.bagID == BAG_SUBSCRIBER_BANK or
-				location.bagID == BAG_BACKPACK or
-				location.bagID == BAG_WORN)
+	elseif (filter == "Bank and Characters") then
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 
-	elseif(IIfA.InventoryListFilter == "Bank and Current Character") then
-		return (location.bagID == BAG_BANK or
-				location.bagID == BAG_SUBSCRIBER_BANK or
-				((location.bagID == BAG_BACKPACK or
-				 location.bagID == BAG_WORN) and
-				 locationName == IIfA.currentCharacterId))
+	elseif(filter == "Bank and Current Character") then
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN) 
+			and locationName == IIfA.currentCharacterId
 				 
-	elseif(IIfA.InventoryListFilter == "Bank and other characters") then
-		return not isHouse(location) and (location.bagID == BAG_BANK or
-				location.bagID == BAG_SUBSCRIBER_BANK or
-				((location.bagID == BAG_BACKPACK or
-				 location.bagID == BAG_WORN) and				 
-				 locationName ~= IIfA.currentCharacterId))
+	elseif(filter == "Bank and other characters") then
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN) 
+			and locationName ~= IIfA.currentCharacterId
 
-	elseif(IIfA.InventoryListFilter == "Bank Only") then
-		return  (location.bagID == BAG_BANK or
-				location.bagID == BAG_SUBSCRIBER_BANK)
+	elseif(filter == "Bank Only") then
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK)
 
-	elseif(IIfA.InventoryListFilter == "Craft Bag") then
-		return (location.bagID == BAG_VIRTUAL)
+	elseif(filter == "Craft Bag") then
+		return (bagId == BAG_VIRTUAL)
 		
-	elseif(IIfA.InventoryListFilter == "All Houses") then
-		return nil ~= getHouseIds()[location.bagID]
-	elseif(nil ~= IIfA:GetHouseList()[IIfA.InventoryListFilter]) then
-		return (location.bagID == IIfA:GetHouseList()[IIfA.InventoryListFilter])
+	elseif(filter == "All Houses") then
+		return IIfA.data.collectHouseData[bagId]
+		
+	elseif(nil ~= IIfA:GetTrackingWithHouseNames()[filter]) then
+		return (bagId == IIfA:GetHouseIdFromName(filter))
+		
 	else --Not a preset, must be a specific guildbank or character
-		if location.bagID == BAG_BACKPACK or location.bagID == BAG_WORN then
+		if isOneOf(bagId, BAG_BACKPACK, BAG_WORN) then
 			-- it's a character name, convert to Id, check that against location Name in the dbv3 table
-			if locationName == IIfA.CharNameToId[IIfA.InventoryListFilter] then return true end
+			if locationName == IIfA.CharNameToId[filter] then return true end
 		else
 			-- it's a bank to compare, do it direct
-			if locationName == IIfA.InventoryListFilter then return true end
+			return locationName == filter
 		end
 	end
 end
@@ -587,19 +584,17 @@ function IIfA:GetAccountInventoryList()
 			if IIfA.data.guildBanks == nil then
 				IIfA.data.guildBanks = {}
 			end
-
+			
 			if IIfA.data.guildBanks[guildName] ~= nil then
 				table.insert(accountInventories, guildName)
 			end
 		end
 	end
 	
-	if IIfA.data.collectHouseData.All then
+	if IIfA.data.b_collectHouses then
 		table.insert(accountInventories, "All Houses")
-		for houseName, houseId in pairs(IIfA:GetHouseList()) do
-			if IIfA:GetTrackedBags()[houseId] then
-				table.insert(accountInventories, houseName)
-			end
+		for idx, houseName in ipairs(IIfA:GetTrackedHouseNames()) do
+			table.insert(accountInventories, houseName)
 		end
 	end
 	

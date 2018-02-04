@@ -29,7 +29,7 @@ IIfA.TooltipLink 		= nil
 IIfA.CurrSceneName 		= "hud"
 IIfA.bFilterOnSetName 	= false
 IIfA.searchFilter 		= ""
-IIfA.dirtyHouses		= {}
+IIfA.trackedHouses		= {}
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -131,9 +131,7 @@ function IIfA_SlashCommands(cmd)
 end
 
 function IIfA:DebugOut(output)
-	if (IIfA.data.bDebug) then
-		d(output)
-	end
+	if (IIfA.data.bDebug) then d(output) end
 end
 
 function IIfA:StatusAlert(message)
@@ -142,6 +140,9 @@ function IIfA:StatusAlert(message)
 	end
 end
 
+function IIfA:BuildHouseLists()
+
+end
 
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
@@ -162,9 +163,8 @@ function IIfA_onLoad(eventCode, addOnName)
 		bDebug 					= false,
 		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight 	= true,
-		collectHouseData		= {
-			["All"]				= false,
-		},
+		b_collectHouses			= false,
+		collectHouseData		= {},
 		ignoredCharEquipment	= {},
 		ignoredCharInventories	= {},
 		frameSettings =
@@ -188,8 +188,8 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2TooltipsFontSize 			= 16,
 		ShowToolTipWhen 				= "Always",
 		DBv3 							= {},
-		dontFocusSearch					= false
-		}
+		dontFocusSearch					= false,
+	}
 
 	-- initializing default values
 	local default = {
@@ -215,7 +215,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2AgedGuildBankDataWarning = true,
 		in2TooltipsFont = "ZoFontGame",
 		in2TooltipsFontSize = 16,
-		}
+	}
 
 	IIfA.minWidth = 410
 	-- prevent resizing by user to be larger than this
@@ -245,34 +245,36 @@ function IIfA_onLoad(eventCode, addOnName)
 	-- end)
 
 	
-	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67
-	-- build house list array
-	IIfA:GetHouseList()	
+	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67		
 	
 
 	IIfA.settings 	= ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
 	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
 
-	IIfA:BuildHouseList()
+	IIfA:RebuildHouseMenuDropdowns()
 
+	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
-	if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
-		ObjSettings.in2InventoryFrameSceneSettings = nil
+	local function nukePositioning()
+		if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
+			ObjSettings.in2InventoryFrameSceneSettings = nil
+		end
+		if ObjSettings.in2InventoryFrameScenes ~= nil then
+			ObjSettings.in2InventoryFrameScenes = nil
+		end
+		if ObjSettings.valDocked ~= nil then
+			ObjSettings.valDocked = nil
+			ObjSettings.valLocked = nil
+			ObjSettings.valMinimized = nil
+			ObjSettings.valLastX = nil
+			ObjSettings.valLastY = nil
+			ObjSettings.valHeight = nil
+			ObjSettings.valWidth = nil
+			ObjSettings.valWideX = nil
+		end
 	end
-	if ObjSettings.in2InventoryFrameScenes ~= nil then
-		ObjSettings.in2InventoryFrameScenes = nil
-	end
-	if ObjSettings.valDocked ~= nil then
-		ObjSettings.valDocked = nil
-		ObjSettings.valLocked = nil
-		ObjSettings.valMinimized = nil
-		ObjSettings.valLastX = nil
-		ObjSettings.valLastY = nil
-		ObjSettings.valHeight = nil
-		ObjSettings.valWidth = nil
-		ObjSettings.valWideX = nil
-	end
-
+	nukePositioning()
+	
 	if IIfA.settings.in2ToggleGuildBankDataCollection ~= nil then
 		IIfA.settings.in2ToggleGuildBankDataCollection = nil
 	end
@@ -327,12 +329,11 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:SetupCharLookups()
 
-	if IIfA.settings.accountCharacters ~= nil then
-		IIfA.settings.accountCharacters = nil
-	end
-	if IIfA.settings.guildBanks ~= nil then
-		IIfA.settings.guildBanks = nil
-	end
+	-- overwrite non-global tables if present
+	
+	IIfA.settings.accountCharacters = nil
+	IIfA.settings.guildBanks = nil
+	
 
 	-- this MUST remain in this location, otherwise it's possible that CollectAll will remove ALL characters data from the list (because they haven't been converted)
 	if IIfA.data.accountCharacters ~= nil then
@@ -465,7 +466,6 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 	IIfA:ScanCurrentCharacter()
-	IIfA:BuildHouseList() -- write house list into array
 	IIfA:ScanBank()
 end
 

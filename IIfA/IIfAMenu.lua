@@ -50,26 +50,6 @@ local function getGuildBankName(guildNum)
 	return GetGuildName(id)
 end
 
-local function getHouseNames()
-	local ret = {}
-	for houseName, houseId in pairs(IIfA:GetHouseList()) do
-		if IIfA:GetTrackedBags()[houseId] then
-			table.insert(ret, houseName)
-		end
-	end
-	return ret
-end
-
-local function getIgnoredHouseNames()
-	local ret = {}
-	for houseName, houseId in pairs(IIfA:GetHouseList()) do
-		if not IIfA:GetTrackedBags()[houseId] then
-			table.insert(ret, houseName)
-		end
-	end
-	return ret
-end
-
 local function getGuildBankKeepDataSetting(guildNum)
 	guildName = getGuildBankName(guildNum)
 
@@ -218,18 +198,18 @@ function IIfA:CreateOptionsMenu()
 					type = "checkbox",
 					name = "Collect furniture in houses",
 					tooltip = "Enables/Disables collection of furniture inside houses",
-					getFunc = function() return 	IIfA:GetCollectingHouseData() end,
-					setFunc = function(value)		IIfA:SetCollectingHouseData(value) end,
+					getFunc = function() return 	IIfA.data.b_collectHouses end,
+					setFunc = function(value)		IIfA:SetHouseTracking(value) end,
 				}, -- checkbox end
 				
 				{	type 	= "description", 
 					title 	= "Ignore or delete houses",
 					text 	= "removes or un-tracks a house. \nWarning: This change will be applied immediately.",
 				},
-				{
+				{  	--dropdown houses to delete or un-track
 					type 	= "dropdown",
 					name 	= "houses to delete or un-track",
-					choices = getHouseNames(),
+					choices = IIfA:GetTrackedHouseNames(),
 					getFunc = function() return end,
 					setFunc = function(choice) deleteHouse = nil; deleteHouse = choice end
 				}, --dropdown end
@@ -238,12 +218,12 @@ function IIfA:CreateOptionsMenu()
 					width = "half",
 					name = "Ignore house",
 					tooltip = "All furniture items in the currently selected house will be untracked",
-					func = function() IIfA:SetCollectHouseStatus(deleteHouse, false) end,
+					func = function() IIfA:SetTrackingForHouse(deleteHouse, false) end,
 				}, -- button end
 				{
 					type 	= "dropdown",
 					name 	= "houses to re-track",
-					choices = getIgnoredHouseNames(),
+					choices = IIfA:GetIgnoredHouseNames(),
 					getFunc = function() return end,
 					setFunc = function(choice) restoreHouse = nil; restoreHouse = choice end
 				}, --dropdown end
@@ -252,7 +232,7 @@ function IIfA:CreateOptionsMenu()
 					width = "half",
 					name = "Unignore house",
 					tooltip = "All furniture items in the currently selected house will be tracked again",
-					func = function() IIfA:SetCollectHouseStatus(restoreHouse, true) end,
+					func = function() IIfA:SetTrackingForHouse(restoreHouse, true) end,
 				}, -- button end	
 			},
 		},
@@ -336,7 +316,7 @@ function IIfA:CreateOptionsMenu()
 			},
 		},
 
-		{
+		{	-- header: Global/Per Char settings
 			type = "header",
 			name = "Global/Per Char settings",
 		},
@@ -344,11 +324,11 @@ function IIfA:CreateOptionsMenu()
 			
 		
 
-		{
+		{	-- submenu: tooltips
 			type = "submenu",
 			name = "Tooltips",
 			tooltip = "Manage tooltip options for both default and custom IIfA tooltips",
-			controls = {
+			controls = { -- tooltips
 				{
 					type = "dropdown",
 					name = "Show IIfA Tooltips",
@@ -414,7 +394,7 @@ function IIfA:CreateOptionsMenu()
 
 		}, -- tooltipOptionsSubWindow end
 
-		{
+		{	-- checkbox: item count on the right
 			type = "checkbox",
 			tooltip = "Show Item Count on Right side of list",
 			name = "Item Count on Right",
@@ -444,28 +424,25 @@ function IIfA:CreateOptionsMenu()
 			-- warning = "Will need to reload the UI",	--(optional)
 		},
 
-		{
+		{ -- checkbox: Focus search box on UI toggle
 			type = "checkbox",
-			name = "Don't focus search box on UI toggle?",
-			tooltip = "If you open the UI, the edit control will take focus. Check this box to disable it.",
-			getFunc = function() return IIfA.defaults.dontFocusSearch end,
-			setFunc = function(value)
-				IIfA.defaults.dontFocusSearch = value
-			end,
+			name = "Focus search box",
+			tooltip = "Focus search bar after UI toggle?",
+			getFunc = function() return not IIfA:GetSettings().dontFocusSearch end,
+			setFunc = function(value) IIfA:GetSettings().dontFocusSearch = not value end,
 		}, -- checkbox end
+		
 		{
 			type = "checkbox",
-			name = "Search Set Names when using Text Filter",
+			name = "Text Filter considers set name as well",
 			tooltip = "Enables/Disables set name inclusion in searches",
 			getFunc = function() return IIfA:GetSettings().bFilterOnSetNameToo end,
-			setFunc = function(value)
-				IIfA:GetSettings().bFilterOnSetNameToo = value
-			end,
+			setFunc = function(value) IIfA:GetSettings().bFilterOnSetNameToo = value end,
 		}, -- checkbox end
 
 		{
 			type = "checkbox",
-			name = "Default to search only Set Names when using Text Filter",
+			name = "Text Filter only searches set name",
 			tooltip = "Enables/Disables set name inclusion in searches",
 			getFunc = function() return IIfA:GetSettings().bFilterOnSetName end,
 			setFunc = function(value)

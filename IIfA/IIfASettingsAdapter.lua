@@ -1,5 +1,11 @@
- local IIfA = IIfA
+local IIfA = IIfA
+IIfA.houseNameToIdTbl = {}
  
+local function GetRealCollectibleName(collectibleId)
+	local collectibleName = GetCollectibleNickname(collectibleId)
+	if collectibleName and #collectibleName == 0 then collectibleName = GetCollectibleName(collectibleId) end
+	return collectibleName
+end
  
 function IIfA:IsCharacterInventoryIgnored(ignoreChar)
 	return IIfA.data.ignoredCharEquipment[ignoreChar]
@@ -47,6 +53,13 @@ function IIfA:SetSetNameFilterOnly(value)
     IIfA:UpdateInventoryScroll()
 end
 
+function IIfA:GetFocusSearchOnToggle()
+	return not IIfA.defaults.dontFocusSearch
+end
+function IIfA:SetFocusSearchOnToggle(value)
+	IIfA.defaults.dontFocusSearch = not value
+end
+
 
 -- Get pointer to current settings based on user pref (global or per char)
 function IIfA:GetSettings()
@@ -76,7 +89,6 @@ function IIfA:GetInventoryListFilterQuality()
 	return IIfA.InventoryListFilterQuality or 99
 end
 
-
 -- this is for the dropdown menu
 function IIfA:SetInventoryListFilterQuality(value)
 	IIfA.InventoryListFilterQuality = value
@@ -87,23 +99,92 @@ function IIfA:SetInventoryListFilterQuality(value)
     IIfA:UpdateInventoryScroll()
 end
 function IIfA:GetCollectingHouseData()
-	return IIfA.data.collectHouseData.All
-end
-function IIfA:SetCollectingHouseData(value)
-	IIfA.data.collectHouseData.All = value
-	for houseName, houseId in pairs(IIfA:GetHouseList()) do
-		IIfA:SetCollectHouseStatus(houseName, value)
-	end
-end
-function IIfA:SetCollectHouseStatus(houseName, value)
-	local houseId = IIfA:GetHouseList()[houseName]
-	IIfA.data.collectHouseData[houseId] = value
-	IIfA:GetTrackedBags()[houseId] 		= value
-	if not value then
-		IIfA:ClearLocationData(houseId)
-	end
+	return IIfA.data.b_collectHouses
 end
 
 function IIfA:GetTrackedBags()
 	return IIfA.trackedBags
+end
+
+function IIfA:GetTrackedHousIds()
+	local ret = {}
+	for id, trackIt in pairs(IIfA.data.collectHouseData) do
+		if trackIt then 
+			table.insert(ret, id)
+		end
+	end
+	return ret
+end
+function IIfA:GetIgnoredHousIds()
+	local ret = {}
+	for id, trackIt in pairs(IIfA.data.collectHouseData) do
+		if not trackIt then table.insert(ret, id) end
+	end
+	return ret
+end
+
+function IIfA:GetHouseIdFromName(houseName)
+	return IIfA.houseNameToIdTbl[houseName]
+end
+function IIfA:GetTrackingWithHouseNames()
+	local ret = {}
+	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
+		ret[GetRealCollectibleName(collectibleId)] = true
+	end
+	return ret
+end
+function IIfA:RebuildHouseMenuDropdowns()
+	local tracked = {}
+	local ignored = {}
+	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
+		local collectibleName = GetRealCollectibleName(collectibleId)
+		-- cache house name for lookup
+		IIfA.houseNameToIdTbl[collectibleName] = collectibleId
+		local targetTable = (trackIt and tracked) or ignored
+		table.insert(targetTable, collectibleName)		
+	end
+	IIfA.houseNamesIgnored = ignored
+	IIfA.houseNamesTracked = tracked
+end
+function IIfA:GetIgnoredHouseNames()
+	if nil == IIfA.houseNamesIgnored then
+		IIfA:RebuildHouseMenuDropdowns()
+	end
+	return IIfA.houseNamesIgnored
+end
+function IIfA:GetTrackedHouseNames()
+	if nil == IIfA.houseNamesIgnored then
+		IIfA:RebuildHouseMenuDropdowns()
+	end
+	return IIfA.houseNamesTracked
+end
+
+function IIfA:GetAllHouseIds()
+	local ret = {}
+	for id, trackIt in pairs(IIfA.data.collectHouseData) do
+		table.insert(ret, id)
+	end
+	return ret
+end
+function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
+	if tonumber(houseCollectibleId) ~= houseCollectibleId then 
+		realId = IIfA:GetHouseIdFromName(houseCollectibleId)
+		if not realId then d(houseCollectibleId); return end
+		houseCollectibleId = realId
+	end
+	IIfA.data.collectHouseData[houseCollectibleId] 	= trackIt
+	IIfA:GetTrackedBags()[houseCollectibleId] 		= trackIt
+	IIfA:RebuildHouseMenuDropdowns()
+	if not trackIt then
+		IIfA:ClearLocationData(houseCollectibleId)
+	else -- try rescanning, in case we are in the house right now
+		IIfA:RescanHouse()
+	end
+end
+
+function IIfA:SetHouseTracking(value) 
+	IIfA.data.b_collectHouses = value 
+	if value then
+		IIfA:RebuildHouseMenuDropdowns()
+	end
 end

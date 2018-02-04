@@ -24,11 +24,13 @@ function IIfA:DeleteGuildData(name)
 	end
 end
 
-function IIfA:CollectGuildBank()
-	
+function IIfA:CollectGuildBank()	
 
 	-- add roomba support
-	if Roomba and Roomba.WorkInProgress and Roomba.WorkInProgress() then return  end
+	if Roomba and Roomba.WorkInProgress and Roomba.WorkInProgress() then 
+		CALLBACK_MANAGER:FireCallbacks("Roomba-EndStacking", function() IIfA:CollectGuildBank() end)
+		return
+	end
 	 
 	local curGB = GetSelectedGuildBankId()
 
@@ -232,15 +234,15 @@ end
 
 
 
-function IIfA:ScanHouse(reset)
+function IIfA:RescanHouse(houseCollectibleId)
 	
-	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	if not houseCollectibleId then return end
+	
 	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
 
-	if reset then 
-		IIfA:ClearLocationData(houseCollectibleId)
-	end
-
+	-- it's easier to throw everything away and re-scan than to conditionally update
+	IIfA:ClearLocationData(houseCollectibleId)
 	
 	local function getAllPlacedFurniture()
 		local ret = {}
@@ -256,7 +258,6 @@ function IIfA:ScanHouse(reset)
 		end	
 	end
 	
-	local houseCollectibleId =  GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	local items = getAllPlacedFurniture()
 	for itemLink, itemCount in pairs(items) do
 		IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
@@ -433,31 +434,6 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 			end
 --		end
 	end
-end
-
-IIfA.HouseList = nil
-function IIfA:GetHouseList()
-	if not IIfA.HouseList then 
-		IIfA.HouseList = {}
-		for index=1,GetTotalCollectiblesByCategoryType(COLLECTIBLE_CATEGORY_TYPE_HOUSE) do 			
-			local collectibleId = GetCollectibleIdFromType(COLLECTIBLE_CATEGORY_TYPE_HOUSE, index)
-			if IsCollectibleUnlocked(collectibleId) then 
-				local name = GetCollectibleNickname(collectibleId)
-				if name == EMPTY_STRING then name = GetCollectibleName(collectibleId) end
-				IIfA.HouseList[name] = collectibleId
-			end
-		end	
-	end
-	return IIfA.HouseList
-end
-
-function IIfA:BuildHouseList()
-	for houseName, collectibleId in pairs(IIfA:GetHouseList()) do
-		if nil == IIfA.data.collectHouseData[collectibleId] then
-			IIfA.data.collectHouseData[collectibleId] = IIfA.data.collectHouseData.All			
-		end
-		IIfA.trackedBags[collectibleId] = IIfA.data.collectHouseData[collectibleId]	
-	end	
 end
 
 
