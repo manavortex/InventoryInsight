@@ -455,7 +455,15 @@ function IIfA_onLoad(eventCode, addOnName)
 		end
 		IIfA.data.DBv3 = dbv3
 	end
-
+	
+	-- keep EU and US items apart
+	local worldName = GetWorldName():gsub(" Megaserver", "")
+	IIfA.data[worldName] = IIfA.data[worldName] or {}
+	if nil == IIfA.data[worldName].DBv3 then 
+		 IIfA.data[GetWorldName()].DBv3 = IIfA.data.DBv3
+	end
+	IIfA.database = IIfA.data[GetWorldName()].DBv3
+	
 	IIfA:ActionLayerInventoryUpdate()
 
 	if not ObjSettings.frameSettings.hud.hidden then
@@ -475,7 +483,7 @@ function IIfA:MakeBSI()
 	local bs = {}
 	local idx
 	local itemLink, DBItem, locname, data
-	for itemLink, DBItem in pairs(IIfA.data.DBv3) do
+	for itemLink, DBItem in pairs(IIfA.database) do
 		for locname, data in pairs(DBItem.locations) do
 			if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
 				(data.bagID ~= BAG_BACKPACK and data.bagID ~= BAG_WORN) then
@@ -557,7 +565,7 @@ end
 
 -- used for testing - wipes all craft bag data
 function IIfA:clearvbag()
-	for itemLink, DBItem in pairs(IIfA.data.DBv3) do
+	for itemLink, DBItem in pairs(IIfA.database) do
 		for locationName, locData in pairs(DBItem.locations) do
 --			if locData.bagID ~= nil then
 				if locData.bagID == BAG_VIRTUAL then

@@ -351,7 +351,7 @@ function IIfA:UpdateScrollDataLinesData()
 
 	local index = 0
 	local dataLines = {}
-	local DBv3 = IIfA.data.DBv3
+	local DBv3 = IIfA.database
 	local iLink, itemLink, iconFile, itemQuality, tempDataLine = nil
 	local itemTypeFilter, itemCount = 0
 	local match = false
@@ -648,7 +648,7 @@ function IIfA:QueryAccountInventory(itemLink)
 		itemLink = IIfA:GetItemID(itemLink)
 	end
 
-	local item = IIfA.data.DBv3[itemLink]
+	local item = IIfA.database[itemLink]
 
 	if ((queryItem.link ~= nil) and (item ~= nil)) then
 		for locationName, location in pairs(item.locations) do

@@ -322,8 +322,8 @@ end
 function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
 	if not IIfA.trackedBags[bagId] then return end
 	
-	IIfA.data.DBv3 = IIfA.data.DBv3 or {}
-	local DBv3 = IIfA.data.DBv3
+	IIfA.database = IIfA.database or {}
+	local DBv3 = IIfA.database
 
 	if fromXfer == nil then
 		fromXfer = false
@@ -509,7 +509,7 @@ end
 
 function IIfA:ClearUnowned()
 -- 2015-3-7 Assembler Maniac - new code added to go through full inventory list, remove any un-owned items
-	local DBv3 = IIfA.data.DBv3
+	local DBv3 = IIfA.database
 	local n, ItemLink, DBItem
 	local ItemOwner, ItemData
 	for ItemLink, DBItem in pairs(DBv3) do
@@ -537,13 +537,13 @@ end
 
 
 function IIfA:ClearLocationData(location)
-	local DBv3 = IIfA.data.DBv3
+	local DBv3 = IIfA.database
 	local itemLocation = nil
 	local LocationCount = 0
 	local itemName, itemData
 
 	if(DBv3)then
-		for itemName, itemData in pairs(IIfA.data.DBv3) do
+		for itemName, itemData in pairs(DBv3) do
 			itemLocation = itemData.locations[location]
 			if (itemLocation) then
 				itemData.locations[location] = nil
@@ -600,7 +600,7 @@ local function GetItemIdentifier(itemLink)
 end
 
 function IIfA:RenameItems()
-	local DBv3 = IIfA.data.DBv3
+	local DBv3 = IIfA.database
 	local item = nil
 	local itemName
 
