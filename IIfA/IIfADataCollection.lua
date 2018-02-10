@@ -1,7 +1,8 @@
-local IIfA = IIfA
-local EMPTY_STRING = ""
+local IIfA 			= IIfA
+local EMPTY_STRING 	= ""
 
-	
+local task 			= LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task			= task	
 local function grabBagContent(bagId)
 	local bagItems = GetBagSize(bagId)
 	for slotNum=0, bagItems, 1 do
@@ -64,15 +65,19 @@ function IIfA:CollectGuildBank()
 		IIfA.data.guildBanks[curGuild] = {}
 		IIfA.data.guildBanks[curGuild].bCollectData = true		-- default to true just so it's here and ok
 	end
-	local guildData = IIfA.data.guildBanks[curGuild]
-	guildData.items = #ZO_GuildBankBackpack.data
-	guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
-	IIfA:ClearLocationData(curGuild)
-	IIfA:DebugOut(" - " .. #ZO_GuildBankBackpack.data .. " items")
-	for i=1, #ZO_GuildBankBackpack.data do
-		local slotIndex = ZO_GuildBankBackpack.data[i].data.slotIndex
-		IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
-	end
+	
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		local guildData = IIfA.data.guildBanks[curGuild]
+		guildData.items = #ZO_GuildBankBackpack.data
+		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
+		IIfA:ClearLocationData(curGuild)
+		IIfA:DebugOut(" - " .. #ZO_GuildBankBackpack.data .. " items")
+		for i=1, #ZO_GuildBankBackpack.data do
+			local slotIndex = ZO_GuildBankBackpack.data[i].data.slotIndex
+			IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
+		end
+	end)
 --	d("IIfA - Guild Bank Collected - " .. curGuild)
 end
 
@@ -87,11 +92,20 @@ local function scanBags()
 	IIfA:ClearLocationData(IIfA.currentCharacterId)
 	
 	if not IIfA:IsCharacterEquipIgnored(playerName) then 
-		grabBagContent(BAG_WORN)
+		-- call with libAsync to avoid lags
+		task:Call(function()
+			grabBagContent(BAG_WORN)
+		end)
 	end	
 	if not IIfA:IsCharacterInventoryIgnored(playerName) then 
-		grabBagContent(BAG_BACKPACK)
-	end		
+		-- call with libAsync to avoid lags
+		task:Call(function()
+			grabBagContent(BAG_BACKPACK)
+		end)
+	end
+	task:Call(function()
+		IIfA:MakeBSI()
+	end)
 end
 IIfA.ScanCurrentCharacter = scanBags
 
@@ -105,8 +119,12 @@ local function tryScanHouseBank()
 	if IsCollectibleUnlocked(collectibleId) then
 		local collectibleName = GetCollectibleNickname(collectibleId)
 		if collectibleName == EMPTY_STRING then collectibleName = GetCollectibleName(collectibleId) end
-		IIfA:ClearLocationData(bagId)
-		grabBagContent(bagId)
+		-- call with libAsync to avoid lags
+		task:Call(function()
+			IIfA:ClearLocationData(bagId)
+		end):Then(function()
+			grabBagContent(bagId)
+		end)
 	end
 	
 	return true
@@ -114,25 +132,46 @@ end
 
 function IIfA:ScanBank()
 	if tryScanHouseBank() then return end
-	IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-	grabBagContent(BAG_BANK)
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+	end):Then(function()
+		grabBagContent(BAG_BANK)
+	end)
 	
 	local slotNum = nil
 	if HasCraftBagAccess() then		
-		grabBagContent(BAG_SUBSCRIBER_BANK)
-		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-		slotNum = GetNextVirtualBagSlotId(slotNum)
-		while slotNum ~= nil do
-			IIfA:EvalBagItem(BAG_VIRTUAL, slotNum)
+		task:Call(function()
+			grabBagContent(BAG_SUBSCRIBER_BANK)
+		end):Then(function()
+			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+		end):Then(function()
 			slotNum = GetNextVirtualBagSlotId(slotNum)
-		end
+			while slotNum ~= nil do
+				IIfA:EvalBagItem(BAG_VIRTUAL, slotNum)
+				slotNum = GetNextVirtualBagSlotId(slotNum)
+			end
+		end)
+	end
+	
+end
+
+function IIfA:UpdateBSI(bagId, slotId, locationId)
+	if locationId then
+		IIfA:MakeBSI()
+	elseif  nil ~= bagId and  nil ~= slotId and nil ~= IIfA.BagSlotInfo[bagId] then
+		IIfA.BagSlotInfo[bagId][slotId] = GetItemLink(bagId, slotId)
 	end
 end
+
 
 -- only grabs the content of bagpack and worn on the first login - hence we set the function to insta-return below.
 function IIfA:OnFirstInventoryOpen()
 	scanBags()
-	IIfA:ScanBank()	
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		IIfA:ScanBank()	
+	end)
 	IIfA.OnFirstInventoryOpen = function() return end	
 end
 
@@ -183,37 +222,49 @@ function IIfA:CleanEmptyGuildBug()
 end
 
 function IIfA:GuildBankReady()
-	IIfA:DebugOut("GuildBankReady...")
-	IIfA.isGuildBankReady = false
-	IIfA:UpdateGuildBankData()
-	IIfA:CleanEmptyGuildBug()
-	IIfA:CollectGuildBank()
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		IIfA:DebugOut("GuildBankReady...")
+		IIfA.isGuildBankReady = false
+		IIfA:UpdateGuildBankData()
+	end):Then(function()
+		IIfA:CleanEmptyGuildBug()
+	end):Then(function()
+		IIfA:CollectGuildBank()
+	end)
 end
 
 function IIfA:GuildBankDelayReady()
 	IIfA:DebugOut("GuildBankDelayReady...")
 	if not IIfA.isGuildBankReady then
 		IIfA.isGuildBankReady = true
-		zo_callLater(function() IIfA:GuildBankReady() end, 1750)
+		-- call with libAsync to avoid lags
+		task:Call(function()
+			IIfA:GuildBankReady()
+		end)
 	end
 end
 
 function IIfA:GuildBankAddRemove(eventID, slotNum)
 	IIfA:DebugOut("Guild Bank Add or Remove...")
-	IIfA:UpdateGuildBankData()
-	IIfA:CleanEmptyGuildBug()
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		IIfA:UpdateGuildBankData()
+		IIfA:CleanEmptyGuildBug()
+	end):Then(function()
 	--IIfA:CollectGuildBank()
-	local dbItem, itemKey
-	if eventID == EVENT_GUILD_BANK_ITEM_ADDED then
---		d("GB Add")
-		dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotNum, true, 0)
-		IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
-	else
---		d("GB Remove")
---		d(GetItemLink(BAG_GUILDBANK, slotNum))
---		dbItem, itemKey = IIfA:EvalBagItem(BAG_BACKPACK, slotNum)
---		IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
-	end
+		local dbItem, itemKey
+		if eventID == EVENT_GUILD_BANK_ITEM_ADDED then
+	--		d("GB Add")
+			dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotNum, true, 0)
+			IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
+		else
+	--		d("GB Remove")
+	--		d(GetItemLink(BAG_GUILDBANK, slotNum))
+	--		dbItem, itemKey = IIfA:EvalBagItem(BAG_BACKPACK, slotNum)
+	--		IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
+		end
+	end)
 end
 
 function IIfA:ActionLayerInventoryUpdate()
@@ -244,7 +295,8 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotNum, isNewItem, itemSoun
 		isNewItem = "False"
 	end
 
-	IIfA:DebugOut(zo_strformat("Inv Slot Upd - <<1>>, <<2>>, <<3>>, <<4>>, <<5>>, <<6>>, <<7>>", GetItemLink(bagId, slotNum, LINK_STYLE_NORMAL), eventCode, bagId, slotNum, inventoryUpdateReason, qty, isNewItem))
+	IIfA:DebugOut(zo_strformat("Inv Slot Upd - <<1>>, <<2>>, <<3>>, <<4>>, <<5>>, <<6>>, <<7>>", 
+		GetItemLink(bagId, slotNum, LINK_STYLE_NORMAL), eventCode, bagId, slotNum, inventoryUpdateReason, qty, isNewItem))
 	local dbItem, itemKey
 	dbItem, itemKey = self:EvalBagItem(bagId, slotNum, true, qty)
 --	if dbItem ~= nil and (bagId == BAG_BANK or bagId == BAG_SUBSCRIBER_BANK or bagId == BAG_BACKPACK) then
@@ -261,8 +313,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 	
 	if not IIfA:GetTrackedBags()[houseCollectibleId] then return end
 
-	-- it's easier to throw everything away and re-scan than to conditionally update
-	IIfA:ClearLocationData(houseCollectibleId)
+	
 	
 	local function getAllPlacedFurniture()
 		local ret = {}
@@ -278,10 +329,16 @@ function IIfA:RescanHouse(houseCollectibleId)
 		end	
 	end
 	
-	local items = getAllPlacedFurniture()
-	for itemLink, itemCount in pairs(items) do
-		IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
-	end
+	-- call with libAsync to avoid lags
+	task:Call(function()
+		-- it's easier to throw everything away and re-scan than to conditionally update
+		IIfA:ClearLocationData(houseCollectibleId)
+	end):Then(function()
+		local items = getAllPlacedFurniture()
+		for itemLink, itemCount in pairs(items) do
+			IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
+		end
+	end)
 	
 end
 
@@ -330,8 +387,15 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemNam
 	end
 
 	itemName = itemName or GetItemName(bagId, slotNum) or EMPTY_STRING
+	if itemName == "" then 
+		if nil ~= IIfA.BagSlotInfo[bagId] and nil ~= IIfA.BagSlotInfo[bagId][slotNum] then
+			itemLink = IIfA.BagSlotInfo[bagId][slotNum]
+			itemName = GetItemLinkItemName(bagId, slotNum)
+		end
+	end
+	
 
-	IIfA:DebugOut(zo_strformat("EvalBagItem - <<1>>/<<2>> <<3>>", bagId, slotNum, itemName))
+	IIfA:DebugOut(zo_strformat("EvalBagItem bagId/slotId: <<1>>/<<2>> itemName: <<3>>", bagId, slotNum, itemName))
 
 	if itemName > EMPTY_STRING then
 		itemLink = itemLink or GetItemLink(bagId, slotNum, LINK_STYLE_BRACKETS)
@@ -428,7 +492,7 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 	else
 		itemLink = itemKey
 	end
-	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>>x<<3>> in <<2>>", itemLink, bagID, slotNum))
+	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotNum))
 
 	for locName, data in pairs(dbItem.locations) do
 --		if data.bagID ~= nil then	-- it's an item, not attribute
@@ -457,6 +521,8 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 			end
 --		end
 	end
+	
+	IIfA:UpdateBSI(bagID, slotNum)
 end
 
 
@@ -468,35 +534,39 @@ function IIfA:CollectAll()
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
 	for bagId, tracked in ipairs(BagList) do
+		-- call with libAsync to avoid lags
+		task:Call(function()
 		
-		bagItems = GetBagSize(bagId)
-		if(bagId == BAG_WORN)then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
-			IIfA:ClearLocationData(IIfA.currentCharacterId)
-		elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
-			IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-		elseif(bagId == BAG_VIRTUAL)then
-			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-		elseif GetAPIVersion() >= 100022 then -- 20.1. mana: bag bag bag
-			local collectibleId = GetCollectibleForHouseBankBag(bagId)
-			if IsCollectibleUnlocked(collectibleId) then
-				local name = GetCollectibleNickname(collectibleId) or GetCollectibleName(collectibleId)
-				IIfA:ClearLocationData(name)
-			end
-		end
---		d("  BagItemCount=" .. bagItems)
-		if bagId ~= BAG_VIRTUAL and tracked then
-			for slotNum=0, bagItems, 1 do
-				dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
-			end
-		else
-			if HasCraftBagAccess() then
-				slotNum = GetNextVirtualBagSlotId(nil)
-				while slotNum ~= nil do
-					IIfA:EvalBagItem(bagId, slotNum)
-					slotNum = GetNextVirtualBagSlotId(slotNum)
+			bagItems = GetBagSize(bagId)
+			if(bagId == BAG_WORN)then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
+				IIfA:ClearLocationData(IIfA.currentCharacterId)
+			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
+				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+			elseif(bagId == BAG_VIRTUAL)then
+				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+			elseif GetAPIVersion() >= 100022 then -- 20.1. mana: bag bag bag
+				local collectibleId = GetCollectibleForHouseBankBag(bagId)
+				if IsCollectibleUnlocked(collectibleId) then
+					local name = GetCollectibleNickname(collectibleId) or GetCollectibleName(collectibleId)
+					IIfA:ClearLocationData(name)
 				end
 			end
-		end
+	--		d("  BagItemCount=" .. bagItems)
+			if bagId ~= BAG_VIRTUAL and tracked then
+				for slotNum=0, bagItems, 1 do
+					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
+				end
+			else
+				if HasCraftBagAccess() then
+					slotNum = GetNextVirtualBagSlotId(nil)
+					while slotNum ~= nil do
+						IIfA:EvalBagItem(bagId, slotNum)
+						slotNum = GetNextVirtualBagSlotId(slotNum)
+					end
+				end
+			end
+			
+		end)
 	end
 
 	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
