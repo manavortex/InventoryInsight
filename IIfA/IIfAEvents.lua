@@ -16,18 +16,6 @@ local function IIfA_InventorySlotUpdate(...)
 	IIfA:InventorySlotUpdate(...)
 end
 
-local function IIfA_CollectibleUpdate(eventCode, collectibleId, justUnlocked)
-	if justUnlocked then return end
-	if GetAPIVersion() < 100022 then return end
-	
-	local collectibleData = ZO_COLLECTIBLE_DATA_MANAGER:GetCollectibleDataById(collectibleId)
-    if not collectibleData:IsCategoryType(COLLECTIBLE_CATEGORY_TYPE_HOUSE_BANK) then return end
-	local name 		= GetCollectibleName(collectibleId)
-	local nickName 	= GetCollectibleNickname(collectibleId)
-	
-
-end
-
 local function IIfA_ScanHouse(eventCode, oldMode, newMode)
 	if newMode == "showing" or newMode == "shown" then return end
 	-- are we listening? 
@@ -117,9 +105,6 @@ function IIfA:RegisterForEvents()
 -- not helpful, no link at all on this callback
 --	SHARED_INVENTORY:RegisterCallback("SlotRemoved", IIfA_EventDump)
 --	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIfA_EventDump)
-
-	-- react to players possibly renaming their storage chests
-	em:RegisterForEvent("IIFA_Collectible_Updated", 	EVENT_COLLECTIBLE_UPDATED, IIfA_CollectibleUpdate)
 	
 	
 	-- Events for data collection

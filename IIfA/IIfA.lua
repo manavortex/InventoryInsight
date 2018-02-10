@@ -469,12 +469,18 @@ function IIfA_onLoad(eventCode, addOnName)
 	if not ObjSettings.frameSettings.hud.hidden then
 		IIfA:ProcessSceneChange("hud", "showing", "shown")
 	end
-	--	IIfA:MakeBSI()
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
-	IIfA:ScanCurrentCharacter()
+	
 	IIfA:ScanBank()
+	IIfA:ScanCurrentCharacter()
+	zo_callLater(function()
+		IIfA:MakeBSI()
+	end, 5000)
+	
+	
+
 end
 
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
