@@ -460,7 +460,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	local worldName = GetWorldName():gsub(" Megaserver", "")
 	IIfA.data[worldName] = IIfA.data[worldName] or {}
 	if nil == IIfA.data[worldName].DBv3 then 
-		 IIfA.data[GetWorldName()].DBv3 = IIfA.data.DBv3
+		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
 	IIfA.database = IIfA.data[worldName].DBv3
 	

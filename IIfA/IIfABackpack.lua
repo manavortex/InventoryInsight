@@ -51,7 +51,7 @@ function IIfA:SetActiveFilter(value)
 	enableFilterButton(value)
 
 	IIfA:UpdateScrollDataLinesData()
-
+	IIfA:UpdateInventoryScroll()
 end
 
 function IIfA:GetActiveSubFilter()
@@ -67,6 +67,7 @@ function IIfA:SetActiveSubFilter(value)
 		IIfA.activeSubFilter = value
 	end
 	IIfA:UpdateScrollDataLinesData()
+	IIfA:UpdateInventoryScroll()
 end
 
 
@@ -401,7 +402,7 @@ function IIfA:UpdateScrollDataLinesData()
 	IIFA_GUI_ListHolder.dataLines = dataLines
 	sort(IIFA_GUI_ListHolder.dataLines)
 	IIFA_GUI_ListHolder.dataOffset = 0
-	IIfA:UpdateInventoryScroll()
+	
 end
 
 
@@ -544,11 +545,9 @@ function IIfA:CreateInventoryScroll()
 		IIfA:SetItemCountPosition()
 	end
 
-	IIfA:UpdateScrollDataLinesData()
-
 	-- setup slider
---	local tex = "/esoui/art/miscellaneous/scrollbox_elevator.dds"
---	IIFA_GUI_ListHolder_Slider:SetThumbTexture(tex, tex, tex, 16, 50, 0, 0, 1, 1)
+	--	local tex = "/esoui/art/miscellaneous/scrollbox_elevator.dds"
+	--	IIFA_GUI_ListHolder_Slider:SetThumbTexture(tex, tex, tex, 16, 50, 0, 0, 1, 1)
 	IIFA_GUI_ListHolder_Slider:SetMinMax(0, #IIFA_GUI_ListHolder.dataLines - IIFA_GUI_ListHolder.maxLines)
 
 	return IIFA_GUI_ListHolder.lines
@@ -687,72 +686,6 @@ function IIfA:QueryAccountInventory(itemLink)
 	return queryItem
 end
 
-local function createInventoryDropdown()
-	local comboBox, i
-
-	if IIFA_GUI_Header_Dropdown.comboBox ~= nil then
-		comboBox = IIFA_GUI_Header_Dropdown.comboBox
-	else
-		comboBox = ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown)
-		IIFA_GUI_Header_Dropdown.comboBox = comboBox
-	end
-
-	function OnItemSelect(_, choiceText, choice)
---		d("OnItemSelect", choiceText, choice)
-		IIfA:SetInventoryListFilter(choiceText)
-	  	PlaySound(SOUNDS.POSITIVE_CLICK)
-	end
-
-	comboBox:SetSortsItems(false)
-
-	local validChoices =  IIfA:GetAccountInventoryList()
-
-	for i = 1, #validChoices do
-       	entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
-		comboBox:AddItem(entry)
-		if validChoices[i] == IIfA:GetInventoryListFilter() then
-			comboBox:SetSelectedItem(validChoices[i])
-		end
-	end
-
-	return IIFA_GUI_Header_Dropdown
-end
-
-
-local function createInventoryDropdownQuality()
-	local comboBox, i
-
-	IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
-
-	local validChoices =  {}
-	table.insert(validChoices, "Any")
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_NORMAL, "Normal"))
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_MAGIC, "Magic"))
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_ARCANE, "Arcane"))
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact"))
-	table.insert(validChoices, getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary"))
-
-	local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox	
-
-	function OnItemSelect(_, choiceText, choice)
-		IIfA:SetInventoryListFilterQuality(getQualityDict()[choiceText])
-	  	PlaySound(SOUNDS.POSITIVE_CLICK)
-	end
-
-	comboBox:SetSortsItems(false)
-
-	for i = 1, #validChoices do
-       	entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)		
-		comboBox:AddItem(entry)
-		if getQualityDict()[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
-			comboBox:SetSelectedItem(validChoices[i])
-		end
-	end
-
-	return IIFA_GUI_Header_Dropdown
-end
-
 function IIfA:SetSceneVisible(name, value)
 	IIfA:GetSettings().frameSettings[name].hidden = not value
 end
@@ -768,10 +701,76 @@ end
 
 
 function IIfA:SetupBackpack()
+
+	local function createInventoryDropdown()
+		local comboBox, i
+
+		if IIFA_GUI_Header_Dropdown.comboBox ~= nil then
+			comboBox = IIFA_GUI_Header_Dropdown.comboBox
+		else
+			comboBox = ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown)
+			IIFA_GUI_Header_Dropdown.comboBox = comboBox
+		end
+
+		function OnItemSelect(_, choiceText, choice)
+	--		d("OnItemSelect", choiceText, choice)
+			IIfA:SetInventoryListFilter(choiceText)
+			PlaySound(SOUNDS.POSITIVE_CLICK)
+		end
+
+		comboBox:SetSortsItems(false)
+
+		local validChoices =  IIfA:GetAccountInventoryList()
+
+		for i = 1, #validChoices do
+			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
+			comboBox:AddItem(entry)
+			if validChoices[i] == IIfA:GetInventoryListFilter() then
+				comboBox:SetSelectedItem(validChoices[i])
+			end
+		end
+
+		return IIFA_GUI_Header_Dropdown
+	end
+
+	local function createInventoryDropdownQuality()
+		local comboBox, i
+
+		IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
+
+		local validChoices =  {}
+		table.insert(validChoices, "Any")
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_NORMAL, "Normal"))
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_MAGIC, "Magic"))
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_ARCANE, "Arcane"))
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact"))
+		table.insert(validChoices, getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary"))
+
+		local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox	
+
+		function OnItemSelect(_, choiceText, choice)
+			IIfA:SetInventoryListFilterQuality(getQualityDict()[choiceText])
+			PlaySound(SOUNDS.POSITIVE_CLICK)
+		end
+
+		comboBox:SetSortsItems(false)
+
+		for i = 1, #validChoices do
+			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)		
+			comboBox:AddItem(entry)
+			if getQualityDict()[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
+				comboBox:SetSelectedItem(validChoices[i])
+			end
+		end
+
+		return IIFA_GUI_Header_Dropdown
+	end
+
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
 	IIfA:CreateInventoryScroll()
 	createInventoryDropdown()
-	createInventoryDropdownQuality()
+	createInventoryDropdownQuality()	
 	IIfA:GuiOnSort(true)
 end
 

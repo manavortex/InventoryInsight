@@ -390,12 +390,14 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemNam
 	if itemName == "" then 
 		if nil ~= IIfA.BagSlotInfo[bagId] and nil ~= IIfA.BagSlotInfo[bagId][slotNum] then
 			itemLink = IIfA.BagSlotInfo[bagId][slotNum]
-			itemName = GetItemLinkItemName(bagId, slotNum)
+			itemName = GetItemLinkName(bagId, slotNum)
 		end
 	end
-	
+	if not itemCount then
+		_, itemCount =  GetItemInfo(bagId, slotNum)
+	end
 
-	IIfA:DebugOut(zo_strformat("EvalBagItem bagId/slotId: <<1>>/<<2>> itemName: <<3>>", bagId, slotNum, itemName))
+	--  IIfA:DebugOut(zo_strformat("EvalBagItem bagId/slotId: <<1>>/<<2>> name/count: <<3>> x <<4>>", bagId, slotNum, itemName, itemCount))
 
 	if itemName > EMPTY_STRING then
 		itemLink = itemLink or GetItemLink(bagId, slotNum, LINK_STYLE_BRACKETS)
@@ -438,7 +440,7 @@ function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemNam
 		elseif(bagId == BAG_BANK or bagId == BAG_SUBSCRIBER_BANK) then
 			location = GetString(IIFA_BAG_BANK)
 		elseif(bagId == BAG_VIRTUAL) then
-			location =GetString(IIFA_BAG_CRAFTBAG)
+			location = GetString(IIFA_BAG_CRAFTBAG)
 		elseif(bagId == BAG_GUILDBANK) then
 			location = GetGuildName(GetSelectedGuildBankId())
 		elseif GetAPIVersion() >= 100022 and 0 < GetCollectibleForHouseBankBag(bagId) then
@@ -514,8 +516,8 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 				if itemLinkCheck ~= itemLink then
 					if bagID ~= data.bagID and slotNum ~= data.bagSlot then
 --						d("should remove " .. itemLink .. " from " .. locName)
-					-- it's no longer the same item, or it's not there at all
-						self.data.DBv3[itemKey].locations[locName] = nil
+					-- it's no longer the same item, or it's not there at all						
+						IIfA.database[itemKey].locations[locName] = nil
 					end
 				end
 			end

@@ -312,6 +312,7 @@ function IIfA:GuiOnSort(initialised)
 		icon:SetAlpha(1)
 	end
 	IIfA:UpdateScrollDataLinesData()
+	IIfA:UpdateInventoryScroll()
 end
 
 function IIfA:GuiOnScroll(control, delta)
