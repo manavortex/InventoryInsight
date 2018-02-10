@@ -51,7 +51,7 @@ function CharBagFrame:ComputeColorAndText(spaceCurr, spaceMax)
 	local usedBagPercent = tonumber(spaceCurr) * 100 / tonumber(spaceMax)
 	local cs = ""
 	if spaceCurr == spaceMax then
-		return ColorStart(self.ColorFull)
+		cs = ColorStart(self.ColorFull)
 	else
 		if usedBagPercent >= self.parent.BagSpaceAlert.threshold then
 			cs = ColorStart(self.ColorAlert)
