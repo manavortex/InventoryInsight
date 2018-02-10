@@ -462,7 +462,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	if nil == IIfA.data[worldName].DBv3 then 
 		 IIfA.data[GetWorldName()].DBv3 = IIfA.data.DBv3
 	end
-	IIfA.database = IIfA.data[GetWorldName()].DBv3
+	IIfA.database = IIfA.data[worldName].DBv3
 	
 	IIfA:ActionLayerInventoryUpdate()
 
