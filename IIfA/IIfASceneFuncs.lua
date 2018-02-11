@@ -115,11 +115,11 @@ function IIfA:ToggleInventoryFrame()
 		SetGameCameraUIMode(true)
 		IIfA:GuiResizeScroll()
     	IIfA:RefreshInventoryScroll()
-		IIFA_GUI_SearchBox:TakeFocus()
 	end
 	if not IIfA.data.dontFocusSearch then 
-		IIfA:SaveFrameInfo("ToggleInventoryFrame")
+		IIFA_GUI_SearchBox:TakeFocus()
 	end
+	IIfA:SaveFrameInfo("ToggleInventoryFrame")
 end
 
 
