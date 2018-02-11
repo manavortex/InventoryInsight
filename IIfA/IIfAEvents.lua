@@ -25,11 +25,11 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
 	if #itemLink == 0 then itemLink = (nil ~= IIfA.BagSlotInfo[bagId] and IIfA.BagSlotInfo[bagId][slotId]) end
 	
-	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>, updateReason: <<5>>", 
+	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>", 
 		itemLink, bagId, slotId, qty, inventoryUpdateReason, tostring(isNewItem))
 	
 	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
-	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, true, qty, itemLink)
+	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not isNewItem, qty, itemLink)
 	
 end
 

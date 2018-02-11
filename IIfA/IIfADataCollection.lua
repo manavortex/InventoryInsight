@@ -8,8 +8,8 @@ local function p(...) IIfA:DebugOut(...) end
 
 local function grabBagContent(bagId, override)
 	local bagItems = GetBagSize(bagId)
-	for slotNum=0, bagItems, 1 do
-		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum, false, nil, nil, nil, nil, override)
+	for slotId=0, bagItems, 1 do
+		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
 end
 
@@ -145,17 +145,17 @@ function IIfA:ScanBank()
 		grabBagContent(BAG_BANK)
 	end)
 	
-	local slotNum = nil
+	local slotId = nil
 	if HasCraftBagAccess() then		
 		task:Call(function()
 			grabBagContent(BAG_SUBSCRIBER_BANK)
 		end):Then(function()
 			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 		end):Then(function()
-			slotNum = GetNextVirtualBagSlotId(slotNum)
-			while slotNum ~= nil do
-				IIfA:EvalBagItem(BAG_VIRTUAL, slotNum)
-				slotNum = GetNextVirtualBagSlotId(slotNum)
+			slotId = GetNextVirtualBagSlotId(slotId)
+			while slotId ~= nil do
+				IIfA:EvalBagItem(BAG_VIRTUAL, slotId)
+				slotId = GetNextVirtualBagSlotId(slotId)
 			end
 		end)
 	end
@@ -256,7 +256,7 @@ function IIfA:GuildBankDelayReady()
 	end
 end
 
-function IIfA:GuildBankAddRemove(eventID, slotNum)
+function IIfA:GuildBankAddRemove(eventID, slotId)
 	IIfA:DebugOut("Guild Bank Add or Remove...")
 	-- call with libAsync to avoid lags
 	task:Call(function()
@@ -267,13 +267,13 @@ function IIfA:GuildBankAddRemove(eventID, slotNum)
 		local dbItem, itemKey
 		if eventID == EVENT_GUILD_BANK_ITEM_ADDED then
 	--		d("GB Add")
-			dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotNum, true, 0)
-			IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
+			dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotId, true, 0)
+			IIfA:ValidateItemCounts(BAG_GUILDBANK, slotId, dbItem, itemKey)
 		else
 	--		d("GB Remove")
-	--		d(GetItemLink(BAG_GUILDBANK, slotNum))
-	--		dbItem, itemKey = IIfA:EvalBagItem(BAG_BACKPACK, slotNum)
-	--		IIfA:ValidateItemCounts(BAG_GUILDBANK, slotNum, dbItem, itemKey)
+	--		d(GetItemLink(BAG_GUILDBANK, slotId))
+	--		dbItem, itemKey = IIfA:EvalBagItem(BAG_BACKPACK, slotId)
+	--		IIfA:ValidateItemCounts(BAG_GUILDBANK, slotId, dbItem, itemKey)
 		end
 	end)
 end
@@ -364,127 +364,171 @@ local function setItemFileEntry(array, key, value)
 	array[key] = value
 end
 
+local function getItemLink(bagId, slotId)
+	if nil == bagId or nil == slotId then return end
+	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
+	if itemLink ~= "" then return itemLink end
+	if nil == IIfA.BagSlotInfo[bagId] then return end
+	return IIfA.BagSlotInfo[bagId][slotId]
+end
+
+local function getItemName(bagId, slotId, itemLink)
+	local itemName = GetItemName(bagId, slotId)
+	if "" ~= itemName then return itemName end
+	if nil == itemLink then return end
+	return GetItemLinkName(itemLink)
+end
+
+local function getItemKey(itemLink, usedInCraftingType, itemType)
+	if usedInCraftingType ~= CRAFTING_TYPE_INVALID and
+	   itemType ~= ITEMTYPE_GLYPH_ARMOR and
+	   itemType ~= ITEMTYPE_GLYPH_JEWELRY and
+	   itemType ~= ITEMTYPE_GLYPH_WEAPON then
+	   return IIfA:GetItemID(itemLink)
+	end
+	itemType = GetItemLinkItemType(itemLink)
+	if  itemType == ITEMTYPE_STYLE_MATERIAL or
+		itemType == ITEMTYPE_ARMOR_TRAIT or
+		itemType == ITEMTYPE_WEAPON_TRAIT or
+		itemType == ITEMTYPE_LOCKPICK or
+		itemType == ITEMTYPE_RAW_MATERIAL or
+		itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
+		itemType == ITEMTYPE_RECIPE then
+		return IIfA:GetItemID(itemLink)
+	end
+	return itemLink
+end
+
+local function getItemCount(bagId, slotId, itemLink)
+	local stackCountBackpack, stackCountBank, stackCountCraftBag, itemCount
+	_, itemCount =  GetItemInfo(bagId, slotId) 
+	if 0 < itemCount then return itemCount end
+	
+	-- try to find it by item link
+	stackCountBackpack, stackCountBank, stackCountCraftBag = GetItemLinkStacks(itemLink)	
+	if 		bagId == BAG_BACKPACK 	and 0 < stackCountBackpack 	then return stackCountBackpack
+	elseif 	bagId == BAG_BANK 		and 0 < stackCountBank 		then return stackCountBank
+	elseif 	bagId == BAG_VIRTUAL 	and 0 < stackCountCraftBag 	then return  stackCountCraftBag end
+	
+	-- return 1 per default
+	return 1
+end
+
+local function getLocation(location, bagId)
+	if(bagId == BAG_BACKPACK or bagId == BAG_WORN) then
+		return IIfA.currentCharacterId
+	elseif(bagId == BAG_BANK or bagId == BAG_SUBSCRIBER_BANK) then
+		return GetString(IIFA_BAG_BANK)
+	elseif(bagId == BAG_VIRTUAL) then
+		return GetString(IIFA_BAG_CRAFTBAG)
+	elseif(bagId == BAG_GUILDBANK) then
+		return GetGuildName(GetSelectedGuildBankId())
+	elseif GetAPIVersion() >= 100022 and 0 < GetCollectibleForHouseBankBag(bagId) then
+		return GetCollectibleForHouseBankBag(bagId)
+	end
+end
+
+function IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
+	if not bagId or not slotId then return end
+	IIfA.BagSlotInfo[bagId] = IIfA.BagSlotInfo[bagId] or {}
+	IIfA.BagSlotInfo[bagId][slotId] = IIfA.BagSlotInfo[bagId][slotId] or itemLink
+end
+
 function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
 	-- d(zo_strformat("trying to add/remove <<1>> x <<2>> from houseCollectibleId <<3>>", itemLink, itemCount, houseCollectibleId))
 	local location = houseCollectibleId
 	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 end
 
-function IIfA:EvalBagItem(bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
+function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 	if not IIfA.trackedBags[bagId] then return end
 	
 	IIfA.database = IIfA.database or {}
 	local DBv3 = IIfA.database
 
-	itemName = itemName or GetItemName(bagId, slotNum) or EMPTY_STRING
-	if itemName == EMPTY_STRING then 
-		if itemLink then 
-			itemName = GetItemLinkName(itemLink)
-		elseif nil ~= IIfA.BagSlotInfo[bagId] and nil ~= IIfA.BagSlotInfo[bagId][slotNum] then
-			itemLink = IIfA.BagSlotInfo[bagId][slotNum]
-			itemName = GetItemLinkName(itemLink)
-		end
+	-- item link is either passed as arg or we need to read it from the BSI
+	itemLink = itemLink or getItemLink(bagId, slotId)
+	
+	-- return if we don't have any item to track
+	if nil == itemLink or #itemLink == 0 then return end
+	
+	
+	-- item nams is either passed or we get it from bag/slot or item link
+	itemName = itemName or getItemName(bagId, slotId, itemLink) or EMPTY_STRING	
+	
+	-- item count is either passed or we have to get it from bag/slot ID or item link
+	itemCount = itemCount or getItemCount(bagId, slotId, itemLink)
+	
+	
+	-- if we have an item link, we save it back to the BSI
+	IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
+	
+	-- get item key from crafting type
+	local usedInCraftingType, itemType = GetItemCraftingInfo(bagId, slotId)
+	
+	
+	local qty, itemQuality
+	_, qty, _, _, _, _, _, itemQuality = GetItemInfo(bagId, slotId)
+	
+	if 0 == qty and itemLink then 
+		itemQuality			= GetItemLinkQuality(itemLink)
+		usedInCraftingType 	= GetItemLinkCraftingSkillType(itemLink)
+		itemType 			= GetItemLinkItemType(itemLink)
 	end
 	
-	IIfA:DebugOut(zo_strformat("EvalBagItem bagId/slotId: <<1>>/<<2>> name/count: <<3>> x <<4>>", bagId, slotNum, itemName, itemCount))
-
-	if not itemCount then
-		_, itemCount =  GetItemInfo(bagId, slotNum)
-	end
-
-	if itemName > EMPTY_STRING then
-		itemLink = itemLink or GetItemLink(bagId, slotNum, LINK_STYLE_BRACKETS)
-		itemKey = itemLink
-		local usedInCraftingType, itemType, extraInfo1, extraInfo2, extraInfo3 = GetItemCraftingInfo(bagId, slotNum)
-
-		if usedInCraftingType ~= CRAFTING_TYPE_INVALID and
-		   itemType ~= ITEMTYPE_GLYPH_ARMOR and
-		   itemType ~= ITEMTYPE_GLYPH_JEWELRY and
-		   itemType ~= ITEMTYPE_GLYPH_WEAPON then
-		   itemKey = IIfA:GetItemID(itemLink)
+	itemKey = getItemKey(itemLink, usedInCraftingType, itemType)
+	
+	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
+	DBitem = DBv3[itemKey]
+	location = 
+	location = locationID or getLocation(location, bagId) or EMPTY_STRING
+	
+	if(DBitem) then
+		DBitemlocation = DBitem.locations[location]
+		if DBitemlocation then
+			DBitemlocation.itemCount = DBitemlocation.itemCount + itemCount
+			DBitemlocation.bagSlot = DBitemlocation.bagSlot or slotId
 		else
-			itemType = GetItemLinkItemType(itemLink)
-			if  itemType == ITEMTYPE_STYLE_MATERIAL or
-				itemType == ITEMTYPE_ARMOR_TRAIT or
-				itemType == ITEMTYPE_WEAPON_TRAIT or
-				itemType == ITEMTYPE_LOCKPICK or
-				itemType == ITEMTYPE_RAW_MATERIAL or
-				itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
-				itemType == ITEMTYPE_RECIPE then
-				itemKey = IIfA:GetItemID(itemLink)
-			end
+			DBitem.locations[location] = {}
+			DBitem.locations[location].bagID = bagId
+			DBitem.locations[location].bagSlot = slotId
+			DBitem.locations[location].itemCount = itemCount
 		end
-		local qty, equipType, itemQuality
-		if not itemLink then 
-			_, qty, _, _, _, equipType, _, itemQuality = GetItemInfo(bagId, slotNum)
-		else
-			qty = 1
-			equipType =  GetItemLinkEquipType(itemLink)
-			itemQuality = GetItemLinkQuality(itemLink)
+		if qty < 1 then
+			DBitem.locations[location].itemCount = getItemCount(bagId, slotId, itemLink)
 		end
-		itemCount = itemCount or qty
-		itemFilterType = GetItemFilterTypeInfo(bagId, slotNum) or 0
-		DBitem = DBv3[itemKey]
-		location = locationID or EMPTY_STRING
-		if(equipType == 0 or bagId ~= BAG_WORN) then equipType = false end
-		if(bagId == BAG_BACKPACK or bagId == BAG_WORN) then
-			location = IIfA.currentCharacterId
-
-		elseif(bagId == BAG_BANK or bagId == BAG_SUBSCRIBER_BANK) then
-			location = GetString(IIFA_BAG_BANK)
-		elseif(bagId == BAG_VIRTUAL) then
-			location = GetString(IIFA_BAG_CRAFTBAG)
-		elseif(bagId == BAG_GUILDBANK) then
-			location = GetGuildName(GetSelectedGuildBankId())
-		elseif GetAPIVersion() >= 100022 and 0 < GetCollectibleForHouseBankBag(bagId) then
-			location = GetCollectibleForHouseBankBag(bagId)
-		end
-		
-		if(DBitem) then
-			DBitemlocation = DBitem.locations[location]
-			if DBitemlocation then				
-				DBitemlocation.itemCount = DBitemlocation.itemCount + itemCount
-				DBitemlocation.bagSlot = DBitemlocation.bagSlot or slotNum
-			else
-				DBitem.locations[location] = {}
-				DBitem.locations[location].bagID = bagId
-				DBitem.locations[location].bagSlot = slotNum
-				DBitem.locations[location].itemCount = itemCount
-			end
-		else
-			DBv3[itemKey] = {}
-			DBv3[itemKey].filterType = itemFilterType
-			DBv3[itemKey].itemQuality = itemQuality
-			DBv3[itemKey].itemName = itemName
-			DBv3[itemKey].locations = {}
-			DBv3[itemKey].locations[location] = {}
-			DBv3[itemKey].locations[location].bagID = bagId
-			DBv3[itemKey].locations[location].bagSlot = slotNum
-			DBv3[itemKey].locations[location].itemCount = itemCount
-		end
-		if zo_strlen(itemKey) < 10 then
-			DBv3[itemKey].itemLink = itemLink
-		end
-		if (IIfA.trackedBags[bagId]) and fromXfer then
-			IIfA:ValidateItemCounts(bagId, slotNum, DBv3[itemKey], itemKey, itemLink, true)
-		end
-
-	  	return DBv3[itemKey], itemKey
 	else
-		return nil
+		DBv3[itemKey] = {}
+		DBv3[itemKey].filterType = itemFilterType
+		DBv3[itemKey].itemQuality = itemQuality
+		DBv3[itemKey].itemName = itemName
+		DBv3[itemKey].locations = {}
+		DBv3[itemKey].locations[location] = {}
+		DBv3[itemKey].locations[location].bagID = bagId
+		DBv3[itemKey].locations[location].bagSlot = slotId
+		DBv3[itemKey].locations[location].itemCount = itemCount
 	end
+	if zo_strlen(itemKey) < 10 then
+		DBv3[itemKey].itemLink = itemLink
+	end
+	if (IIfA.trackedBags[bagId]) and fromXfer then
+		IIfA:ValidateItemCounts(bagId, slotId, DBv3[itemKey], itemKey, itemLink, true)
+	end
+
+	return DBv3[itemKey], itemKey
+	
 end
 
-function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverride, override)
+function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverride, override)
 	
 	local itemCount
 	local itemLink, itemLinkCheck
 	if zo_strlen(itemKey) < 10 then
-		itemLink = GetItemLink(bagID, slotNum) or dbItem.itemLink or (override and itemLinkOverride)
+		itemLink = GetItemLink(bagID, slotId) or dbItem.itemLink or (override and itemLinkOverride)
 	else
 		itemLink = itemKey
 	end
-	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotNum))
+	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotId))
 
 	for locName, data in pairs(dbItem.locations) do
 		if (data.bagID == BAG_GUILDBANK and locName == GetGuildName(GetSelectedGuildBankId())) or	
@@ -500,34 +544,34 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 				itemLinkCheck = (override and itemLinkOverride) or EMPTY_STRING
 			end
 			if itemLinkCheck ~= itemLink then
-				if bagID ~= data.bagID and slotNum ~= data.bagSlot then
+				if bagID ~= data.bagID and slotId ~= data.bagSlot then
 				-- it's no longer the same item, or it's not there at all						
 					IIfA.database[itemKey].locations[locName] = nil
 				end
 			-- item link is valid, just make sure we have our count right
 			elseif bagId == data.bagID then
-					_, data.itemCount = GetItemInfo(bagID, slotNum)
+					_, data.itemCount = GetItemInfo(bagID, slotId)
 				
 			end
 			
 		end
 	end
 	
-	IIfA:UpdateBSI(bagID, slotNum)
+	IIfA:UpdateBSI(bagID, slotId)
 end
 
-function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverride, override)
+function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverride, override)
 	local itemLink, itemLinkCheck
 	if nil == itemKey or zo_strlen(itemKey) < 10 then
-		itemLink = GetItemLink(bagID, slotNum, LINK_STYLE_BRACKETS) or dbItem.itemLink or (override and itemLinkOverride)
+		itemLink = GetItemLink(bagID, slotId, LINK_STYLE_BRACKETS) or dbItem.itemLink or (override and itemLinkOverride)
 	else
 		itemLink = itemKey
 	end
 	if itemLink == "" then 
-		itemLink = (nil ~= IIfA.BagSlotInfo[bagID] and IIfA.BagSlotInfo[bagID][slotNum])
+		itemLink = (nil ~= IIfA.BagSlotInfo[bagID] and IIfA.BagSlotInfo[bagID][slotId])
 	end
 	dbItem = dbItem or IIfA:QueryAccountInventory(itemLink)
-	-- IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotNum))
+	-- IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotId))
 
 	for locName, data in pairs(dbItem.locations) do
 --		if data.bagID ~= nil then	-- it's an item, not attribute
@@ -547,7 +591,7 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 				end
 --				("ItemlinkCheck = " .. itemLinkCheck)
 				if itemLinkCheck ~= itemLink then
-					if bagID ~= data.bagID and slotNum ~= data.bagSlot then
+					if bagID ~= data.bagID and slotId ~= data.bagSlot then
 --						d("should remove " .. itemLink .. " from " .. locName)
 					-- it's no longer the same item, or it's not there at all	
 						if nil ~= IIfA.database[itemKey] and nil ~= IIfA.database[itemKey].locations and nil ~= locName then
@@ -559,7 +603,7 @@ function IIfA:ValidateItemCounts(bagID, slotNum, dbItem, itemKey, itemLinkOverri
 --		end
 	end
 	
-	IIfA:UpdateBSI(bagID, slotNum)
+	IIfA:UpdateBSI(bagID, slotId)
 end
 
 
@@ -589,15 +633,15 @@ function IIfA:CollectAll()
 			end
 	--		d("  BagItemCount=" .. bagItems)
 			if bagId ~= BAG_VIRTUAL and tracked then
-				for slotNum=0, bagItems, 1 do
-					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotNum)
+				for slotId=0, bagItems, 1 do
+					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId)
 				end
 			else
 				if HasCraftBagAccess() then
-					slotNum = GetNextVirtualBagSlotId(nil)
-					while slotNum ~= nil do
-						IIfA:EvalBagItem(bagId, slotNum)
-						slotNum = GetNextVirtualBagSlotId(slotNum)
+					slotId = GetNextVirtualBagSlotId(nil)
+					while slotId ~= nil do
+						IIfA:EvalBagItem(bagId, slotId)
+						slotId = GetNextVirtualBagSlotId(slotId)
 					end
 				end
 			end

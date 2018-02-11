@@ -86,16 +86,7 @@ function IIfA:SaveFrameInfo(calledFrom)
 	local settings = IIfA:GetSceneSettings(sceneName)
 
     settings.hidden    	=  IIFA_GUI:IsControlHidden()
---    settings.locked    	=  IIFA_GUI.locked
---    settings.minimized 	=  IIFA_GUI.minimized
---	settings.docked		=  IIFA_GUI.docked
-
---	if sceneName ~= "hud" then
---		settings.docked = IIFA_GUI.docked
---	else
---		settings.docked = false
---	end
-
+	
 	if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
     	settings.lastX	= IIFA_GUI:GetLeft()
     	settings.lastY	= IIFA_GUI:GetTop()
