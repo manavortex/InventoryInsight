@@ -49,8 +49,7 @@ end
 function IIfA:SetSetNameFilterOnly(value)
 	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName	
 	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+    IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GetFocusSearchOnToggle()
@@ -80,8 +79,7 @@ function IIfA:SetInventoryListFilter(value)
 
 	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
 
-	IIfA:UpdateScrollDataLinesData()
-	IIfA:UpdateInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 -- this is for the dropdown menu
@@ -95,8 +93,7 @@ function IIfA:SetInventoryListFilterQuality(value)
 	
 	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
 	
-	IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 function IIfA:GetCollectingHouseData()
 	return IIfA.data.b_collectHouses

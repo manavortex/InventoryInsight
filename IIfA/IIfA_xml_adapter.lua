@@ -222,7 +222,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 
 	function SetSubSubFilters(_, subFiltName, choice)
 		IIfA.filterTypes = choice.subFiltTypes
-		IIfA:UpdateScrollDataLinesData()
+		IIfA:RefreshInventoryScroll()
 	end
 
 	if filterTypeNames ~= nil then
@@ -274,7 +274,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 
 	IIfA:GuiResizeScroll()
 
-	IIfA:UpdateScrollDataLinesData()
+	IIfA:RefreshInventoryScroll()
 end
 
 -- IIFA_GUI_SearchBox is the input field
@@ -283,16 +283,14 @@ function IIfA:GuiOnSearchboxText(control)
 	local text = control:GetText()
 	IIFA_GUI_SearchBoxText:SetHidden(text ~= nil and text > "")
 	IIfA.searchFilter = zo_strlower(text)
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+    IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GuiOnSearchBoxClear(control)
 	IIFA_GUI_SearchBox:SetText("")
 	IIFA_GUI_SearchBoxText:SetHidden(false)
 	IIfA.searchFilter = ""
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+    IIfA:RefreshInventoryScroll()
 end
 
 
@@ -311,8 +309,7 @@ function IIfA:GuiOnSort(initialised)
 		icon:SetTexture("/esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds")
 		icon:SetAlpha(1)
 	end
-	IIfA:UpdateScrollDataLinesData()
-	IIfA:UpdateInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GuiOnScroll(control, delta)
@@ -574,8 +571,8 @@ function IIfA:RePositionFrame(settings)
 
 	if not settings.hidden then
 		IIfA:GuiResizeScroll()
-    	IIfA:UpdateScrollDataLinesData()
-    	IIfA:UpdateInventoryScroll()
+		IIfA:RefreshInventoryScroll()
+    	
 	end
 	IIFA_GUI:SetHidden(settings.hidden)
 end

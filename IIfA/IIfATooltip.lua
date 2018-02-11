@@ -1,6 +1,8 @@
 local IIfA = IIfA
 IIfA.LastActiveRowControl = nil
 
+local function p(...) IIfA:DebugOut(...) end
+
 function IIfA:addStatsPopupTooltip(...)
 	d("IIFA - Popup tooltip OnUpdate hit")
 	d(...)
@@ -243,7 +245,7 @@ function IIfA_TooltipOnTwitch(control, eventNum)
 		end
 		-- this is called whenever there's any data added to the ingame tooltip
 		if eventNum == TOOLTIP_GAME_DATA_MAX_VALUE then		-- hopefully always called on last data add
---			IIfA:DebugOut("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
+--			p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
 			IIfA:UpdateTooltip(control)
 		end
 	end
@@ -374,10 +376,10 @@ function IIfA:getMouseoverLink()
 
 	else
 --		d(mouseOverControl:GetName(), mouseOverControl)
-		IIfA:DebugOut("Tooltip not processed - '" .. name .. "'")
+		p("Tooltip not processed - '" .. name .. "'")
 
 		if IIfA.TooltipLink then
-			IIfA:DebugOut("Current Link - " .. IIfA.TooltipLink)
+			p("Current Link - " .. IIfA.TooltipLink)
 		end
 
 		return nil
@@ -460,11 +462,12 @@ function IIfA:UpdateTooltip(tooltip)
 							textOut = string.format("%s x %s", location.name, location.itemsFound)
 						end
 					end
-					IIfA:DebugOut(textOut)
+					
 					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
 					textOut = IIfA.colorHandler:Colorize(textOut)
+					-- p("IIfA:UpdateTooltip -> <<1>>", textOut)
 					tooltip:AddLine(textOut)
 				end
 			end

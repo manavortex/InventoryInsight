@@ -110,12 +110,11 @@ end
 function IIfA:ToggleInventoryFrame()
 	IIFA_GUI:SetHidden(not IIFA_GUI:IsControlHidden())
 	if not IIFA_GUI:IsControlHidden() then
-		IIfA:OnFirstInventoryOpen()
+		-- IIfA:OnFirstInventoryOpen()
 		-- get current camera mode so when we toggle off, we put it back to where it was (maybe, can think of some weird circumstances where it might screw it up)
 		SetGameCameraUIMode(true)
 		IIfA:GuiResizeScroll()
-    	IIfA:UpdateScrollDataLinesData()
-    	IIfA:UpdateInventoryScroll()
+    	IIfA:RefreshInventoryScroll()
 		IIFA_GUI_SearchBox:TakeFocus()
 	end
 	if not IIfA.data.dontFocusSearch then 

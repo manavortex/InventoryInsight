@@ -10,7 +10,7 @@ IIfA.InventoryFilter = "All"
 IIfA.InventoryListFilter = "Any"
 IIfA.InventoryListFilterQuality = 99
 
-
+local function p(...) IIfA:DebugOut(...) end
 -- this is for the buttons
 local function enableFilterButton(num)
 	local buttonName = "Button"..num
@@ -50,8 +50,7 @@ function IIfA:SetActiveFilter(value)
 
 	enableFilterButton(value)
 
-	IIfA:UpdateScrollDataLinesData()
-	IIfA:UpdateInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GetActiveSubFilter()
@@ -66,8 +65,7 @@ function IIfA:SetActiveSubFilter(value)
 	else
 		IIfA.activeSubFilter = value
 	end
-	IIfA:UpdateScrollDataLinesData()
-	IIfA:UpdateInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 
@@ -344,7 +342,6 @@ end
 
 -- fill the shown item list with items that match current filter(s)
 function IIfA:UpdateScrollDataLinesData()
-	IIfA:DebugOut("UpdateScrollDataLinesData")
 
 	if (not IIfA.searchFilter) or IIfA.searchFilter == "Click to search..." then
 		IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
@@ -433,8 +430,8 @@ local function fillLine(curLine, curItem)
 	end
 end
 
-function IIfA:InitializeInventoryLines()
-	IIfA:DebugOut("InitializeInventoryLines")
+function IIfA:SetDataLinesData()
+	p("SetDataLinesData")
 
 	local curLine, curData
 	for i = 1, IIFA_GUI_ListHolder.maxLines do
@@ -454,18 +451,27 @@ end
 function IIfA:UpdateInventoryScroll()
 	local index = 0
 
-	IIfA:DebugOut("UpdateInventoryScroll")
-
 	------------------------------------------------------
 	if IIFA_GUI_ListHolder.dataOffset < 0 then IIFA_GUI_ListHolder.dataOffset = 0 end
 	if IIFA_GUI_ListHolder.maxLines == nil then
 		IIFA_GUI_ListHolder.maxLines = 35
 	end
-	IIfA:InitializeInventoryLines()
+	IIfA:SetDataLinesData()
 
 	local total = #IIFA_GUI_ListHolder.dataLines - IIFA_GUI_ListHolder.maxLines
 	IIFA_GUI_ListHolder_Slider:SetMinMax(0, total)
 end
+
+function IIfA:RefreshInventoryScroll()
+	
+	-- p("RefreshInventoryScroll")
+	
+	IIfA:UpdateScrollDataLinesData()
+	IIfA:UpdateInventoryScroll()
+end
+
+
+
 
 
 function IIfA:SetItemCountPosition()
@@ -520,7 +526,7 @@ end
 
 
 function IIfA:CreateInventoryScroll()
-	IIfA:DebugOut("CreateInventoryScroll")
+	p("CreateInventoryScroll")
 
 	IIFA_GUI_ListHolder.dataOffset = 0
 
@@ -953,8 +959,7 @@ function IIfA:FilterByItemName(control)
 	IIFA_GUI_SearchBox:SetText(itemName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+    IIfA:RefreshInventoryScroll()
 
 end
 
@@ -980,8 +985,7 @@ function IIfA:FilterByItemSet(control)
 	IIFA_GUI_SearchBox:SetText(setName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = true
-    IIfA:UpdateScrollDataLinesData()
-    IIfA:UpdateInventoryScroll()
+    IIfA:RefreshInventoryScroll()
 
 end
 

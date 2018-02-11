@@ -12,6 +12,28 @@ local function IIfA_EventOnPlayerUnloaded()
 	IIfA.CharBagFrame:UpdateAssets()
 end
 
+
+-- used by an event function
+function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, qty)
+	
+	if isNewItem then
+		isNewItem = "True"
+	else
+		isNewItem = "False"
+	end
+
+	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
+	if #itemLink == 0 then itemLink = (nil ~= IIfA.BagSlotInfo[bagId] and IIfA.BagSlotInfo[bagId][slotId]) end
+	
+	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>, updateReason: <<5>>", 
+		itemLink, bagId, slotId, qty, inventoryUpdateReason, tostring(isNewItem))
+	
+	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
+	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, true, qty, itemLink)
+	
+end
+
+
 local function IIfA_InventorySlotUpdate(...)
 	IIfA:InventorySlotUpdate(...)
 end
@@ -20,8 +42,9 @@ local function IIfA_ScanHouse(eventCode, oldMode, newMode)
 	if newMode == "showing" or newMode == "shown" then return end
 	-- are we listening? 
 	if not IIfA:GetCollectingHouseData() then return end
-	
-	IIfA:RescanHouse(GetCollectibleIdForHouse(GetCurrentZoneHouseId()))
+	local collectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+	IIfA:DebugOut(zo_strformat("Housing editor mode is now <<2>> - calling IIfA:RescanHouse(<<1>>)", collectibleId, newMode))
+	IIfA:RescanHouse(collectibleId)
 end
 
 local function IIfA_HouseEntered(eventCode)	

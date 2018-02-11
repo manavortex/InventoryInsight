@@ -130,8 +130,33 @@ function IIfA_SlashCommands(cmd)
 	end
 end
 
-function IIfA:DebugOut(output)
-	if (IIfA.data.bDebug) then d(output) end
+function IIfA:DebugOut(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+	if not IIfA.data.bDebug then return end
+	if a10 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10))
+	elseif a9 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9))
+	elseif a8 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8))
+	elseif a7 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7))
+	elseif a6 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5, a6))
+	elseif a5 then 
+		d(zo_strformat(output, a1, a2, a3, a4, a5))
+	elseif a4 then 
+		d(zo_strformat(output, a1, a2, a3, a4))
+	elseif a3 then
+		d(zo_strformat(output, a1, a2, a3))
+	elseif a2 then
+		d(zo_strformat(output, a1, a2))
+	elseif a1 then 
+		d(zo_strformat(output, a1))
+	elseif output then
+		d(zo_strformat(output))
+	else
+		d("\n")
+	end	
 end
 
 function IIfA:StatusAlert(message)
@@ -234,7 +259,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.filterTypes = nil
 	
 	-- grabs data from bagpack, and worn bag when we first open the inventory
-	ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen) 
+	-- ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen) 
 	ZO_PreHook(BACKPACK_GUILD_BANK_LAYOUT_FRAGMENT, "ApplyBackpackLayout", IIfA.CollectGuildBank) 
 	
 	-- ZO_PreHook(SHARED_INVENTORY, "GetOrCreateBagCache", function(self, bagId) 
