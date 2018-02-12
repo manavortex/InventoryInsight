@@ -104,15 +104,15 @@ end
 local function DoesInventoryMatchList(locationName, location)
 	local bagId 	= location.bagID
 	local filter 	= IIfA.InventoryListFilter
-	
+
 	local function isHouse()
 		return IIfA:GetTrackingWithHouseNames()[locationName]
 	end
-	
+
 	local function isOneOf(value, comp1, comp2, comp3, comp4, comp5, comp6)
-		return nil ~= value and (value == comp6) or (value == comp5) or (value == comp4) or (value == comp3) or (value == comp2) or value == comp1 
+		return nil ~= value and (value == comp6) or (value == comp5) or (value == comp4) or (value == comp3) or (value == comp2) or value == comp1
 	end
-	
+
 --	if locationName == "attributes" then return false end
 	if (filter == "All") then
 		return true
@@ -130,11 +130,11 @@ local function DoesInventoryMatchList(locationName, location)
 		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 
 	elseif(filter == "Bank and Current Character") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN) 
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 			and locationName == IIfA.currentCharacterId
-				 
+
 	elseif(filter == "Bank and other characters") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN) 
+		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 			and locationName ~= IIfA.currentCharacterId
 
 	elseif(filter == "Bank Only") then
@@ -142,16 +142,16 @@ local function DoesInventoryMatchList(locationName, location)
 
 	elseif(filter == "Craft Bag") then
 		return (bagId == BAG_VIRTUAL)
-	
+
 	elseif(filter == "Housing Storage") then
-		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0 
-		
+		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0
+
 	elseif(filter == "All Houses") then
 		return IIfA.data.collectHouseData[bagId]
-		
+
 	elseif(nil ~= IIfA:GetTrackingWithHouseNames()[filter]) then
 		return (bagId == IIfA:GetHouseIdFromName(filter))
-		
+
 	else --Not a preset, must be a specific guildbank or character
 		if isOneOf(bagId, BAG_BACKPACK, BAG_WORN) then
 			-- it's a character name, convert to Id, check that against location Name in the dbv3 table
@@ -167,7 +167,7 @@ local function matchCurrentInventory(locationName)
 --	if locationName == "attributes" then return false end
 	local accountInventoryList = IIfA:GetAccountInventoryList()
 
-	for i, inventoryName in ipairs(accountInventoryList) do
+	for i, inventoryName in pairs(accountInventoryList) do
 		if inventoryName == locationName then return true end
 	end
 
@@ -189,7 +189,7 @@ local function getQualityDict()
 		qualityDictionary[getColoredString(ITEM_QUALITY_MAGIC,  "Magic")] 			= ITEM_QUALITY_MAGIC
 		qualityDictionary[getColoredString(ITEM_QUALITY_ARCANE, "Arcane")] 			= ITEM_QUALITY_ARCANE
 		qualityDictionary[getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact")] 		= ITEM_QUALITY_ARTIFACT
-		qualityDictionary[getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary")] 	= ITEM_QUALITY_LEGENDARY		
+		qualityDictionary[getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary")] 	= ITEM_QUALITY_LEGENDARY
 	end
 	return qualityDictionary
 end
@@ -201,7 +201,7 @@ local function matchFilter(itemName, itemLink)
 
 	local searchFilter = IIfA.searchFilter
 	-- 17-7-30 AM - moved lowercasing to when it's created, one less call to lowercase for every item
-	
+
     local name = string.lower(itemName) or ""
 
 	-- text filter takes precedence
@@ -399,7 +399,7 @@ function IIfA:UpdateScrollDataLinesData()
 	IIFA_GUI_ListHolder.dataLines = dataLines
 	sort(IIFA_GUI_ListHolder.dataLines)
 	IIFA_GUI_ListHolder.dataOffset = 0
-	
+
 end
 
 
@@ -463,9 +463,9 @@ function IIfA:UpdateInventoryScroll()
 end
 
 function IIfA:RefreshInventoryScroll()
-	
+
 	-- p("RefreshInventoryScroll")
-	
+
 	IIfA:UpdateScrollDataLinesData()
 	IIfA:UpdateInventoryScroll()
 end
@@ -564,7 +564,7 @@ function IIfA:GetCharacterList()
 	for i=1, GetNumCharacters() do
 		local charName, _, _, _, _, _, _, _ = GetCharacterInfo(i)
 		charName = charName:sub(1, charName:find("%^") - 1)
-		if (nil == charInventories[charName]) then 
+		if (nil == charInventories[charName]) then
 			table.insert(charInventories, charName)
 		end
 	end
@@ -573,15 +573,15 @@ end
 
 function IIfA:GetAccountInventoryList()
 	local accountInventories = IIfA.dropdownBankNames
-	
+
 
 -- get character names, will present in same order as character selection screen
 	for idx, charName in ipairs(IIfA:GetCharacterList()) do
-		if (nil == accountInventories[charName]) then 
+		if (nil == accountInventories[charName]) then
 			table.insert(accountInventories, charName)
 		end
 	end
-	
+
 -- banks are same as toons, same order as player normally sees them
 	if IIfA.data.bCollectGuildBankData then
 		for i = 1, GetNumGuilds() do
@@ -592,20 +592,20 @@ function IIfA:GetAccountInventoryList()
 			if IIfA.data.guildBanks == nil then
 				IIfA.data.guildBanks = {}
 			end
-			
+
 			if IIfA.data.guildBanks[guildName] ~= nil then
 				table.insert(accountInventories, guildName)
 			end
 		end
 	end
-	
+
 	if IIfA.data.b_collectHouses then
 		table.insert(accountInventories, "All Houses")
 		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
 			table.insert(accountInventories, houseName)
 		end
 	end
-	
+
 	return accountInventories
 end
 
@@ -662,27 +662,27 @@ function IIfA:QueryAccountInventory(itemLink)
 				locationName = IIfA.CharIdToName[locationName]
 			end
 			if locationName ~= nil then
-				
+
 				for x, QILocation in pairs(queryItem.locations) do
 					if (QILocation.name == locationName)then
 						QILocation.itemsFound = QILocation.itemsFound + location.itemCount
 						AlreadySavedLoc = true
 					end
 				end
-				
+
 				if nil ~= location.itemCount then
 					if (not AlreadySavedLoc) and (location.itemCount > 0) then
 						newLocation = {}
 						newLocation.name = locationName
-						
+
 						if locationName == location.bagID then -- location is a collectible
 							newLocation.name = GetCollectibleNickname(locationName)
 							if newLocation.name == "" then newLocation.name = GetCollectibleName(locationName) end
 						end
-						
+
 						newLocation.itemsFound = location.itemCount
 						newLocation.worn = location.bagID == BAG_WORN
-						
+
 						table.insert(queryItem.locations, newLocation)
 					end
 				end
@@ -753,7 +753,7 @@ function IIfA:SetupBackpack()
 		table.insert(validChoices, getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact"))
 		table.insert(validChoices, getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary"))
 
-		local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox	
+		local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox
 
 		function OnItemSelect(_, choiceText, choice)
 			IIfA:SetInventoryListFilterQuality(getQualityDict()[choiceText])
@@ -763,7 +763,7 @@ function IIfA:SetupBackpack()
 		comboBox:SetSortsItems(false)
 
 		for i = 1, #validChoices do
-			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)		
+			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
 			comboBox:AddItem(entry)
 			if getQualityDict()[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
 				comboBox:SetSelectedItem(validChoices[i])
@@ -776,7 +776,7 @@ function IIfA:SetupBackpack()
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
 	IIfA:CreateInventoryScroll()
 	createInventoryDropdown()
-	createInventoryDropdownQuality()	
+	createInventoryDropdownQuality()
 	IIfA:GuiOnSort(true)
 end
 
