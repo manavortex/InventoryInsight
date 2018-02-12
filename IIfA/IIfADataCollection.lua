@@ -533,6 +533,7 @@ function IIfA:CollectAll()
 	local location = EMPTY_STRING
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
+  
 	for bagId, tracked in pairs(BagList) do		-- do NOT use ipairs, it's non-linear list (holes in the # sequence)
 		-- call with libAsync to avoid lags
 		task:Call(function()

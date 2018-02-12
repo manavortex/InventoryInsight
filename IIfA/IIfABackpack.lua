@@ -601,7 +601,7 @@ function IIfA:GetAccountInventoryList()
 
 	if IIfA.data.b_collectHouses then
 		table.insert(accountInventories, "All Houses")
-		for idx, houseName in ipairs(IIfA:GetTrackedHouseNames()) do
+		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
 			table.insert(accountInventories, houseName)
 		end
 	end
