@@ -455,7 +455,6 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	
 	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
 	DBitem = DBv3[itemKey]
-	location = 
 	location = locationID or getLocation(location, bagId) or EMPTY_STRING
 	
 	if(DBitem) then
@@ -543,7 +542,7 @@ function IIfA:CollectAll()
 	local location = EMPTY_STRING
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
-	for bagId, tracked in ipairs(BagList) do
+	for bagId, tracked in pairs(BagList) do
 		-- call with libAsync to avoid lags
 		task:Call(function()		
 			bagItems = GetBagSize(bagId)
