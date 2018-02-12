@@ -15,7 +15,7 @@ end
 
 -- used by an event function
 function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, qty)
-	
+
 	if isNewItem then
 		isNewItem = "True"
 	else
@@ -23,14 +23,20 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 	end
 
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
-	if #itemLink == 0 then itemLink = (nil ~= IIfA.BagSlotInfo[bagId] and IIfA.BagSlotInfo[bagId][slotId]) end
-	
-	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>", 
+	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
+		itemLink = IIfA.BagSlotInfo[bagId][slotId]
+	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
+		IIfA.BagSlotInfo[bagId][slotId] = itemLink
+	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
+		IIfA.BagSlotInfo[bagId][slotId] = itemLink
+	end
+
+	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>",
 		itemLink, bagId, slotId, qty, inventoryUpdateReason, tostring(isNewItem))
-	
+
 	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
 	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not isNewItem, qty, itemLink)
-	
+
 end
 
 
@@ -40,28 +46,29 @@ end
 
 local function IIfA_ScanHouse(eventCode, oldMode, newMode)
 	if newMode == "showing" or newMode == "shown" then return end
-	-- are we listening? 
+	-- are we listening?
 	if not IIfA:GetCollectingHouseData() then return end
 	local collectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	IIfA:DebugOut(zo_strformat("Housing editor mode is now <<2>> - calling IIfA:RescanHouse(<<1>>)", collectibleId, newMode))
 	IIfA:RescanHouse(collectibleId)
 end
 
-local function IIfA_HouseEntered(eventCode)	
+local function IIfA_HouseEntered(eventCode)
 	if not IsOwnerOfCurrentHouse() then return end
-	
-	-- are we listening? 
+
+	-- are we listening?
 	if not IIfA:GetCollectingHouseData() then return end
-	
-	-- is the house registered? 
-	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())	
-	
+
+	-- is the house registered?
+	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+
 	if nil == IIfA.data.collectHouseData[houseCollectibleId] then
-		IIfA:SetTrackingForHouse(houseCollectibleId, true)		
+		IIfA:SetTrackingForHouse(houseCollectibleId, true)
 	end
-	
+
 	IIfA:RescanHouse(houseCollectibleId)
 end
+
 local function IIfA_EventProc(...)
 	--d(...)
 	local l = {...}
@@ -128,8 +135,8 @@ function IIfA:RegisterForEvents()
 -- not helpful, no link at all on this callback
 --	SHARED_INVENTORY:RegisterCallback("SlotRemoved", IIfA_EventDump)
 --	SHARED_INVENTORY:RegisterCallback("SingleSlotInventoryUpdate", IIfA_EventDump)
-	
-	
+
+
 	-- Events for data collection
 	em:RegisterForEvent("IIFA_ALPUSH", 		EVENT_ACTION_LAYER_PUSHED, 	function() IIfA:ActionLayerInventoryUpdate() end)
 	em:RegisterForEvent("IIFA_BANK_OPEN",	EVENT_OPEN_BANK, 			function() IIfA:ScanBank() end)
@@ -149,13 +156,13 @@ function IIfA:RegisterForEvents()
 	em:RegisterForEvent("IIFA_GUILDBANK_ITEM_REMOVED", 	EVENT_GUILD_BANK_ITEM_REMOVED, 	function(...) IIfA:GuildBankAddRemove(...) end)
 
 	-- Housing
-	em:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", EVENT_PLAYER_ACTIVATED, 			IIfA_HouseEntered)	
+	em:RegisterForEvent("IIFA_HOUSING_PLAYER_INFO_CHANGED", EVENT_PLAYER_ACTIVATED, 			IIfA_HouseEntered)
 	em:RegisterForEvent("IIfA_HOUSE_MANAGER_MODE_CHANGED", 	EVENT_HOUSING_EDITOR_MODE_CHANGED, 	IIfA_ScanHouse)
 
 	em:RegisterForEvent("IIFA_GuildJoin",  EVENT_GUILD_SELF_JOINED_GUILD, 	function() IIfA:CreateOptionsMenu() end)
 	em:RegisterForEvent("IIFA_GuildLeave", EVENT_GUILD_SELF_LEFT_GUILD, 	function() IIfA:CreateOptionsMenu() end)
 
-	--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)	
+	--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA:ProcessRightClick(rowControl) end)
 end
 
