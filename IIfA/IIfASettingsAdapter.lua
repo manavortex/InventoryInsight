@@ -16,6 +16,7 @@ function IIfA:IsCharacterEquipIgnored(ignoreChar)
 end
 
 function IIfA:IgnoreCharacterEquip(ignoreChar, value)
+	if not ignoreChar then return end
 	IIfA.data.ignoredCharEquipment[ignoreChar] = value
 	if value then
 		IIfA:ScanCurrentCharacter()
@@ -24,6 +25,7 @@ function IIfA:IgnoreCharacterEquip(ignoreChar, value)
 	end
 end
 function IIfA:IgnoreCharacterInventory(ignoreChar, value)
+	if not ignoreChar then return end
 	IIfA.data.ignoredCharInventories[ignoreChar] = value
 	IIfA:ScanCurrentCharacter()
 end
