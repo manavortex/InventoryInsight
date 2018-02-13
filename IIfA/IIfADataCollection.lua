@@ -86,7 +86,8 @@ end
 
 
 
-local function scanBags()
+function IIfA:ScanCurrentCharacter()
+
 	local playerName = GetUnitName('player')
 
 	IIfA.data.accountCharacters 			= IIfA.data.accountCharacters or {}
@@ -108,9 +109,8 @@ local function scanBags()
 	end
 	task:Call(function()
 		IIfA:MakeBSI()
-	end)
+	end)	
 end
-IIfA.ScanCurrentCharacter = scanBags
 
 local function tryScanHouseBank()
 	if GetAPIVersion() < 100022 then return end
@@ -143,22 +143,17 @@ function IIfA:ScanBank()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 	end):Then(function()
 		grabBagContent(BAG_BANK)
+	end):Then(function()
+		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+		grabBagContent(GetString(BAG_SUBSCRIBER_BANK))
+		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+		slotId = GetNextVirtualBagSlotId(slotId)
+		while slotId ~= nil do
+			IIfA:EvalBagItem(BAG_VIRTUAL, slotId)
+			slotId = GetNextVirtualBagSlotId(slotId)
+		end
 	end)
 
-	local slotId = nil
-	if HasCraftBagAccess() then
-		task:Call(function()
-			grabBagContent(BAG_SUBSCRIBER_BANK)
-		end):Then(function()
-			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-		end):Then(function()
-			slotId = GetNextVirtualBagSlotId(slotId)
-			while slotId ~= nil do
-				IIfA:EvalBagItem(BAG_VIRTUAL, slotId)
-				slotId = GetNextVirtualBagSlotId(slotId)
-			end
-		end)
-	end
 
 end
 
@@ -169,12 +164,11 @@ function IIfA:OnFirstInventoryOpen()
 	if IIfA.BagsScanned then return end
 	IIfA.BagsScanned = true
 
-	scanBags()
 	-- call with libAsync to avoid lags
 	task:Call(function()
-
-	end):Then(function()
 		IIfA:ScanBank()
+	end):Then(function()
+		IIfA:ScanCurrentCharacter()
 	end)
 end
 

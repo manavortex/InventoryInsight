@@ -26,6 +26,7 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemLink = IIfA.BagSlotInfo[bagId][slotId]
 	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
+		IIfA.BagSlotInfo[bagId] = {}
 		IIfA.BagSlotInfo[bagId][slotId] = itemLink
 	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
 		IIfA.BagSlotInfo[bagId][slotId] = itemLink
