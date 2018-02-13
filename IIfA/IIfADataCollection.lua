@@ -534,16 +534,13 @@ function IIfA:CollectAll()
 			bagItems = GetBagSize(bagId)
 			if(bagId == BAG_WORN)then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
 				IIfA:ClearLocationData(IIfA.currentCharacterId)
+				grabBagContent(BAG_WORN)
 			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+				grabBagContent(BAG_BANK)
 			elseif(bagId == BAG_VIRTUAL)then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-			elseif GetAPIVersion() >= 100022 then -- 20.1. mana: bag bag bag
-				local collectibleId = GetCollectibleForHouseBankBag(bagId)
-				if IsCollectibleUnlocked(collectibleId) then
-					local name = GetCollectibleNickname(collectibleId) or GetCollectibleName(collectibleId)
-					IIfA:ClearLocationData(name)
-				end
+				grabBagContent(BAG_WORN)
 			end
 	--		d("  BagItemCount=" .. bagItems)
 			if bagId ~= BAG_VIRTUAL and tracked then
