@@ -462,7 +462,7 @@ function IIfA:UpdateTooltip(tooltip)
 							textOut = string.format("%s x %s", location.name, location.itemsFound)
 						end
 					end
-					
+
 					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
