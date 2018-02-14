@@ -441,6 +441,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 
 	itemKey = getItemKey(itemLink, usedInCraftingType, itemType)
 
+	if nil == itemKey then return end
 	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
 	DBitem = DBv3[itemKey]
 	location = locationID or getLocation(location, bagId) or EMPTY_STRING
