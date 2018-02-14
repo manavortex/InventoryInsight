@@ -419,7 +419,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	IIfA.database = IIfA.database or {}
 	local DBv3 = IIfA.database
 
-	-- item link is either passed as arg or we need to read it from the BSI
+	-- item link is either passed as arg or we need to read it from the system
 	itemLink = itemLink or getItemLink(bagId, slotId)
 
 	-- return if we don't have any item to track
@@ -434,7 +434,6 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	-- get item key from crafting type
 	local usedInCraftingType, itemType = GetItemCraftingInfo(bagId, slotId)
 
-
 	local qty, itemQuality
 	_, qty, _, _, _, _, _, itemQuality = GetItemInfo(bagId, slotId)
 
@@ -443,6 +442,8 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 		usedInCraftingType 	= GetItemLinkCraftingSkillType(itemLink)
 		itemType 			= GetItemLinkItemType(itemLink)
 	end
+	if usedInCraftingType == CRAFTING_TYPE_INVALID then usedInCraftingType = nil end
+	if itemType == 0 then itemType = nil end
 
 	itemKey = getItemKey(itemLink, usedInCraftingType, itemType)
 
@@ -491,7 +492,7 @@ function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverrid
 	local itemCount
 	local itemLink, itemLinkCheck
 	if zo_strlen(itemKey) < 10 then
-		itemLink = GetItemLink(bagID, slotId) or dbItem.itemLink or (override and itemLinkOverride)
+		itemLink = dbItem.itemLink or GetItemLink(bagID, slotId) or (override and itemLinkOverride)
 	else
 		itemLink = itemKey
 	end
@@ -533,7 +534,6 @@ function IIfA:CollectAll()
 	local location = EMPTY_STRING
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
-  
 	for bagId, tracked in pairs(BagList) do		-- do NOT use ipairs, it's non-linear list (holes in the # sequence)
 		-- call with libAsync to avoid lags
 		task:Call(function()
@@ -663,8 +663,8 @@ local function GetItemIdentifier(itemLink)
         return string.format("%s,%s,%d,%d,%d", itemId, data[4], trait, level, cp)
     elseif(itemType == ITEMTYPE_POISON or itemType == ITEMTYPE_POTION) then
         return string.format("%s,%d,%d,%s", itemId, level, cp, data[23])
-    elseif(hasDifferentQualities[itemType]) then
-        return string.format("%s,%s", itemId, data[4])
+--    elseif(hasDifferentQualities[itemType]) then
+--        return string.format("%s,%s", itemId, data[4])
     else
         return itemId
     end
