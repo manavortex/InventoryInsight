@@ -269,14 +269,6 @@ function IIfA:ActionLayerInventoryUpdate()
 end
 
 
-function IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
-
-	local location = houseCollectibleId
-	-- bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID	
-	
-	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
-end
-
 --[[
 Data collection notes:
 	Currently crafting items are coming back from getitemlink with level info in them.
@@ -322,7 +314,9 @@ function IIfA:RescanHouse(houseCollectibleId)
 		IIfA:ClearLocationData(houseCollectibleId)
 	end):Then(function()
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
-			IIfA:AddFurnitureItem(itemLink, itemCount, houseCollectibleId, true)
+			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
+			IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+			
 		end
 	end)
 
@@ -426,6 +420,8 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	-- item link is either passed as arg or we need to read it from the system
 	itemLink = itemLink or getItemLink(bagId, slotId)
 
+	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
+	
 	-- return if we don't have any item to track
 	if nil == itemLink or #itemLink == 0 then return end
 
@@ -435,7 +431,6 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	itemCount = itemCount or getItemCount(bagId, slotId, itemLink)
 
-	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
 	
 	-- get item key from crafting type
 	local usedInCraftingType, itemType = GetItemCraftingInfo(bagId, slotId)
@@ -550,7 +545,7 @@ function IIfA:CollectAll()
 			bagItems = GetBagSize(bagId)
 			if(bagId == BAG_WORN) then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
 				IIfA:ClearLocationData(IIfA.currentCharacterId)
-				if not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId)
+				if not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) then
 					grabBagContent(BAG_WORN)
 				end
 			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
@@ -558,7 +553,7 @@ function IIfA:CollectAll()
 					grabBagContent(BAG_BANK)
 			elseif(bagId == BAG_BACKPACK) then	
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
-				if not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
+				if not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId) then
 					grabBagContent(BAG_BACKPACK)
 				end
 			elseif(bagId == BAG_VIRTUAL)then
