@@ -17,7 +17,12 @@ end
 
 function IIfA:IgnoreCharacterEquip(ignoreChar, value)
 	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
 	IIfA.data.ignoredCharEquipment[ignoreChar] = value
+	
+	if ignoreChar == IIfA.currentCharacterId then 
+		IIfA.trackedBags[BAG_WORN] = false
+	end	
 	if value then
 		IIfA:ScanCurrentCharacter()
 	else
@@ -26,8 +31,17 @@ function IIfA:IgnoreCharacterEquip(ignoreChar, value)
 end
 function IIfA:IgnoreCharacterInventory(ignoreChar, value)
 	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
 	IIfA.data.ignoredCharInventories[ignoreChar] = value
-	IIfA:ScanCurrentCharacter()
+	
+	if ignoreChar == IIfA.currentCharacterId then 
+		IIfA.trackedBags[BAG_BAGPACK] = false
+	end
+	if value then
+		IIfA:ScanCurrentCharacter()
+	else
+		IIfA:ClearLocationData(IIfA.currentCharacterId)
+	end
 end
 function IIfA:GetCharacterList()
 	return IIfA.data.accountCharacters

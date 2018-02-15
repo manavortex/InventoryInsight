@@ -498,6 +498,9 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 	
+	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) 
+	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
+	
 	IIfA:ScanBank()
 	IIfA:ScanCurrentCharacter()
 	zo_callLater(function()

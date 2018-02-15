@@ -288,9 +288,10 @@ function IIfA:RescanHouse(houseCollectibleId)
 	
 	if not IIfA.data.collectHouseData[houseCollectibleId] then 
 		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHousIds()[houseCollectibleId] then 
-		return 
+			IIfA.trackedBags[houseCollectibleId] = false
+			return 
 		end
-		
+		IIfA.trackedBags[houseCollectibleId] = true
 	end
 
 	--- stuff them all into an array
@@ -315,6 +316,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 	end):Then(function()
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
+			IIfA:DebugOut("furniture item <<1>> x<<2>>", itemLink, itemCount)
 			IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 			
 		end
@@ -379,7 +381,7 @@ local function getItemCount(bagId, slotId, itemLink)
 	if 		bagId == BAG_BACKPACK 	and 0 < stackCountBackpack 	then return stackCountBackpack
 	elseif 	bagId == BAG_BANK 		and 0 < stackCountBank 		then return stackCountBank
 	elseif 	bagId == BAG_VIRTUAL 	and 0 < stackCountCraftBag 	then return stackCountCraftBag
-	elseif  bagId == BAG_WORN then return itemCount end
+	elseif  bagId == BAG_WORN then return 1 end
 
 	-- return 0 if no item count was found, possibly an out of date index to a house container that no longer exists
 	return 0
@@ -412,18 +414,20 @@ function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, 
 end
 
 function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
+	
 	if not IIfA.trackedBags[bagId] then return end
 
 	IIfA.database = IIfA.database or {}
 	local DBv3 = IIfA.database
 	
+	IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
+			
 	-- item link is either passed as arg or we need to read it from the system
 	itemLink = itemLink or getItemLink(bagId, slotId)
 
-	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
 	
 	-- return if we don't have any item to track
-	if nil == itemLink or #itemLink == 0 then return end
+	if nil == itemLink  then return end
 
 	-- item nams is either passed or we get it from bag/slot or item link
 	itemName = itemName or getItemName(bagId, slotId, itemLink) or EMPTY_STRING
@@ -446,7 +450,10 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	if usedInCraftingType == CRAFTING_TYPE_INVALID then usedInCraftingType = nil end
 	if itemType == 0 then itemType = nil end
 
-	itemKey = getItemKey(itemLink, usedInCraftingType, itemType) or itemLink
+	local itemKey = getItemKey(itemLink, usedInCraftingType, itemType) or itemLink
+	
+	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
+	
 
 	if nil == itemKey then return end
 	
@@ -544,18 +551,14 @@ function IIfA:CollectAll()
 		task:Call(function()
 			bagItems = GetBagSize(bagId)
 			if(bagId == BAG_WORN) then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
-				IIfA:ClearLocationData(IIfA.currentCharacterId)
-				if not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) then
-					grabBagContent(BAG_WORN)
-				end
+				IIfA:ClearLocationData(IIfA.currentCharacterId)				
+				grabBagContent(BAG_WORN)				
 			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-					grabBagContent(BAG_BANK)
+				grabBagContent(BAG_BANK)
 			elseif(bagId == BAG_BACKPACK) then	
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
-				if not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId) then
-					grabBagContent(BAG_BACKPACK)
-				end
+				grabBagContent(BAG_BACKPACK)
 			elseif(bagId == BAG_VIRTUAL)then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 				grabBagContent(BAG_VIRTUAL)
