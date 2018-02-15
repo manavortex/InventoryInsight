@@ -62,9 +62,9 @@ local function IIfA_HouseEntered(eventCode)
 	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 
 	if nil == IIfA.data.collectHouseData[houseCollectibleId] then
-		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())
+		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())		
 	end
-
+	IIfA:GetTrackedBags()[houseCollectibleId] = IIfA:GetTrackedBags()[houseCollectibleId] or IIfA.data.collectHouseData[houseCollectibleId]
 	IIfA:RescanHouse(houseCollectibleId)
 end
 

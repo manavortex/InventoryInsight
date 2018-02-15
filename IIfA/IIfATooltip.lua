@@ -445,6 +445,7 @@ function IIfA:UpdateTooltip(tooltip)
 
 		if(queryResults) then
 			if #queryResults.locations > 0 then
+				IIfA:DebugOut(queryResults)
 				if itemStyleTexArray.styleName ~= "" then
 					ZO_Tooltip_AddDivider(tooltip)
 				end
