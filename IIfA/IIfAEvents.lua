@@ -57,14 +57,12 @@ end
 local function IIfA_HouseEntered(eventCode)
 	if not IsOwnerOfCurrentHouse() then return end
 
-	-- are we listening?
-	if not IIfA:GetCollectingHouseData() then return end
 
 	-- is the house registered?
 	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 
 	if nil == IIfA.data.collectHouseData[houseCollectibleId] then
-		IIfA:SetTrackingForHouse(houseCollectibleId, true)
+		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())
 	end
 
 	IIfA:RescanHouse(houseCollectibleId)

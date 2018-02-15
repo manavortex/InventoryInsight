@@ -166,6 +166,7 @@ function IIfA:GetAllHouseIds()
 	return ret
 end
 function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
+	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if tonumber(houseCollectibleId) ~= houseCollectibleId then 
 		realId = IIfA:GetHouseIdFromName(houseCollectibleId)
 		if not realId then d(houseCollectibleId); return end
@@ -179,6 +180,10 @@ function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	else -- try rescanning, in case we are in the house right now
 		IIfA:RescanHouse()
 	end
+end
+
+function IIfA:GetHouseTracking() 
+	return IIfA.data.b_collectHouses
 end
 
 function IIfA:SetHouseTracking(value) 

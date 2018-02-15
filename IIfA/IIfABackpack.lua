@@ -149,7 +149,7 @@ local function DoesInventoryMatchList(locationName, location)
 	elseif(filter == "All Houses") then
 		return IIfA.data.collectHouseData[bagId]
 
-	elseif(nil ~= IIfA:GetTrackingWithHouseNames()[filter]) then
+	elseif (nil ~= IIfA:GetHouseIdFromName(filter)) then
 		return (bagId == IIfA:GetHouseIdFromName(filter))
 
 	else --Not a preset, must be a specific guildbank or character
