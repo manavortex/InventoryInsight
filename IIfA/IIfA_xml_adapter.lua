@@ -157,16 +157,23 @@ function IIfA:GuiSetupDropdown(dropdown)
 end
 
 function IIfA:GuiSetupQualityDropdown(dropdown)
-	local selectedItem = IIfA:GetInventoryListFilterQuality()
-	dropdown.comboBox:SetSelectedItem(selectedItem)
+	local selectedQuality = IIfA:GetInventoryListFilterQuality()
+	local qualityDict = IIfA:getQualityDict()
+
+	for choice, value in pairs(qualityDict) do
+		if value == selectedQuality then
+			dropdown.comboBox:SetSelectedItem(choice)
+			break
+		end
+	end
 end
 
 -- click functions
 function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, filterTypeNames)
 	-- identify if this is main or sub filter clicked
-	
+
 	local b_isMain = control:GetName():find("Sub") == nil
-	
+
 	if mouseButton == MOUSE_BUTTON_INDEX_RIGHT then
 		if b_isMain then
 			IIfA.LastFilterControl = control
@@ -174,11 +181,11 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 		else
 			IIfA.LastSubFilterControl = control
 			local parentIdx = control:GetParent():GetName():gsub("IIFA_GUI_Header_Subfilter_", "")
-			local parentControl = IIFA_GUI_Header_Filter:GetChild(parentIdx+1)			
+			local parentControl = IIFA_GUI_Header_Filter:GetChild(parentIdx+1)
 			return IIfA:GuiOnFilterButton(parentControl, MOUSE_BUTTON_INDEX_LEFT, parentControl.filterText)
 		end
-	end	
-	
+	end
+
 	if b_isMain then
 		if IIfA.LastFilterControl ~= nil then
 			IIfA.LastFilterControl:SetState(BSTATE_NORMAL)
@@ -487,6 +494,7 @@ function IIfA:RePositionFrame(settings)
 		IIFA_GUI_Header_Subfilter:SetHeight(38)
 	end
 	IIFA_GUI_Header_Dropdown:SetHidden(bMinimize)
+	IIFA_GUI_Header_Dropdown_Quality:SetHidden(bMinimize)
 	IIFA_GUI_Search:SetHidden(bMinimize)
 	IIFA_GUI_Header_GoldButton:SetHidden(bMinimize)
 	IIFA_GUI_Header_BagButton:SetHidden(bMinimize)
@@ -512,6 +520,8 @@ function IIfA:RePositionFrame(settings)
 		IIFA_GUI_Header_Maximize:SetHidden(false)
 	else
    		IIFA_GUI:SetDimensionConstraints(IIfA.minWidth, 300, -1, 1400)
+--		IIfA:SetInventoryListFilterQuality(IIfA:GetInventoryListFilterQuality())
+
 		if settings.docked then
 			-- no resizing handles
 			IIFA_GUI:SetResizeHandleSize(0)
@@ -572,7 +582,7 @@ function IIfA:RePositionFrame(settings)
 	if not settings.hidden then
 		IIfA:GuiResizeScroll()
 		IIfA:RefreshInventoryScroll()
-    	
+
 	end
 	IIFA_GUI:SetHidden(settings.hidden)
 end

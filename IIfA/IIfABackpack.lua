@@ -180,7 +180,6 @@ local function getColoredString(color, s)
 	return c:Colorize(s)
 end
 local function getQualityDict()
-
 	if nil == qualityDictionary then
 		qualityDictionary = {}
 		qualityDictionary["Any"] = 99
@@ -192,6 +191,10 @@ local function getQualityDict()
 		qualityDictionary[getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary")] 	= ITEM_QUALITY_LEGENDARY
 	end
 	return qualityDictionary
+end
+
+function IIfA:getQualityDict()
+	return qualityDictionary or getQualityDict()
 end
 
 local function matchFilter(itemName, itemLink)
@@ -736,11 +739,12 @@ function IIfA:SetupBackpack()
 			end
 		end
 
-		return IIFA_GUI_Header_Dropdown
+--		return IIFA_GUI_Header_Dropdown
 	end
 
 	local function createInventoryDropdownQuality()
 		local comboBox, i
+		local qualityDict = getQualityDict()
 
 		IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
 
@@ -765,12 +769,12 @@ function IIfA:SetupBackpack()
 		for i = 1, #validChoices do
 			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
 			comboBox:AddItem(entry)
-			if getQualityDict()[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
+			if qualityDict[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
 				comboBox:SetSelectedItem(validChoices[i])
 			end
 		end
 
-		return IIFA_GUI_Header_Dropdown
+--		return IIFA_GUI_Header_Dropdown
 	end
 
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
