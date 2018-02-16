@@ -98,6 +98,17 @@ function IIfA:CreateOptionsMenu()
 			name = "Manage Collected Data",
 			tooltip = "Manage collected Characters and Guild Banks. Delete data you no longer need (old guilds or deleted characters)",	--(optional)
 			controls = {
+				{  -- button begin
+					type = "button",
+					name = "Wipe database",
+					tooltip = "Deletes all collected data",
+					func = function() 
+						local worldName 		= GetWorldName():gsub(" Megaserver", "")
+						IIfA.data[worldName] 	= {}
+						IIfA:ScanCurrentCharacterAndBank()
+					end,
+				}, -- button end
+			
 				{	type 	= "description", 
 					title 	= "Ignore or delete characters",
 					text 	= "removes or un-tracks a character. \nWarning: This change will be applied immediately.",

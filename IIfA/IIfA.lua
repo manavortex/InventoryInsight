@@ -487,6 +487,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	if nil == IIfA.data[worldName].DBv3 then 
 		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
+	IIfA.data.DBv3 = nil
 	IIfA.database = IIfA.data[worldName].DBv3
 	
 	IIfA:ActionLayerInventoryUpdate()
@@ -501,17 +502,21 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) 
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
 	
+	IIfA:CollectAll()
+		
+
+end
+
+EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
+
+function IIfA:ScanCurrentCharacterAndBank()
+	
 	IIfA:ScanBank()
 	IIfA:ScanCurrentCharacter()
 	zo_callLater(function()
 		IIfA:MakeBSI()
 	end, 5000)
-	
-	
-
 end
-
-EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
 
 function IIfA:MakeBSI()
 	local bs = {}
