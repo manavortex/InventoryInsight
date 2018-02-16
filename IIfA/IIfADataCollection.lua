@@ -403,7 +403,7 @@ end
 
 function IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
 	if not bagId or not slotId then return end
-	IIfA.BatSlotInfo = IIfA.BagSlotInfo or IIfA:MakeBSI()
+	IIfA.BagSlotInfo = IIfA.BagSlotInfo or IIfA:MakeBSI()
 	IIfA.BagSlotInfo[bagId] = IIfA.BagSlotInfo[bagId] or {}
 	IIfA.BagSlotInfo[bagId][slotId] = IIfA.BagSlotInfo[bagId][slotId] or itemLink
 end
