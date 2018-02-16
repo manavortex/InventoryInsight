@@ -192,6 +192,9 @@ local function getQualityDict()
 	end
 	return qualityDictionary
 end
+function IIfA:getQualityDict()
+	return qualityDictionary or getQualityDict()
+end
 
 function IIfA:getQualityDict()
 	return qualityDictionary or getQualityDict()
@@ -747,7 +750,8 @@ function IIfA:SetupBackpack()
 		local qualityDict = getQualityDict()
 
 		IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
-
+		local qualityDict = getQualityDict()
+		
 		local validChoices =  {}
 		table.insert(validChoices, "Any")
 		table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
@@ -773,8 +777,7 @@ function IIfA:SetupBackpack()
 				comboBox:SetSelectedItem(validChoices[i])
 			end
 		end
-
---		return IIFA_GUI_Header_Dropdown
+		-- return IIFA_GUI_Header_Dropdown
 	end
 
 	IIfA.InventoryListFilter = IIfA.data.in2DefaultInventoryFrameView
@@ -886,7 +889,7 @@ function IIfA:FMC(control, WhoSeesIt)
 
 	local langChapNames = {}
 	langChapNames["EN"] = {"Axes", "Belts", "Boots", "Bows", "Chests", "Daggers", "Gloves", "Helmets", "Legs", "Maces", "Shields", "Shoulders", "Staves", "Swords" }
-	langChapNames["DE"] = {"Äxte", "Gürtel", "Stiefel", "Bogen", "Torsi", "Dolche", "Handschuhe", "Helme", "Beine", "Keulen", "Schilde", "Schultern", "Stäbe", "Schwerter" }
+	langChapNames["DE"] = {"Ã„xte", "GÃ¼rtel", "Stiefel", "Bogen", "Torsi", "Dolche", "Handschuhe", "Helme", "Beine", "Keulen", "Schilde", "Schultern", "StÃ¤be", "Schwerter" }
 	local chapnames = langChapNames[GetCVar("language.2")] or langChapNames["EN"]
 
 	if control.itemLink == nil or control.itemLink == "" then

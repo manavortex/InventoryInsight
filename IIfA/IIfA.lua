@@ -488,6 +488,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	if nil == IIfA.data[worldName].DBv3 then 
 		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
+	IIfA.data.DBv3 = nil
 	IIfA.database = IIfA.data[worldName].DBv3
 	
 	IIfA:ActionLayerInventoryUpdate()
@@ -502,35 +503,42 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) 
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
 	
+	IIfA:CollectAll()
+		
+
+end
+
+EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
+
+function IIfA:ScanCurrentCharacterAndBank()
+	
 	IIfA:ScanBank()
 	IIfA:ScanCurrentCharacter()
 	zo_callLater(function()
 		IIfA:MakeBSI()
 	end, 5000)
-	
-	
-
 end
-
-EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
 
 function IIfA:MakeBSI()
 	local bs = {}
 	local idx
 	local itemLink, DBItem, locname, data
 	for itemLink, DBItem in pairs(IIfA.database) do
-		for locname, data in pairs(DBItem.locations) do
-			if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
-				(data.bagID ~= BAG_BACKPACK and data.bagID ~= BAG_WORN) then
-				idx = data.bagID
-				if idx == BAG_GUILDBANK then		-- replace idx with appropriate guild bank name instead of the ID for BAG_GUILDBANK (to differentiate guild banks)
-					idx = locname
+		if DBItem.locations then
+			for locname, data in pairs(DBItem.locations) do
+				if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
+					(data.bagID ~= BAG_BACKPACK and data.bagID ~= BAG_WORN) then
+					idx = data.bagID
+					if idx == BAG_GUILDBANK then		-- replace idx with appropriate guild bank name instead of the ID for BAG_GUILDBANK (to differentiate guild banks)
+						idx = locname
+					end
+					if bs[idx] == nil then
+						bs[idx] = {}
+					end
+					if nil ~= idx and nil ~= data.bagSlot then
+						bs[idx][data.bagSlot] = itemLink
+					end
 				end
-				if bs[idx] == nil then
-					bs[idx] = {}
-				end
-
-				bs[idx][data.bagSlot] = itemLink
 			end
 		end
 	end

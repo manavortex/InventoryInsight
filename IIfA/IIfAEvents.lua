@@ -16,12 +16,12 @@ end
 -- used by an event function
 function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, qty)
 
+	if nil == bagId then return end
 	if isNewItem then
 		isNewItem = "True"
 	else
 		isNewItem = "False"
 	end
-
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
 	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemLink = IIfA.BagSlotInfo[bagId][slotId]

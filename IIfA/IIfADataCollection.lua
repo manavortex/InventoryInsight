@@ -401,8 +401,17 @@ local function getLocation(location, bagId)
 	end
 end
 
+-- use getbsi to avoid "trying to access nil" errors
+function IIfA:GetBSI()
+	if nil == IIfA.BagSlotInfo then
+		IIfA:MakeBSI()
+	end
+	return IIfA.BagSlotInfo
+end	
+
 function IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
 	if not bagId or not slotId then return end
+	IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 	IIfA.BagSlotInfo[bagId] = IIfA.BagSlotInfo[bagId] or {}
 	IIfA.BagSlotInfo[bagId][slotId] = IIfA.BagSlotInfo[bagId][slotId] or itemLink
 end
@@ -581,6 +590,9 @@ function IIfA:CollectAll()
 
 	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
 	IIfA:ClearUnowned()
+	zo_callLater(function()
+		IIfA:MakeBSI()
+	end, 1000)
 end
 
 
