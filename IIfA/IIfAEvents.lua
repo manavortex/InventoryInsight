@@ -16,12 +16,13 @@ end
 -- used by an event function
 function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, qty)
 
-	if nil == bagId then return end
+	if nil == bagId or nil == slotId then return end
 	if isNewItem then
 		isNewItem = "True"
 	else
 		isNewItem = "False"
 	end
+
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
 	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemLink = IIfA.BagSlotInfo[bagId][slotId]
@@ -62,7 +63,7 @@ local function IIfA_HouseEntered(eventCode)
 	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 
 	if nil == IIfA.data.collectHouseData[houseCollectibleId] then
-		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())		
+		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())
 	end
 	IIfA:GetTrackedBags()[houseCollectibleId] = IIfA:GetTrackedBags()[houseCollectibleId] or IIfA.data.collectHouseData[houseCollectibleId]
 	IIfA:RescanHouse(houseCollectibleId)

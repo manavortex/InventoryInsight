@@ -192,9 +192,6 @@ local function getQualityDict()
 	end
 	return qualityDictionary
 end
-function IIfA:getQualityDict()
-	return qualityDictionary or getQualityDict()
-end
 
 function IIfA:getQualityDict()
 	return qualityDictionary or getQualityDict()
@@ -750,8 +747,7 @@ function IIfA:SetupBackpack()
 		local qualityDict = getQualityDict()
 
 		IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
-		local qualityDict = getQualityDict()
-		
+
 		local validChoices =  {}
 		table.insert(validChoices, "Any")
 		table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
