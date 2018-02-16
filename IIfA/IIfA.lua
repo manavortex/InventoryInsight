@@ -3,6 +3,7 @@
 --Original Author: Vicster0
 --v0.8
 -- v1.x and 2.x - rewrites by ManaVortex & AssemblerManiac
+-- v3.x - new features mainly by ManaVortex
 --[[
 	Collects inventory data for all characters on a single account
 	including the shared bank and makes this information available
@@ -20,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "2.20"
+IIfA.version 			= "3.04"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -132,25 +133,25 @@ end
 
 function IIfA:DebugOut(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
 	if not IIfA.data.bDebug then return end
-	if a10 then 
+	if a10 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10))
-	elseif a9 then 
+	elseif a9 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9))
-	elseif a8 then 
+	elseif a8 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8))
-	elseif a7 then 
+	elseif a7 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7))
-	elseif a6 then 
+	elseif a6 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5, a6))
-	elseif a5 then 
+	elseif a5 then
 		d(zo_strformat(output, a1, a2, a3, a4, a5))
-	elseif a4 then 
+	elseif a4 then
 		d(zo_strformat(output, a1, a2, a3, a4))
 	elseif a3 then
 		d(zo_strformat(output, a1, a2, a3))
 	elseif a2 then
 		d(zo_strformat(output, a1, a2))
-	elseif a1 then 
+	elseif a1 then
 		d(zo_strformat(output, a1))
 	elseif output then
 		d(zo_strformat(output))
