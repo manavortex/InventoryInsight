@@ -258,21 +258,21 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA.filterGroup = "All"
 	IIfA.filterTypes = nil
-	
+
 	-- grabs data from bagpack, and worn bag when we first open the inventory
-	-- ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen) 
-	ZO_PreHook(BACKPACK_GUILD_BANK_LAYOUT_FRAGMENT, "ApplyBackpackLayout", IIfA.CollectGuildBank) 
-	
-	-- ZO_PreHook(SHARED_INVENTORY, "GetOrCreateBagCache", function(self, bagId) 
+	-- ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen)
+	ZO_PreHook(BACKPACK_GUILD_BANK_LAYOUT_FRAGMENT, "ApplyBackpackLayout", IIfA.CollectGuildBank)
+
+	-- ZO_PreHook(SHARED_INVENTORY, "GetOrCreateBagCache", function(self, bagId)
 		-- d("SHARED_INVENTORY: GetOrCreateBagCache: " .. tostring(bagId))
 	-- end)
-	-- ZO_PreHook(SHARED_INVENTORY, "PerformFullUpdateOnBagCache", function(self, bagId) 
+	-- ZO_PreHook(SHARED_INVENTORY, "PerformFullUpdateOnBagCache", function(self, bagId)
 		-- d("SHARED_INVENTORY: PerformFullUpdateOnBagCache: " .. tostring(bagId))
 	-- end)
 
-	
-	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67		
-	
+
+	-- http://esodata.uesp.net/100016/src/libraries/utility/zo_savedvars.lua.html#67
+
 
 	IIfA.settings 	= ZO_SavedVars:NewCharacterIdSettings("IIfA_Settings", 1, nil, default)
 	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
@@ -300,7 +300,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		end
 	end
 	nukePositioning()
-	
+
 	if IIfA.settings.in2ToggleGuildBankDataCollection ~= nil then
 		IIfA.settings.in2ToggleGuildBankDataCollection = nil
 	end
@@ -356,10 +356,10 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:SetupCharLookups()
 
 	-- overwrite non-global tables if present
-	
+
 	IIfA.settings.accountCharacters = nil
 	IIfA.settings.guildBanks = nil
-	
+
 
 	-- this MUST remain in this location, otherwise it's possible that CollectAll will remove ALL characters data from the list (because they haven't been converted)
 	if IIfA.data.accountCharacters ~= nil then
@@ -481,16 +481,16 @@ function IIfA_onLoad(eventCode, addOnName)
 		end
 		IIfA.data.DBv3 = dbv3
 	end
-	
+
 	-- keep EU and US items apart
 	local worldName = GetWorldName():gsub(" Megaserver", "")
 	IIfA.data[worldName] = IIfA.data[worldName] or {}
-	if nil == IIfA.data[worldName].DBv3 then 
+	if nil == IIfA.data[worldName].DBv3 then
 		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
 	IIfA.data.DBv3 = nil
 	IIfA.database = IIfA.data[worldName].DBv3
-	
+
 	IIfA:ActionLayerInventoryUpdate()
 
 	if not ObjSettings.frameSettings.hud.hidden then
@@ -499,19 +499,19 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
-	
-	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId) 
+
+	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId)
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
-	
+
 	IIfA:CollectAll()
-		
+
 
 end
 
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
 
 function IIfA:ScanCurrentCharacterAndBank()
-	
+
 	IIfA:ScanBank()
 	IIfA:ScanCurrentCharacter()
 	zo_callLater(function()
@@ -543,6 +543,7 @@ function IIfA:MakeBSI()
 		end
 	end
 	IIfA.BagSlotInfo = bs
+	return bs	-- return only used in IIfA:SaveBagSlotIndex when IIfA.BagSlotInfo is nil
 end
 
 

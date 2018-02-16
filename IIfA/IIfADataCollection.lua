@@ -109,7 +109,7 @@ function IIfA:ScanCurrentCharacter()
 	end
 	task:Call(function()
 		IIfA:MakeBSI()
-	end)	
+	end)
 end
 
 local function tryScanHouseBank()
@@ -283,13 +283,13 @@ function IIfA:RescanHouse(houseCollectibleId)
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not houseCollectibleId then return end
 
-	
+
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
-	
-	if not IIfA.data.collectHouseData[houseCollectibleId] then 
-		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHousIds()[houseCollectibleId] then 
+
+	if not IIfA.data.collectHouseData[houseCollectibleId] then
+		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHousIds()[houseCollectibleId] then
 			IIfA.trackedBags[houseCollectibleId] = false
-			return 
+			return
 		end
 		IIfA.trackedBags[houseCollectibleId] = true
 	end
@@ -318,7 +318,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			IIfA:DebugOut("furniture item <<1>> x<<2>>", itemLink, itemCount)
 			IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
-			
+
 		end
 	end)
 
@@ -401,17 +401,9 @@ local function getLocation(location, bagId)
 	end
 end
 
--- use getbsi to avoid "trying to access nil" errors
-function IIfA:GetBSI()
-	if nil == IIfA.BagSlotInfo then
-		IIfA:MakeBSI()
-	end
-	return IIfA.BagSlotInfo
-end	
-
 function IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
 	if not bagId or not slotId then return end
-	IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
+	IIfA.BatSlotInfo = IIfA.BagSlotInfo or IIfA:MakeBSI()
 	IIfA.BagSlotInfo[bagId] = IIfA.BagSlotInfo[bagId] or {}
 	IIfA.BagSlotInfo[bagId][slotId] = IIfA.BagSlotInfo[bagId][slotId] or itemLink
 end
@@ -423,18 +415,18 @@ function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, 
 end
 
 function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
-	
+
 	if not IIfA.trackedBags[bagId] then return end
 
 	IIfA.database = IIfA.database or {}
 	local DBv3 = IIfA.database
-	
+
 	IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
-			
+
 	-- item link is either passed as arg or we need to read it from the system
 	itemLink = itemLink or getItemLink(bagId, slotId)
 
-	
+
 	-- return if we don't have any item to track
 	if nil == itemLink  then return end
 
@@ -444,7 +436,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	itemCount = itemCount or getItemCount(bagId, slotId, itemLink)
 
-	
+
 	-- get item key from crafting type
 	local usedInCraftingType, itemType = GetItemCraftingInfo(bagId, slotId)
 
@@ -460,14 +452,14 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	if itemType == 0 then itemType = nil end
 
 	local itemKey = getItemKey(itemLink, usedInCraftingType, itemType) or itemLink
-	
+
 	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
-	
+
 
 	if nil == itemKey then return end
-	
-	
-	
+
+
+
 	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
 	DBitem = DBv3[itemKey]
 	location = locationID or getLocation(location, bagId) or EMPTY_STRING
@@ -560,12 +552,12 @@ function IIfA:CollectAll()
 		task:Call(function()
 			bagItems = GetBagSize(bagId)
 			if(bagId == BAG_WORN) then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
-				IIfA:ClearLocationData(IIfA.currentCharacterId)				
-				grabBagContent(BAG_WORN)				
+				IIfA:ClearLocationData(IIfA.currentCharacterId)
+				grabBagContent(BAG_WORN)
 			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 				grabBagContent(BAG_BANK)
-			elseif(bagId == BAG_BACKPACK) then	
+			elseif(bagId == BAG_BACKPACK) then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
 				grabBagContent(BAG_BACKPACK)
 			elseif(bagId == BAG_VIRTUAL)then
