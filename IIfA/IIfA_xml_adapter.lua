@@ -185,7 +185,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 			return IIfA:GuiOnFilterButton(parentControl, MOUSE_BUTTON_INDEX_LEFT, parentControl.filterText)
 		end
 	end
-	
+
 	if b_isMain then
 		if IIfA.LastFilterControl ~= nil then
 			IIfA.LastFilterControl:SetState(BSTATE_NORMAL)
@@ -494,6 +494,7 @@ function IIfA:RePositionFrame(settings)
 		IIFA_GUI_Header_Subfilter:SetHeight(38)
 	end
 	IIFA_GUI_Header_Dropdown:SetHidden(bMinimize)
+	IIFA_GUI_Header_Dropdown_Quality:SetHidden(bMinimize)
 	IIFA_GUI_Search:SetHidden(bMinimize)
 	IIFA_GUI_Header_Dropdown_Quality:SetHidden(bMinimize)
 	IIFA_GUI_Header_GoldButton:SetHidden(bMinimize)
