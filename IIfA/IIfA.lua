@@ -432,7 +432,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.data.bConvertedGlyphs = true
 		IIfA.data.bConvertedLocType = true
 	end
-	if IIfA.data.bConvertedMotifs == nil and IIfA.data.DBv3 == nil then			-- 9-12-16 AM - added whole if to convert motifs to item ids
+	if IIfA.data.bConvertedMotifs == nil and IIfA.data.DBv2 ~= nil then			-- 9-12-16 AM - added whole if to convert motifs to item ids
 		for itemLink, DBItem in pairs(IIfA.data.DBv2) do
 			if itemLink:find("|") ~= nil then			-- not a numeric itemid, it's a link
 				local itemType = GetItemLinkItemType(itemLink)
@@ -461,7 +461,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.data.bConvertedMotifs = true
 	end
 
-	if IIfA.data.DBv3 == nil then
+	if IIfA.data.DBv2 ~= nil then
 		dbv3 = {}
 		for itemLink, DBItem in pairs(IIfA.data.DBv2) do
 			dbv3[itemLink] = {}
@@ -480,12 +480,13 @@ function IIfA_onLoad(eventCode, addOnName)
 			end
 		end
 		IIfA.data.DBv3 = dbv3
+		IIfA.data.DBv2 = nil
 	end
 
 	-- keep EU and US items apart
 	local worldName = GetWorldName():gsub(" Megaserver", "")
 	IIfA.data[worldName] = IIfA.data[worldName] or {}
-	if nil == IIfA.data[worldName].DBv3 then
+	if IIfA.data[worldName].DBv3 == nil then
 		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
 	IIfA.data.DBv3 = nil

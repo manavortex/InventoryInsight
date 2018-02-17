@@ -8,6 +8,7 @@ local function p(...) IIfA:DebugOut(...) end
 
 local function grabBagContent(bagId, override)
 	local bagItems = GetBagSize(bagId)
+	IIfA:DebugOut("grabBagContent - bagId = <<1>>", bagId)
 	for slotId=0, bagItems, 1 do
 		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
@@ -144,8 +145,8 @@ function IIfA:ScanBank()
 	end):Then(function()
 		grabBagContent(BAG_BANK)
 	end):Then(function()
-		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-		grabBagContent(GetString(BAG_SUBSCRIBER_BANK))
+		grabBagContent(BAG_SUBSCRIBER_BANK)
+	end):Then(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 		slotId = GetNextVirtualBagSlotId(slotId)
 		while slotId ~= nil do
@@ -333,6 +334,7 @@ local function getItemLink(bagId, slotId)
 		IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
 		return itemLink
 	end
+	if not IIfA.BagSlotInfo then return end
 	if nil == IIfA.BagSlotInfo[bagId] then return end
 	return IIfA.BagSlotInfo[bagId][slotId]
 end
@@ -346,25 +348,23 @@ local function getItemName(bagId, slotId, itemLink)
 end
 
 -- returns the item's db key, we only save under the item link if we need to save level information etc, else we use the ID
-local function getItemKey(itemLink, usedInCraftingType, itemType)
+function IIfA:GetItemKey(itemLink, usedInCraftingType, itemType)
 
-	-- crafting materials get saved by ID
-	if usedInCraftingType ~= CRAFTING_TYPE_INVALID and
-	   itemType ~= ITEMTYPE_GLYPH_ARMOR and
-	   itemType ~= ITEMTYPE_GLYPH_JEWELRY and
-	   itemType ~= ITEMTYPE_GLYPH_WEAPON then
-	   return IIfA:GetItemID(itemLink)
-	end
-	-- raw materials
-	itemType = itemType or GetItemLinkItemType(itemLink)
-	if  itemType == ITEMTYPE_STYLE_MATERIAL or
-		itemType == ITEMTYPE_ARMOR_TRAIT or
-		itemType == ITEMTYPE_WEAPON_TRAIT or
-		itemType == ITEMTYPE_LOCKPICK or
-		itemType == ITEMTYPE_RAW_MATERIAL or
-		itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
-		itemType == ITEMTYPE_RECIPE then
+	if CanItemLinkBeVirtual(itemLink) then	-- anything that goes in the craft bag
 		return IIfA:GetItemID(itemLink)
+	elseif usedInCraftingType ~= CRAFTING_TYPE_INVALID and		-- crafting materials get saved by ID
+   		itemType ~= ITEMTYPE_GLYPH_ARMOR and
+   		itemType ~= ITEMTYPE_GLYPH_JEWELRY and
+   		itemType ~= ITEMTYPE_GLYPH_WEAPON then
+   		return IIfA:GetItemID(itemLink)
+	else
+		-- other oddball items that might have level info in them
+		itemType = itemType or GetItemLinkItemType(itemLink)
+		if	itemType == ITEMTYPE_LOCKPICK or
+			itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
+			itemType == ITEMTYPE_RECIPE then
+			return IIfA:GetItemID(itemLink)
+		end
 	end
 	return itemLink
 end
@@ -396,7 +396,7 @@ local function getLocation(location, bagId)
 		return GetString(IIFA_BAG_CRAFTBAG)
 	elseif(bagId == BAG_GUILDBANK) then
 		return GetGuildName(GetSelectedGuildBankId())
-	elseif GetAPIVersion() >= 100022 and 0 < GetCollectibleForHouseBankBag(bagId) then
+	elseif 0 < GetCollectibleForHouseBankBag(bagId) then
 		return GetCollectibleForHouseBankBag(bagId)
 	end
 end
@@ -421,11 +421,10 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	IIfA.database = IIfA.database or {}
 	local DBv3 = IIfA.database
 
-	IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
-
 	-- item link is either passed as arg or we need to read it from the system
 	itemLink = itemLink or getItemLink(bagId, slotId)
 
+	--IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
 
 	-- return if we don't have any item to track
 	if nil == itemLink  then return end
@@ -438,7 +437,10 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 
 
 	-- get item key from crafting type
-	local usedInCraftingType, itemType = GetItemCraftingInfo(bagId, slotId)
+	local usedInCraftingType, _ = GetItemCraftingInfo(bagId, slotId)
+	local itemType = GetItemType(bagId, slotId)
+
+	-- IIfA:DebugOut("CraftingType, ItemType <<1>>, <<2>>", usedInCraftingType, itemType)
 
 	local qty, itemQuality
 	_, qty, _, _, _, _, _, itemQuality = GetItemInfo(bagId, slotId)
@@ -448,17 +450,17 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 		usedInCraftingType 	= GetItemLinkCraftingSkillType(itemLink)
 		itemType 			= GetItemLinkItemType(itemLink)
 	end
-	if usedInCraftingType == CRAFTING_TYPE_INVALID then usedInCraftingType = nil end
-	if itemType == 0 then itemType = nil end
 
-	local itemKey = getItemKey(itemLink, usedInCraftingType, itemType) or itemLink
+	local itemKey
+	if bagId == BAG_VIRTUAL then
+		itemKey = tostring(slotId)
+	else
+		itemKey = IIfA:GetItemKey(itemLink, usedInCraftingType, itemType) or itemLink
+	end
 
-	IIfA:DebugOut("saving <<1>> x<<2>> -> <<3>>", itemLink, itemCount, itemKey)
-
+	IIfA:DebugOut("saving slot=<<1>> <<2>> x<<3>> -> <<4>>", slotId, itemLink, itemCount, itemKey)
 
 	if nil == itemKey then return end
-
-
 
 	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
 	DBitem = DBv3[itemKey]
@@ -553,22 +555,22 @@ function IIfA:CollectAll()
 			bagItems = GetBagSize(bagId)
 			if(bagId == BAG_WORN) then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
 				IIfA:ClearLocationData(IIfA.currentCharacterId)
-				grabBagContent(BAG_WORN)
 			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-				grabBagContent(BAG_BANK)
 			elseif(bagId == BAG_BACKPACK) then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
-				grabBagContent(BAG_BACKPACK)
 			elseif(bagId == BAG_VIRTUAL)then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-				grabBagContent(BAG_VIRTUAL)
 			end
 	--		d("  BagItemCount=" .. bagItems)
 			if bagId ~= BAG_VIRTUAL and tracked then
-				for slotId=0, bagItems, 1 do
-					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId)
+				grabBagContent(bagId)
+				if bagId == BAG_BANK then
+					grabBagContent(BAG_SUBSCRIBER_BANK)
 				end
+--				for slotId=0, bagItems, 1 do
+--					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId)
+--				end
 			else -- it's bag virtual
 				slotId = GetNextVirtualBagSlotId(nil)
 				while slotId ~= nil do
