@@ -627,31 +627,9 @@ function IIfA:QueryAccountInventory(itemLink)
 	local newLocation = {}
 
 	itemType = GetItemLinkItemType(itemLink)
-	if itemType == ITEMTYPE_BLACKSMITHING_MATERIAL or
-		itemType == ITEMTYPE_ARMOR_TRAIT or
-		itemType == ITEMTYPE_BLACKSMITHING_BOOSTER or
-		itemType == ITEMTYPE_BLACKSMITHING_RAW_MATERIAL or
-		itemType == ITEMTYPE_CLOTHIER_BOOSTER or
-		itemType == ITEMTYPE_CLOTHIER_MATERIAL or
-		itemType == ITEMTYPE_CLOTHIER_RAW_MATERIAL or
-		itemType == ITEMTYPE_ENCHANTING_RUNE_ASPECT or
-		itemType == ITEMTYPE_ENCHANTING_RUNE_ESSENCE or
-		itemType == ITEMTYPE_ENCHANTING_RUNE_POTENCY or
-		itemType == ITEMTYPE_FLAVORING or
-		itemType == ITEMTYPE_INGREDIENT or
+	if CanItemLinkBeVirtual(itemLink) or
 		itemType == ITEMTYPE_LOCKPICK or
-		itemType == ITEMTYPE_LURE or
-		itemType == ITEMTYPE_POISON_BASE or
-		itemType == ITEMTYPE_POTION_BASE or
-		itemType == ITEMTYPE_RAW_MATERIAL or
-		itemType == ITEMTYPE_REAGENT or
 		itemType == ITEMTYPE_RECIPE or
-		itemType == ITEMTYPE_SPICE or
-		itemType == ITEMTYPE_STYLE_MATERIAL or
-		itemType == ITEMTYPE_WEAPON_TRAIT or
-		itemType == ITEMTYPE_WOODWORKING_BOOSTER or
-		itemType == ITEMTYPE_WOODWORKING_MATERIAL or
-		itemType == ITEMTYPE_WOODWORKING_RAW_MATERIAL or
 		itemType == ITEMTYPE_RACIAL_STYLE_MOTIF then
 		itemLink = IIfA:GetItemID(itemLink)
 	end
