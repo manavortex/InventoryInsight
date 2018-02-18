@@ -117,15 +117,13 @@ end
 
 local function tryScanHouseBank()
 	if not IsOwnerOfCurrentHouse() then return end
-
-	local bagId
+	local bagId, collectibleId
 	for bagId = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
-		local collectibleId = GetCollectibleForHouseBankBag(bagId)
+		collectibleId = GetCollectibleForHouseBankBag(bagId) -- this MUST stay here, or collectibleId is 0		
 		if IsCollectibleUnlocked(collectibleId) then
 			IIfA:DebugOut(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
 			-- call with libAsync to avoid lags
 			task:Call(function()
-				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- this MUST stay here, or collectibleId is 0
 				IIfA:ClearLocationData(collectibleId)
 			end):Then(function()
 				grabBagContent(bagId, true)
@@ -135,7 +133,6 @@ local function tryScanHouseBank()
 end
 
 function IIfA:ScanBank()
-
 	-- call with libAsync to avoid lags
 	task:Call(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))

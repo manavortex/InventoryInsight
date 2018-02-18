@@ -323,11 +323,10 @@ end
 
 --sort datalines
 local function IIfA_FilterCompareUp(a, b)
-	--local _, _, name1 = a.itemLink:match("|H(.-):(.-)|h(.-)|h")
-	--local _, _, name2 = b.itemLink:match("|H(.-):(.-)|h(.-)|h")
-	local name1 = a.name
-	local name2 = b.name
-	return (name1 or "") < (name2 or "")
+	
+	local sort1 = (IIfA.bSortQuality and a.quality) or a.name
+	local sort2 = (IIfA.bSortQuality and b.quality) or b.name
+	return (sort1 or "") < (sort2 or "")
 end
 local function IIfA_FilterCompareDown(a, b)
 	return IIfA_FilterCompareUp(b, a)
@@ -758,7 +757,7 @@ function IIfA:SetupBackpack()
 	IIfA:CreateInventoryScroll()
 	createInventoryDropdown()
 	createInventoryDropdownQuality()
-	IIfA:GuiOnSort(true)
+	-- IIfA:GuiOnSort()
 end
 
 function IIfA:ProcessRightClick(control)

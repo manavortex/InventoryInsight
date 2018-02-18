@@ -148,11 +148,11 @@
 							<OnMouseEnter>	IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
 							<OnMouseExit>	IIfA:GuiHideTooltip(self)</OnMouseExit>
 						</Control>
-
+<!-- Filter Group -->
 						<Control name="$(parent)_Filter" mouseEnabled="true">
 							<Dimensions x="300" y="30" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="50" offsetY="80"/>
-
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="50" offsetY="110"/>
 							<Controls>
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
@@ -247,11 +247,12 @@
 						</Control>
 
 <!-- SubFilter Groups -->
-						<Control name="$(parent)_Subfilter" mouseEnabled="true">
-							<Dimensions x="300" y="0" />
+						<Control name="$(parent)_Subfilter" mouseEnabled="true" hidden="true">
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="2"/>
-<!-- SubFilter Group 1 - Weapons -->
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMRIGHT" offsetX="0"/>
+							<DimensionConstraints minY="10"/>
 							<Controls>
+<!-- SubFilter Group 1 - Weapons -->
 								<Control name="$(parent)_1" mouseEnabled="true" hidden="true">
 									<Dimensions x="300" y="0" />
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
@@ -836,27 +837,33 @@
 
 						<Control name="$(parent)_SortBar" mouseEnabled="true">
 
-							<Anchor point="TOPLEFT" relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMLEFT" offsetY="3" offsetX="-50" />
-							<Dimensions y="30" x="110"/>
+							<Anchor point="TOPLEFT" 	relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMLEFT" offsetX="-45"  offsetY="10" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="40" />
 
 							<Controls>
-								<Button name="$(parent)_Sort" verticalAlignment="LEFT"  mouseEnabled="true">
+								<Control name="$(parent)_Sort" verticalAlignment="LEFT">
+									<Dimensions y="30"/>
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="2" />
-									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="2" />
-									<OnMouseUp>IIfA:GuiOnSort()</OnMouseUp>
+									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="2" />									
 									<Controls>
-
-										<Texture name="$(parent)_Icon">
+										<Texture name="$(parent)_Icon" textureFile="/esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds">
 											<Dimensions x="30" y="30"/>
 											<Anchor point="LEFT" relativeTo="$(parent)" relativePoint="LEFT" offsetX="10" />
 										</Texture>
-
-										<Label name="$(parent)_SortName" hidden="false" text="Name" mouseEnabled="false" font="ZoFontGameLargeBold">
-											<Anchor point="LEFT" relativeTo="$(parent)_Icon" relativePoint="RIGHT" offsetX="20" />
-										</Label>
+										<Button name="$(parent)_SortName" text="Name" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Icon" relativePoint="TOPRIGHT" offsetX="20"/>
+											<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_Icon" relativePoint="BOTTOMLEFT" offsetX="260"/>											
+											<OnMouseUp>IIfA:GuiOnSort(false)</OnMouseUp>
+										</Button>
+										<Button name="$(parent)_SortQuality" text="Quality" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_SortName" relativePoint="TOPRIGHT"/>
+											<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT"/>
+											<Dimensions y="45"/>
+											<OnMouseUp>IIfA:GuiOnSort(true)</OnMouseUp>
+										</Button>
 
 									</Controls>
-								</Button>
+								</Control>
 
 								<Control name="$(parent)_Subfilter_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" hidden="true">
 									<Dimensions x="150" y="30" />
@@ -872,7 +879,7 @@
 
 				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
 					<DimensionConstraints  minY="52"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="15" offsetY="150"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-27" offsetY="-55"/>
 					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
 
