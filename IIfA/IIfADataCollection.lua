@@ -74,7 +74,7 @@ function IIfA:CollectGuildBank()
 
 	-- call with libAsync to avoid lag
 	task:Call(function()
-d("Collect guild bank - " .. curGuild)
+		IIfA:DebugOut("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
 		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
