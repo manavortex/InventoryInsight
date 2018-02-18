@@ -656,7 +656,7 @@ function IIfA:QueryAccountInventory(itemLink)
 						newLocation = {}
 						newLocation.name = locationName
 
-						if locationName == location.bagID then -- location is a collectible
+						if location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then	-- location is a housing chest
 							newLocation.name = GetCollectibleNickname(locationName)
 							if newLocation.name == "" then newLocation.name = GetCollectibleName(locationName) end
 						end

@@ -47,6 +47,7 @@ local function IIfA_InventorySlotUpdate(...)
 end
 
 local function IIfA_ScanHouse(eventCode, oldMode, newMode)
+	d(newMode)
 	if newMode == "showing" or newMode == "shown" then return end
 	-- are we listening?
 	if not IIfA:GetCollectingHouseData() then return end
@@ -57,7 +58,6 @@ end
 
 local function IIfA_HouseEntered(eventCode)
 	if not IsOwnerOfCurrentHouse() then return end
-
 
 	-- is the house registered?
 	local houseCollectibleId = GetCollectibleIdForHouse(GetCurrentZoneHouseId())
@@ -145,7 +145,7 @@ function IIfA:RegisterForEvents()
 	em:RegisterForEvent("IIFA_GUILDBANK_LOADED", EVENT_GUILD_BANK_ITEMS_READY, function() IIfA:GuildBankDelayReady() end)
 
 --	em:RegisterForEvent("IIFA_gb1", EVENT_GUILD_BANK_OPEN_ERROR, fgb1)
-	em:RegisterForEvent("IIFA_gb2", EVENT_GUILD_BANK_UPDATED_QUANTITY, fgb2)
+--	em:RegisterForEvent("IIFA_gb2", EVENT_GUILD_BANK_UPDATED_QUANTITY, fgb2)
 --	em:RegisterForEvent("IIFA_gb3", EVENT_GUILD_BANK_SELECTED, fgb3)
 --	em:RegisterForEvent("IIFA_gb4", EVENT_GUILD_BANK_DESELECTED, fgb4)
 --	em:RegisterForEvent("IIFA_gb5", EVENT_GUILD_BANK_ITEMS_READY, fgb5)
