@@ -216,7 +216,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 
 	if IIfA.LastSubFilterControl == nil then
 		IIFA_GUI_Header_Subfilter:SetHidden(true)
-		IIFA_GUI_Header_Subfilter:SetHeight(0)
+		IIFA_GUI_Header_Subfilter:SetHeight(10)
 	else
 		IIFA_GUI_Header_Subfilter:SetHidden(false)
 		IIFA_GUI_Header_Subfilter:SetHeight(38)
@@ -265,20 +265,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 		IIFA_GUI_Header_SortBar_Subfilter_Dropdown:SetHidden(true)
 	end
 
-
-	local X_OFFSET_INDEX = 4
-	local Y_OFFSET_INDEX = 5
-	IIFA_GUI_ListHolder:ClearAnchors()
-
-	local newAnchor = ZO_Anchor:New(unpack(IIFA_GUI_ListHolder.savedAnchor1))
-	newAnchor:SetOffsets(IIFA_GUI_ListHolder.savedAnchor1[X_OFFSET_INDEX], IIFA_GUI_ListHolder.savedAnchor1[Y_OFFSET_INDEX] + IIFA_GUI_Header_Subfilter:GetHeight())
-	newAnchor:AddToControl(IIFA_GUI_ListHolder)
-
-	IIFA_GUI_ListHolder:SetAnchor(BOTTOMRIGHT, IIFA_GUI, BOTTOMRIGHT, -27, -55)
-	-- newAnchor = ZO_Anchor:New(unpack(IIFA_GUI_ListHolder.savedAnchor2))
-	-- newAnchor:SetOffsets(IIFA_GUI_ListHolder.savedAnchor2[X_OFFSET_INDEX], IIFA_GUI_ListHolder.savedAnchor2[Y_OFFSET_INDEX])
-	-- newAnchor:AddToControl(IIFA_GUI_ListHolder)
-
+	
 	IIfA:GuiResizeScroll()
 
 	IIfA:RefreshInventoryScroll()
@@ -301,15 +288,20 @@ function IIfA:GuiOnSearchBoxClear(control)
 end
 
 
+
+	-- We're inverting search order if same header is clicked twice. 
+IIfA.bSortQuality = false
 -- IIFA_GUI_ListHolder sort
-function IIfA:GuiOnSort(initialised)
-	if (initialised ~= true) then
+function IIfA:GuiOnSort(sortQuality)	
+		
+	if (IIfA.bSortQuality == sortQuality) then
 		IIfA.ScrollSortUp = not IIfA.ScrollSortUp
 	end
-
+	IIfA.bSortQuality = sortQuality
+	
 	local icon = IIFA_GUI_Header_SortBar.Icon
 
-	if(IIfA.ScrollSortUp)then
+	if (IIfA.ScrollSortUp) then
 		icon:SetTexture("/esoui/art/miscellaneous/list_sortheader_icon_sortup.dds")
 		icon:SetAlpha(1)
 	else
