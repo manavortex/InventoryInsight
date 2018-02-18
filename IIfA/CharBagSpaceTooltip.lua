@@ -128,10 +128,6 @@ end
 
 
 function CharBagFrame:Initialize(objectForAssets)
-	local function ComputeSpaceUsedText(spaceUsed, spaceMax)
-		-- returns color coded
-	end
-
 	self.frame = IIFA_CharBagFrame
 	local tControl
 	local prevControl = self.frame
