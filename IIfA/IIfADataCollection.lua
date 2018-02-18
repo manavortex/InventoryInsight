@@ -7,6 +7,8 @@ IIfA.task			= task
 local function p(...) IIfA:DebugOut(...) end
 
 local function grabBagContent(bagId, override)
+	if bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN and not IsOwnerOfCurrentHouse() then return end
+
 	local bagItems = GetBagSize(bagId)
 	IIfA:DebugOut("grabBagContent - bagId = <<1>>", bagId)
 	for slotId=0, bagItems, 1 do
@@ -114,31 +116,26 @@ function IIfA:ScanCurrentCharacter()
 end
 
 local function tryScanHouseBank()
-	if GetAPIVersion() < 100022 then return end
-	local bagId = GetBankingBag()
-	if not bagId then return end
-	local collectibleId = GetCollectibleForHouseBankBag(bagId)
+	if not IsOwnerOfCurrentHouse() then return end
 
-	if IsCollectibleUnlocked(collectibleId) then
-
-		IIfA:DebugOut(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
-
-		local collectibleName = GetCollectibleNickname(collectibleId)
-		if collectibleName == EMPTY_STRING then collectibleName = GetCollectibleName(collectibleId) end
-		-- call with libAsync to avoid lags
-		task:Call(function()
-			IIfA:ClearLocationData(collectibleId)
-		end):Then(function()
-			grabBagContent(bagId, true)
-		end)
+	local bagId
+	for bagId = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
+		local collectibleId = GetCollectibleForHouseBankBag(bagId)
+		if IsCollectibleUnlocked(collectibleId) then
+			IIfA:DebugOut(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
+			-- call with libAsync to avoid lags
+			task:Call(function()
+				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- this MUST stay here, or collectibleId is 0
+				IIfA:ClearLocationData(collectibleId)
+			end):Then(function()
+				grabBagContent(bagId, true)
+			end)
+		end
 	end
-
-	return true
 end
 
 function IIfA:ScanBank()
 
-	if tryScanHouseBank() then return end
 	-- call with libAsync to avoid lags
 	task:Call(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
@@ -153,9 +150,9 @@ function IIfA:ScanBank()
 			IIfA:EvalBagItem(BAG_VIRTUAL, slotId)
 			slotId = GetNextVirtualBagSlotId(slotId)
 		end
+	end):Then(function()
+		tryScanHouseBank()
 	end)
-
-
 end
 
 
@@ -553,14 +550,20 @@ function IIfA:CollectAll()
 		-- call with libAsync to avoid lags
 		task:Call(function()
 			bagItems = GetBagSize(bagId)
-			if(bagId == BAG_WORN) then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
+			if bagId == BAG_WORN then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
 				IIfA:ClearLocationData(IIfA.currentCharacterId)
-			elseif(bagId == BAG_BANK) then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
+			elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-			elseif(bagId == BAG_BACKPACK) then
+			elseif bagId == BAG_BACKPACK then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
-			elseif(bagId == BAG_VIRTUAL)then
+			elseif bagId == BAG_VIRTUAL then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+			elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
+				if IsOwnerOfCurrentHouse() then
+					IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
+				else
+					tracked = false		-- prevent reading the house bag if we're not in our own home
+				end
 			end
 	--		d("  BagItemCount=" .. bagItems)
 			if bagId ~= BAG_VIRTUAL and tracked then

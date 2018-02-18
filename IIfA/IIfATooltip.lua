@@ -414,7 +414,7 @@ function IIfA:getLastLink(tooltip)
 end
 
 function IIfA:UpdateTooltip(tooltip)
-	local itemLink
+	local itemLink, itemData
 	itemLink = self:getLastLink(tooltip)
 
 	local queryResults = IIfA:QueryAccountInventory(itemLink)
@@ -455,13 +455,7 @@ function IIfA:UpdateTooltip(tooltip)
 						d(location)
 						textOut = 'Error occurred'
 					else
-						if tonumber(location.name) == location.name then
-							local loc = GetCollectibleNickname(location.name)
-							 if loc == "" then loc = GetCollectibleName(location.name)end
-							textOut = string.format("%s x %s", loc, location.itemsFound)
-						else
-							textOut = string.format("%s x %s", location.name, location.itemsFound)
-						end
+						textOut = string.format("%s x %s", location.name, location.itemsFound)
 					end
 
 					if location.worn then
@@ -520,7 +514,7 @@ function IIfA:UpdateTooltip(tooltip)
 		if(queryResults) then
 			if #queryResults.locations > 0 then
 				ZO_Tooltip_AddDivider(tooltip)
-				for x, location in pairs(queryResults.locations) do
+				for _, location in pairs(queryResults.locations) do
 					local textOut
 					if location.name == nil or location.itemsFound == nil then
 						d(location)
