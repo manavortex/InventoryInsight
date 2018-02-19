@@ -98,9 +98,65 @@ function CharBagFrame:FillCharAndBank()
 	spaceUsed = spaceUsed + bankUsed + self.totSpaceUsed
 	spaceMax = spaceMax + bankMax + self.totSpaceMax
 
+	-- housing chests
+	local bInHouse, ctr, tempUsed
+	local cName
+	local iChestCount = 0
+	bInOwnedHouse = IsOwnerOfCurrentHouse()
+
+	for ctr = BAG_HOUSE_BANK_ONE,BAG_HOUSE_BANK_TEN do
+		tControl = self.houseChestControls[ctr]
+		if IsCollectibleUnlocked(GetCollectibleForHouseBankBag(ctr)) then
+			if bInOwnedHouse then
+				tempUsed = GetNumBagUsedSlots(ctr)
+				self.currAssets.houseChestSpace[ctr] = tempUsed
+				bFoundData = true
+			else
+				if self.currAssets.houseChestSpace[ctr] ~= nil then
+					tempUsed = self.currAssets.houseChestSpace[ctr]
+					bFoundData = true
+				else
+					tempUsed = nil
+				end
+			end
+			iChestCount = iChestCount + 1
+			if tempUsed ~= nil then
+				tControl:SetHeight(26)
+				self:SetQty(tControl, "spaceUsed", self:ComputeColorAndText(tempUsed, GetBagSize(ctr)))
+				self:SetQty(tControl, "spaceMax", GetBagSize(ctr))
+				cName = GetCollectibleNickname(GetCollectibleForHouseBankBag(ctr))
+				if cName == "" then
+					cName = GetCollectibleName(GetCollectibleForHouseBankBag(ctr))
+				end
+				tControl:GetNamedChild("charName"):SetText(cName)
+				spaceUsed = spaceUsed + tempUsed
+				spaceMax = spaceMax + GetBagSize(ctr)
+			end
+		else
+			tControl:SetHeight(0)
+			self.currAssets.houseChestSpace[ctr] = nil
+		end
+	end
+
+	local iFrameHeight
+	local iDivCount = 2
+
+	if iChestCount > 0 then
+		self.divider3:SetHeight(3)
+		if not bFoundData then
+			tControl = self.houseChestControls[BAG_HOUSE_BANK_ONE]
+			tControl:SetHeight(26)
+			tControl:GetNamedChild("charName"):SetText("Enter House once")
+		end
+		iDivCount = iDivCount + 1
+	end
+
+	iFrameHeight = ((GetNumCharacters() + 4 + iChestCount) * 26) + (iDivCount * 3)		-- numchars + numChests + 4 (title line + bank + total + dividers)
+
+	self.frame:SetHeight(iFrameHeight)
+
 	self:SetQty(self.totControl, "spaceUsed", spaceUsed)
 	self:SetQty(self.totControl, "spaceMax", spaceMax)
-
 
 end
 
@@ -128,10 +184,6 @@ end
 
 
 function CharBagFrame:Initialize(objectForAssets)
-	local function ComputeSpaceUsedText(spaceUsed, spaceMax)
-		-- returns color coded
-	end
-
 	self.frame = IIFA_CharBagFrame
 	local tControl
 	local prevControl = self.frame
@@ -217,12 +269,28 @@ function CharBagFrame:Initialize(objectForAssets)
     tControl:SetAlpha(1)
 	self.divider2 = tControl
 
+	self.houseChestControls = {}
+	self.currAssets.houseChestSpace = self.currAssets.houseChestSpace or {}
+	local ctr
+	prevControl = self.divider2
+	for ctr = BAG_HOUSE_BANK_ONE,BAG_HOUSE_BANK_TEN do
+		tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_House_Bank" .. ctr, self.frame, "IIFA_CharBagRow")
+		tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+		tControl:SetHeight(0)
+		self.houseChestControls[ctr] = tControl
+		prevControl = tControl
+	end
+
+	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider3", self.frame, "ZO_Options_Divider")
+	tControl:SetDimensions(288, 0)
+    tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+    tControl:SetAlpha(1)
+	self.divider3 = tControl
+
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Tots", self.frame, "IIFA_CharBagRow")
 	tControl:GetNamedChild("charName"):SetText("Totals")
-	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, self.divider3, BOTTOMLEFT, 0, 0)
 	self.totControl = tControl
-
-	self.frame:SetHeight((GetNumCharacters() + 4) * 26)	-- numchars + 4 represents # chars + bank + total + title and col titles
 
 	self:FillCharAndBank()
 

@@ -72,8 +72,9 @@ function IIfA:CollectGuildBank()
 		IIfA.data.guildBanks[curGuild].bCollectData = true		-- default to true just so it's here and ok
 	end
 
-	-- call with libAsync to avoid lags
+	-- call with libAsync to avoid lag
 	task:Call(function()
+		IIfA:DebugOut("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
 		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
@@ -115,15 +116,22 @@ function IIfA:ScanCurrentCharacter()
 	end)
 end
 
+--[[
+Developer note: In TryScanHouseBank, the call to IIfA:ClearLocationData will fail because collectibleId is zero
+bagId on the other hand DOES work, possibly because it's in use by the for loop
+]]--
+
 local function tryScanHouseBank()
 	if not IsOwnerOfCurrentHouse() then return end
+
 	local bagId, collectibleId
 	for bagId = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
-		collectibleId = GetCollectibleForHouseBankBag(bagId) -- this MUST stay here, or collectibleId is 0		
+		collectibleId = GetCollectibleForHouseBankBag(bagId)
 		if IsCollectibleUnlocked(collectibleId) then
 			IIfA:DebugOut(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
-			-- call with libAsync to avoid lags
+			-- call with libAsync to avoid lag
 			task:Call(function()
+				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- required code - MUST stay here, or collectibleId is 0
 				IIfA:ClearLocationData(collectibleId)
 			end):Then(function()
 				grabBagContent(bagId, true)
@@ -133,7 +141,7 @@ local function tryScanHouseBank()
 end
 
 function IIfA:ScanBank()
-	-- call with libAsync to avoid lags
+	-- call with libAsync to avoid lag
 	task:Call(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 	end):Then(function()
@@ -239,7 +247,7 @@ end
 
 function IIfA:GuildBankAddRemove(eventID, slotId)
 	IIfA:DebugOut("Guild Bank Add or Remove...")
-	-- call with libAsync to avoid lags
+	-- call with libAsync to avoid lag
 	task:Call(function()
 		IIfA:UpdateGuildBankData()
 		IIfA:CleanEmptyGuildBug()
@@ -247,7 +255,7 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 	--IIfA:CollectGuildBank()
 		local dbItem, itemKey
 		if eventID == EVENT_GUILD_BANK_ITEM_ADDED then
-	--		d("GB Add")
+			IIfA:DebugOut("GB Add - Slot <<1>>", slotId)
 			dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotId, true, 0)
 			IIfA:ValidateItemCounts(BAG_GUILDBANK, slotId, dbItem, itemKey)
 		else

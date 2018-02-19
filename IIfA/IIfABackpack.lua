@@ -323,7 +323,7 @@ end
 
 --sort datalines
 local function IIfA_FilterCompareUp(a, b)
-	
+
 	local sort1 = (IIfA.bSortQuality and a.quality) or a.name
 	local sort2 = (IIfA.bSortQuality and b.quality) or b.name
 	return (sort1 or "") < (sort2 or "")
@@ -655,9 +655,11 @@ function IIfA:QueryAccountInventory(itemLink)
 						newLocation = {}
 						newLocation.name = locationName
 
-						if location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then	-- location is a housing chest
+						if location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then -- location is a housing chest
 							newLocation.name = GetCollectibleNickname(locationName)
 							if newLocation.name == "" then newLocation.name = GetCollectibleName(locationName) end
+						elseif location.bagID == locationName then	-- location is a house
+							newLocation.name = GetCollectibleName(locationName)
 						end
 
 						newLocation.itemsFound = location.itemCount

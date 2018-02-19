@@ -47,7 +47,7 @@ local function IIfA_InventorySlotUpdate(...)
 end
 
 local function IIfA_ScanHouse(eventCode, oldMode, newMode)
-	d(newMode)
+	IIfA:DebugOut("IIfA_ScanHouse(<<1>>, <<2>>, <<3>>)", eventCode, oldMode, newMode)
 	if newMode == "showing" or newMode == "shown" then return end
 	-- are we listening?
 	if not IIfA:GetCollectingHouseData() then return end

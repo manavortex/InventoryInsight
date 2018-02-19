@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.04"
+IIfA.version 			= "3.05"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -62,9 +62,12 @@ IIfA.dropdownBankNames = {
 	"Bank and Current Character",
 	"Bank and other characters",
 	"Bank Only",
-	"Craft Bag"
+	"Craft Bag",
+	"Housing Storage",
+	"All Houses",
 }
-if GetAPIVersion() >= 100022 then
+
+if IIfA.trackedBags[BAG_SUBSCRIBER_BANK] == nil then
 	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] 	= true
 	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] 	= true
 	IIfA.trackedBags[BAG_HOUSE_BANK_THREE]	= true
