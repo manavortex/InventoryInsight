@@ -8,10 +8,14 @@ local function GetRealCollectibleName(collectibleId)
 end
  
 function IIfA:IsCharacterInventoryIgnored(ignoreChar)
+	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
 	return IIfA.data.ignoredCharEquipment[ignoreChar]
 end
 
 function IIfA:IsCharacterEquipIgnored(ignoreChar)
+	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
 	return IIfA.data.ignoredCharInventories[ignoreChar]
 end
 
