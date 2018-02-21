@@ -844,7 +844,7 @@
 								<Control name="$(parent)_Sort" verticalAlignment="LEFT">
 									<Dimensions y="30"/>
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="2" />
-									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="2" />									
+									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="2" />
 									<Controls>
 										<Texture name="$(parent)_Icon" textureFile="/esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds">
 											<Dimensions x="30" y="30"/>
@@ -852,14 +852,18 @@
 										</Texture>
 										<Button name="$(parent)_SortName" text="Name" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER">
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_Icon" relativePoint="TOPRIGHT" offsetX="20"/>
-											<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_Icon" relativePoint="BOTTOMLEFT" offsetX="260"/>											
+											<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_Icon" relativePoint="BOTTOMLEFT" offsetX="260"/>
 											<OnMouseUp>IIfA:GuiOnSort(false)</OnMouseUp>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort By Name")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 										</Button>
 										<Button name="$(parent)_SortQuality" text="Quality" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER">
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_SortName" relativePoint="TOPRIGHT"/>
 											<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT"/>
 											<Dimensions y="45"/>
 											<OnMouseUp>IIfA:GuiOnSort(true)</OnMouseUp>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort by Quality")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 										</Button>
 
 									</Controls>

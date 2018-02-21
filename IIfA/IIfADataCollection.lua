@@ -1,7 +1,7 @@
 local IIfA 			= IIfA
 local EMPTY_STRING 	= ""
 
-local task 			= LibStub("LibAsync"):Create("IIfA_DataCollection")
+local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
 
 local function p(...) IIfA:DebugOut(...) end
@@ -99,13 +99,13 @@ function IIfA:ScanCurrentCharacter()
 
 	IIfA:ClearLocationData(IIfA.currentCharacterId)
 
-	if not IIfA:IsCharacterEquipIgnored(playerName) then
+	if not IIfA:IsCharacterEquipIgnored() then
 		-- call with libAsync to avoid lags
 		task:Call(function()
 			grabBagContent(BAG_WORN)
 		end)
 	end
-	if not IIfA:IsCharacterInventoryIgnored(playerName) then
+	if not IIfA:IsCharacterInventoryIgnored() then
 		-- call with libAsync to avoid lags
 		task:Call(function()
 			grabBagContent(BAG_BACKPACK)
@@ -290,7 +290,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
 
 	if not IIfA.data.collectHouseData[houseCollectibleId] then
-		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHousIds()[houseCollectibleId] then
+		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHouseIds()[houseCollectibleId] then
 			IIfA.trackedBags[houseCollectibleId] = false
 			return
 		end
@@ -555,12 +555,12 @@ function IIfA:CollectAll()
 		-- call with libAsync to avoid lags
 		task:Call(function()
 			bagItems = GetBagSize(bagId)
-			if bagId == BAG_WORN then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
-				IIfA:ClearLocationData(IIfA.currentCharacterId)
+			if bagId == BAG_WORN then
+				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
 			elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 			elseif bagId == BAG_BACKPACK then
-				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
+				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
 			elseif bagId == BAG_VIRTUAL then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 			elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
@@ -570,20 +570,20 @@ function IIfA:CollectAll()
 					tracked = false		-- prevent reading the house bag if we're not in our own home
 				end
 			end
-	--		d("  BagItemCount=" .. bagItems)
-			if bagId ~= BAG_VIRTUAL and tracked then
-				grabBagContent(bagId)
-				if bagId == BAG_BANK then
-					grabBagContent(BAG_SUBSCRIBER_BANK)
-				end
---				for slotId=0, bagItems, 1 do
---					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId)
---				end
-			else -- it's bag virtual
-				slotId = GetNextVirtualBagSlotId(nil)
-				while slotId ~= nil do
-					IIfA:EvalBagItem(bagId, slotId)
-					slotId = GetNextVirtualBagSlotId(slotId)
+			if tracked then
+				if bagId ~= BAG_VIRTUAL then
+					if bagId ~= BAG_SUBSCRIBER_BANK then
+						grabBagContent(bagId)
+						if bagId == BAG_BANK then
+							grabBagContent(BAG_SUBSCRIBER_BANK)
+						end
+					end
+				else -- it's bag virtual
+					slotId = GetNextVirtualBagSlotId(nil)
+					while slotId ~= nil do
+						IIfA:EvalBagItem(bagId, slotId)
+						slotId = GetNextVirtualBagSlotId(slotId)
+					end
 				end
 			end
 
@@ -628,19 +628,24 @@ function IIfA:ClearUnowned()
 end
 
 
-function IIfA:ClearLocationData(location)
+function IIfA:ClearLocationData(location, bagID)		-- if loc is characterid, bagID can be BAG_BACKPACK, or BAG_WORN, if nil, don't do anything
 	local DBv3 = IIfA.database
 	local itemLocation = nil
 	local LocationCount = 0
 	local itemName, itemData
+	local bChar
+	if bagID == nil then
+		bChar = nil
+	else
+		bChar = location == IIfA.currentCharacterId
+	end
 
 	if(DBv3)then
-
-		IIfA:DebugOut(zo_strformat("IIfA:ClearLocationData(<<1>>)", location))
+		IIfA:DebugOut(zo_strformat("IIfA:ClearLocationData(<<1>>, <<2>>)", location, bagID))
 
 		for itemName, itemData in pairs(DBv3) do
 			itemLocation = itemData.locations[location]
-			if (itemLocation) then
+			if itemLocation and (bChar == nil or (bChar and itemLocation.bagID == bagID)) then
 				itemData.locations[location] = nil
 			end
 			LocationCount = 0

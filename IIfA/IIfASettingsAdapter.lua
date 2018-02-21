@@ -1,6 +1,9 @@
 local IIfA = IIfA
 IIfA.houseNameToIdTbl = {}
- 
+
+local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task			= task
+
 local function GetRealCollectibleName(collectibleId)
 	local collectibleName = GetCollectibleNickname(collectibleId)
 	if collectibleName and #collectibleName == 0 then collectibleName = GetCollectibleName(collectibleId) end
@@ -19,33 +22,23 @@ function IIfA:IsCharacterEquipIgnored(ignoreChar)
 	return IIfA.data.ignoredCharInventories[ignoreChar]
 end
 
-function IIfA:IgnoreCharacterEquip(ignoreChar, value)
-	if not ignoreChar then return end
-	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
-	IIfA.data.ignoredCharEquipment[ignoreChar] = value
-	
-	if ignoreChar == IIfA.currentCharacterId then 
-		IIfA.trackedBags[BAG_WORN] = false
-	end	
-	if value then
-		IIfA:ScanCurrentCharacter()
-	else
-		IIfA:ClearLocationData(IIfA.currentCharacterId)
-	end
+function IIfA:IsCharacterEquipIgnored()
+	return IIfA.data.ignoredCharEquipment[IIfA.currentCharacterId] or false
 end
-function IIfA:IgnoreCharacterInventory(ignoreChar, value)
-	if not ignoreChar then return end
-	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
-	IIfA.data.ignoredCharInventories[ignoreChar] = value
-	
-	if ignoreChar == IIfA.currentCharacterId then 
-		IIfA.trackedBags[BAG_BAGPACK] = false
-	end
-	if value then
-		IIfA:ScanCurrentCharacter()
-	else
-		IIfA:ClearLocationData(IIfA.currentCharacterId)
-	end
+
+function IIfA:IgnoreCharacterEquip(value)
+	IIfA.data.ignoredCharEquipment[IIfA.currentCharacterId] = value
+
+	IIfA.trackedBags[BAG_WORN] = not value
+	task:Call(function()
+		if value then
+			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
+		else
+			IIfA:ScanCurrentCharacter()
+		end
+	end):Then(function()
+		IIfA:RefreshInventoryScroll()
+	end)
 end
 function IIfA:GetCharacterList()
 	return IIfA.data.accountCharacters
@@ -59,7 +52,7 @@ function IIfA:GetIgnoredCharacterList()
 		wasAdded[characterName] = true
 	end
 	for characterName, characterData in pairs(IIfA.data.ignoredCharInventories) do
-		if not wasAdded[characterName] then 
+		if not wasAdded[characterName] then
 			table.insert(ret, characterName)
 		end
 	end
@@ -67,7 +60,7 @@ function IIfA:GetIgnoredCharacterList()
 end
 
 function IIfA:SetSetNameFilterOnly(value)
-	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName	
+	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName
 	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
     IIfA:RefreshInventoryScroll()
 end
@@ -110,9 +103,9 @@ end
 -- this is for the dropdown menu
 function IIfA:SetInventoryListFilterQuality(value)
 	IIfA.InventoryListFilterQuality = value
-	
+
 	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
-	
+
 	IIfA:RefreshInventoryScroll()
 end
 function IIfA:GetCollectingHouseData()
@@ -126,13 +119,13 @@ end
 function IIfA:GetTrackedHousIds()
 	local ret = {}
 	for id, trackIt in pairs(IIfA.data.collectHouseData) do
-		if trackIt then 
+		if trackIt then
 			table.insert(ret, id)
 		end
 	end
 	return ret
 end
-function IIfA:GetIgnoredHousIds()
+function IIfA:GetIgnoredHouseIds()
 	local ret = {}
 	for id, trackIt in pairs(IIfA.data.collectHouseData) do
 		if not trackIt then table.insert(ret, id) end
@@ -158,7 +151,7 @@ function IIfA:RebuildHouseMenuDropdowns()
 		-- cache house name for lookup
 		IIfA.houseNameToIdTbl[collectibleName] = collectibleId
 		local targetTable = (trackIt and tracked) or ignored
-		table.insert(targetTable, collectibleName)		
+		table.insert(targetTable, collectibleName)
 	end
 	IIfA.houseNamesIgnored = ignored
 	IIfA.houseNamesTracked = tracked
@@ -185,7 +178,7 @@ function IIfA:GetAllHouseIds()
 end
 function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
-	if tonumber(houseCollectibleId) ~= houseCollectibleId then 
+	if tonumber(houseCollectibleId) ~= houseCollectibleId then
 		realId = IIfA:GetHouseIdFromName(houseCollectibleId)
 		if not realId then d(houseCollectibleId); return end
 		houseCollectibleId = realId
@@ -200,12 +193,12 @@ function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	end
 end
 
-function IIfA:GetHouseTracking() 
+function IIfA:GetHouseTracking()
 	return IIfA.data.b_collectHouses
 end
 
-function IIfA:SetHouseTracking(value) 
-	IIfA.data.b_collectHouses = value 
+function IIfA:SetHouseTracking(value)
+	IIfA.data.b_collectHouses = value
 	if value then
 		IIfA:RebuildHouseMenuDropdowns()
 	end

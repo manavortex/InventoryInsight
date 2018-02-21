@@ -5,16 +5,16 @@ local LAM = LibStub("LibAddonMenu-2.0")
 local LMP = LibStub("LibMediaProvider-1.0")
 
 local function getCharacterInventories()
-	
+
 	local accountInventories = {}
-	
+
 	if nil ~= IIfA:GetCharacterList() then
 		for characterName, character in pairs(IIfA:GetCharacterList()) do
 			d("inserting " .. characterName)
 			table.insert(accountInventories, characterName)
 		end
 	end
-	
+
 	return accountInventories
 end
 
@@ -90,7 +90,7 @@ function IIfA:CreateOptionsMenu()
 			tooltip = "Prints verbose debugging to the ChatFrame. '/ii debug' for quick toggle",
 			name = "Debugging",
 			getFunc = function() return IIfA.data.bDebug end,
-			setFunc = function(value) IIfA.data.bDebug = value end
+			setFunc = function(value) IIfA.data.bDebug = value end,
 		},
 
 		{
@@ -102,14 +102,14 @@ function IIfA:CreateOptionsMenu()
 					type = "button",
 					name = "Wipe database",
 					tooltip = "Deletes all collected data",
-					func = function() 
+					func = function()
 						local worldName 		= GetWorldName():gsub(" Megaserver", "")
 						IIfA.data[worldName] 	= {}
 						IIfA:ScanCurrentCharacterAndBank()
 					end,
 				}, -- button end
-			
-				{	type 	= "description", 
+
+				{	type 	= "description",
 					title 	= "Ignore or delete characters",
 					text 	= "removes or un-tracks a character. \nWarning: This change will be applied immediately.",
 				},
@@ -118,57 +118,44 @@ function IIfA:CreateOptionsMenu()
 					name 	= "characters to delete or un-track",
 					choices = IIfA:GetCharacterList(),
 					getFunc = function() return end,
-					setFunc = function(choice) deleteChar = nil; deleteChar = choice end
+					setFunc = function(choice) deleteChar = nil; deleteChar = choice end,
 				}, --dropdown end
 
 				{  -- button begin
 					type = "button",
-					width = "half",
 					name = "Delete Character",
 					tooltip = "Delete Inventory Insight data for the character selected above",
 					func = function() IIfA:DeleteCharacterData(deleteChar) end,
 				}, -- button end
-				
-				{  -- button begin
-					type = "button",
-					width = "half",
-					name = "Ignore Equipment",
-					tooltip = "All items equipped by the current character will be ignored",
-					func = function() IIfA:IgnoreCharacterEquip(deleteChar, true) end,
 
-				}, -- button end
-				{  -- button begin
-					type = "button",
-					width = "half",
-					name = "Ignore Inventory",
-					tooltip = "This character's carried inventory will be ignored",
-					func = function() IIfA:IgnoreCharacterInventory(deleteChar, true) end,
-				}, -- button end
-				
-				{	type 	= "description", 
-					title 	= "Unignore characters",
-					text 	= "Adds an ignored character back to the tracking lists",
-				},
 				{
-					type = "dropdown",
-					name = "Character to unignore",
-					choices = IIfA:GetIgnoredCharacterList(),
-					getFunc = function() return end,
-					setFunc = function(choice) undeleteChar = nil; undeleteChar = choice end
-				}, --dropdown end
-				
-				{  -- button begin
-					type = "button",
-					width = "half",
-					name = "Unignore",
-					tooltip = "All items equipped by the current character will be tracked again",
-					func = function() 
-						IIfA:IgnoreCharacterEquip(undeleteChar, false) 
-						IIfA:IgnoreCharacterInventory(undeleteChar, false)
-					end,
-				}, -- button end							
-				
-				{	type 	= "description", 
+					type = "divider",
+				},
+
+				{
+					type = "checkbox",
+					name = "Ignore Char Backpack",
+					tooltip = "Ignore Backpack Items on this Character",
+					getFunc = function() return IIfA:IsCharacterInventoryIgnored() end,
+					setFunc = function(...) IIfA:IgnoreCharacterInventory(...) end,
+				}, -- checkbox end
+
+				{
+					type = "checkbox",
+					name = "Ignore Char Equipment",
+					tooltip = "Ignore Worn/Equipped Items on this Character",
+					getFunc = function() return IIfA:IsCharacterEquipIgnored() end,
+					setFunc = function(...) IIfA:IgnoreCharacterEquip(...) end,
+				}, -- checkbox end
+
+
+				{
+					type = "divider",
+				},
+
+
+
+				{	type 	= "description",
 					title 	= "Guild Bank To Delete",
 					text 	= "Delete Inventory Insight data for guild. \nWarning: This change will be applied immediately.",
 				},
@@ -177,7 +164,7 @@ function IIfA:CreateOptionsMenu()
 					 name = 'Guild Bank To Delete',
 					 choices = getGuildBanks(),
 					 getFunc = function() return end,
-					 setFunc = function(choice) deleteGBank = nil; deleteGBank = choice end
+					 setFunc = function(choice) deleteGBank = nil; deleteGBank = choice end,
 
 				}, -- dropdown end
 
@@ -199,12 +186,12 @@ function IIfA:CreateOptionsMenu()
 			tooltip = "Manage data collection options for Guild Banks",
 			controls = {}
 		},
-	
+
 		{
-			type = "submenu", 
-			name = "Houses", 
+			type = "submenu",
+			name = "Houses",
 			controls = {
-				
+
 				{
 					type = "checkbox",
 					name = "Collect furniture in houses",
@@ -212,8 +199,8 @@ function IIfA:CreateOptionsMenu()
 					getFunc = function() return 	IIfA.data.b_collectHouses end,
 					setFunc = function(value)		IIfA:SetHouseTracking(value) end,
 				}, -- checkbox end
-				
-				{	type 	= "description", 
+
+				{	type 	= "description",
 					title 	= "Ignore or delete houses",
 					text 	= "removes or un-tracks a house. \nWarning: This change will be applied immediately.",
 				},
@@ -222,7 +209,7 @@ function IIfA:CreateOptionsMenu()
 					name 	= "houses to delete or un-track",
 					choices = IIfA:GetTrackedHouseNames(),
 					getFunc = function() return end,
-					setFunc = function(choice) deleteHouse = nil; deleteHouse = choice end
+					setFunc = function(choice) deleteHouse = nil; deleteHouse = choice end,
 				}, --dropdown end
 				{  -- button begin
 					type = "button",
@@ -236,7 +223,7 @@ function IIfA:CreateOptionsMenu()
 					name 	= "houses to re-track",
 					choices = IIfA:GetIgnoredHouseNames(),
 					getFunc = function() return end,
-					setFunc = function(choice) restoreHouse = nil; restoreHouse = choice end
+					setFunc = function(choice) restoreHouse = nil; restoreHouse = choice end,
 				}, --dropdown end
 				{  -- button begin
 					type = "button",
@@ -244,10 +231,10 @@ function IIfA:CreateOptionsMenu()
 					name = "Unignore house",
 					tooltip = "All furniture items in the currently selected house will be tracked again",
 					func = function() IIfA:SetTrackingForHouse(restoreHouse, true) end,
-				}, -- button end	
+				}, -- button end
 			},
 		},
-		
+
 		{
 			type = "submenu",
 			name = "Pack Use/Size highlites",
@@ -331,9 +318,9 @@ function IIfA:CreateOptionsMenu()
 			type = "header",
 			name = "Global/Per Char settings",
 		},
-		
-			
-		
+
+
+
 
 		{	-- submenu: tooltips
 			type = "submenu",
@@ -442,7 +429,7 @@ function IIfA:CreateOptionsMenu()
 			getFunc = function() return not IIfA:GetSettings().dontFocusSearch end,
 			setFunc = function(value) IIfA:GetSettings().dontFocusSearch = not value end,
 		}, -- checkbox end
-		
+
 		{
 			type = "checkbox",
 			name = "Text Filter considers set name as well",
@@ -549,7 +536,7 @@ function IIfA:CreateOptionsMenu()
 						tooltip = "Enables/Disables data collection for all guild banks on this account",
 						warning = "Guild bank information will not be updated if this option is turned off!",
 						getFunc = function() return IIfA.data.bCollectGuildBankData end,
-						setFunc = function(value) 
+						setFunc = function(value)
 							IIfA.data.bCollectGuildBankData = value
 							IIfA.trackedBags[BAG_GUILDBANK] = value
 						end,

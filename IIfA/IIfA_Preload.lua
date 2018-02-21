@@ -1,10 +1,12 @@
  --this creates a menu for the addon.
-local IIfA = IIfA
+
+-- IIfA doesn't exist at the point when this module is loaded, so this is useless
+-- local IIfA = IIfA
 
 local strings = {
-	IIFA_BAG_BAGPACK 	= "Inventar", 
-	IIFA_BAG_BANK 		= "Bank", 
-	IIFA_BAG_CRAFTBAG 	= "CraftBag", 
+	IIFA_BAG_BAGPACK 	= "Inventory",
+	IIFA_BAG_BANK 		= "Bank",
+	IIFA_BAG_CRAFTBAG 	= "CraftBag",
 }
 
 
@@ -18,10 +20,10 @@ function IIfA_SetButtonFilterText(control)
 	local buttonIdxNames = {
 		[1] = "All",
 		[2] = "Weapons",
-		[3] = "Armor", 
+		[3] = "Armor",
 		[4] = "Consumables",
 		[5] = "Materials",
-		[6] = "Furniture", 
+		[6] = "Furniture",
 		[7] = "Miscellaneous",
 	}
 	local name = control:GetName() or ""
