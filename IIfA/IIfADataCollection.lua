@@ -555,12 +555,12 @@ function IIfA:CollectAll()
 		-- call with libAsync to avoid lags
 		task:Call(function()
 			bagItems = GetBagSize(bagId)
-			if bagId == BAG_WORN then	--location for BAG_BACKPACK and BAG_WORN is the same so only reset once
-				IIfA:ClearLocationData(IIfA.currentCharacterId)
+			if bagId == BAG_WORN then
+				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
 			elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
 				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
 			elseif bagId == BAG_BACKPACK then
-				IIfA:ClearLocationData(GetString(IIFA_BAG_BACKPACK))
+				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
 			elseif bagId == BAG_VIRTUAL then
 				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
 			elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
@@ -570,20 +570,20 @@ function IIfA:CollectAll()
 					tracked = false		-- prevent reading the house bag if we're not in our own home
 				end
 			end
-	--		d("  BagItemCount=" .. bagItems)
-			if bagId ~= BAG_VIRTUAL and tracked then
-				grabBagContent(bagId)
-				if bagId == BAG_BANK then
-					grabBagContent(BAG_SUBSCRIBER_BANK)
-				end
---				for slotId=0, bagItems, 1 do
---					dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId)
---				end
-			else -- it's bag virtual
-				slotId = GetNextVirtualBagSlotId(nil)
-				while slotId ~= nil do
-					IIfA:EvalBagItem(bagId, slotId)
-					slotId = GetNextVirtualBagSlotId(slotId)
+			if tracked then
+				if bagId ~= BAG_VIRTUAL then
+					if bagId ~= BAG_SUBSCRIBER_BANK then
+						grabBagContent(bagId)
+						if bagId == BAG_BANK then
+							grabBagContent(BAG_SUBSCRIBER_BANK)
+						end
+					end
+				else -- it's bag virtual
+					slotId = GetNextVirtualBagSlotId(nil)
+					while slotId ~= nil do
+						IIfA:EvalBagItem(bagId, slotId)
+						slotId = GetNextVirtualBagSlotId(slotId)
+					end
 				end
 			end
 

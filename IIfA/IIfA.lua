@@ -48,11 +48,12 @@ IIfA.task			= task
 --	Global Variables and external functions
 -- --------------------------------------------------------------
 
+-- BAG_SUBSCRIBER_BANK handled special in the CollectAll function - do NOT add to this list
+
 IIfA.trackedBags = {
 	[BAG_WORN] 				= true,
 	[BAG_BACKPACK] 			= true,
 	[BAG_BANK] 				= true,
-	[BAG_SUBSCRIBER_BANK] 	= true,
 	[BAG_GUILDBANK] 		= true,
 	[BAG_VIRTUAL] 			= true,
 	[BAG_HOUSE_BANK_TWO] 	= true,
