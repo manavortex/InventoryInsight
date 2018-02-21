@@ -9,24 +9,17 @@ local function GetRealCollectibleName(collectibleId)
 	if collectibleName and #collectibleName == 0 then collectibleName = GetCollectibleName(collectibleId) end
 	return collectibleName
 end
-
-function IIfA:IsCharacterInventoryIgnored()
-	return IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] or false
+ 
+function IIfA:IsCharacterInventoryIgnored(ignoreChar)
+	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
+	return IIfA.data.ignoredCharEquipment[ignoreChar]
 end
 
-function IIfA:IgnoreCharacterInventory(value)
-	IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] = value
-
-	IIfA.trackedBags[BAG_BACKPACK] = not value
-	task:Call(function()
-		if value then
-			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
-		else
-			IIfA:ScanCurrentCharacter()
-		end
-	end):Then(function()
-		IIfA:RefreshInventoryScroll()
-	end)
+function IIfA:IsCharacterEquipIgnored(ignoreChar)
+	if not ignoreChar then return end
+	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
+	return IIfA.data.ignoredCharInventories[ignoreChar]
 end
 
 function IIfA:IsCharacterEquipIgnored()
