@@ -103,8 +103,7 @@ function IIfA:CreateOptionsMenu()
 					name = "Wipe database",
 					tooltip = "Deletes all collected data",
 					func = function()
-						local worldName 		= GetWorldName():gsub(" Megaserver", "")
-						IIfA.data[worldName] 	= {}
+						IIfA.database 			= {}
 						IIfA:ScanCurrentCharacterAndBank()
 					end,
 				}, -- button end

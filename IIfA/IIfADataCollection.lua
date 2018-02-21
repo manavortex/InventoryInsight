@@ -285,10 +285,10 @@ function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not houseCollectibleId then return end
-
+	if not IIfA:GetHouseTracking() then return end
 
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
-
+	
 	if not IIfA.data.collectHouseData[houseCollectibleId] then
 		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHouseIds()[houseCollectibleId] then
 			IIfA.trackedBags[houseCollectibleId] = false
