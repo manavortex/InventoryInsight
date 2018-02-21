@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.05"
+IIfA.version 			= "3.06"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -41,18 +41,31 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLORDEF_DEFAULT = ZO_ColorDef:New("3399FF")
 
+local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task			= task
+
 -- --------------------------------------------------------------
 --	Global Variables and external functions
 -- --------------------------------------------------------------
 
 IIfA.trackedBags = {
-	[BAG_WORN] 					= true,
-	[BAG_BACKPACK] 				= true,
-	[BAG_BANK] 					= true,
-	[BAG_SUBSCRIBER_BANK] 		= true,
-	[BAG_GUILDBANK] 			= true,
-	[BAG_VIRTUAL] 				= true,
+	[BAG_WORN] 				= true,
+	[BAG_BACKPACK] 			= true,
+	[BAG_BANK] 				= true,
+	[BAG_SUBSCRIBER_BANK] 	= true,
+	[BAG_GUILDBANK] 		= true,
+	[BAG_VIRTUAL] 			= true,
+	[BAG_HOUSE_BANK_TWO] 	= true,
+	[BAG_HOUSE_BANK_THREE]	= true,
+	[BAG_HOUSE_BANK_FOUR] 	= true,
+	[BAG_HOUSE_BANK_FIVE] 	= true,
+	[BAG_HOUSE_BANK_SIX] 	= true,
+	[BAG_HOUSE_BANK_SEVEN] 	= true,
+	[BAG_HOUSE_BANK_EIGHT] 	= true,
+	[BAG_HOUSE_BANK_NINE] 	= true,
+	[BAG_HOUSE_BANK_TEN] 	= true,
 }
+
 IIfA.dropdownBankNames = {
 	"All",
 	"All Banks",
@@ -66,21 +79,6 @@ IIfA.dropdownBankNames = {
 	"Housing Storage",
 	"All Houses",
 }
-
-if IIfA.trackedBags[BAG_SUBSCRIBER_BANK] == nil then
-	IIfA.trackedBags[BAG_SUBSCRIBER_BANK] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_TWO] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_THREE]	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_FOUR] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_FIVE] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_SIX] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_SEVEN] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_EIGHT] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_NINE] 	= true
-	IIfA.trackedBags[BAG_HOUSE_BANK_TEN] 	= true
-	table.insert(IIfA.dropdownBankNames, "Housing Storage")
-end
-
 
 function IIfA:GetItemID(itemLink)
 	local ret = nil
@@ -504,8 +502,11 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 
-	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored(IIfA.currentCharacterId)
-	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored(IIfA.currentCharacterId)
+	IIfA.ignoredCharEquipment = IIfA.ignoredCharEquipment or {}
+	IIfA.ignoredCharInventories = IIfA.ignoredCharInventories or {}
+
+	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored()
+	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
 
 	IIfA:CollectAll()
 
