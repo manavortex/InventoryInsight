@@ -99,13 +99,13 @@ function CharBagFrame:FillCharAndBank()
 	spaceMax = spaceMax + bankMax + self.totSpaceMax
 
 	-- housing chests
-	local bInHouse, ctr, tempUsed
+	local bInHouse, ctr, tempUsed, bFoundData
 	local cName
 	local iChestCount = 0
-	bInOwnedHouse = IsOwnerOfCurrentHouse()
+	local bInOwnedHouse = IsOwnerOfCurrentHouse()
 
 	for ctr = BAG_HOUSE_BANK_ONE,BAG_HOUSE_BANK_TEN do
-		tControl = self.houseChestControls[ctr]
+		local tControl = self.houseChestControls[ctr]
 		if IsCollectibleUnlocked(GetCollectibleForHouseBankBag(ctr)) then
 			if bInOwnedHouse then
 				tempUsed = GetNumBagUsedSlots(ctr)
@@ -138,7 +138,7 @@ function CharBagFrame:FillCharAndBank()
 		end
 	end
 
-	local iFrameHeight
+	local iFrameHeight, tControl
 	local iDivCount = 2
 
 	if iChestCount > 0 then
@@ -170,7 +170,7 @@ function CharBagFrame:RepaintSpaceUsed()
 	local assets = self.parent.assets
 	for i=1, GetNumCharacters() do
 		local _, _, _, _, _, _, charId, _ = GetCharacterInfo(i)
-		tControl = GetControl("IIFA_GUI_Bag_Grid_Row_" .. i)
+		local tControl = GetControl("IIFA_GUI_Bag_Grid_Row_" .. i)
 		if charId ~= currId then
 			if assets[charId] ~= nil then
 				if assets[charId].spaceUsed ~= nil then

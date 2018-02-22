@@ -1,6 +1,7 @@
 local IIfA = IIfA
 
 local LMP = LibStub("LibMediaProvider-1.0")
+local _
 
 IIfA.ScrollSortUp = true
 IIfA.ActiveFilter = 0
@@ -409,6 +410,7 @@ end
 
 
 local function fillLine(curLine, curItem)
+	local color
 	if curItem == nil then
 		curLine.itemLink = ""
 		curLine.icon:SetTexture(nil)
@@ -481,7 +483,7 @@ end
 
 function IIfA:SetItemCountPosition()
 	for i=1, IIFA_GUI_ListHolder.maxLines do
-		line = IIFA_GUI_ListHolder.lines[i]
+		local line = IIFA_GUI_ListHolder.lines[i]
 		line.text:ClearAnchors()
 		line.qty:ClearAnchors()
 		if IIfA:GetSettings().showItemCountOnRight then
@@ -590,8 +592,8 @@ function IIfA:GetAccountInventoryList()
 -- banks are same as toons, same order as player normally sees them
 	if IIfA.data.bCollectGuildBankData then
 		for i = 1, GetNumGuilds() do
-			id = GetGuildId(i)
-			guildName = GetGuildName(id)
+			local id = GetGuildId(i)
+			local guildName = GetGuildName(id)
 
 			-- on the off chance that this doesn't exist already, create it
 			if IIfA.data.guildBanks == nil then
@@ -619,6 +621,7 @@ function IIfA:QueryAccountInventory(itemLink)
 		itemLink = string.gsub(itemLink, '|H0', '|H1')
 	end
 
+
 	local queryItem = {
 		link = itemLink,
 		locations = {},
@@ -628,7 +631,7 @@ function IIfA:QueryAccountInventory(itemLink)
 	local AlreadySavedLoc = false
 	local newLocation = {}
 
-	itemType = GetItemLinkItemType(itemLink)
+	local itemType = GetItemLinkItemType(itemLink)
 	if CanItemLinkBeVirtual(itemLink) or
 		itemType == ITEMTYPE_LOCKPICK or
 		itemType == ITEMTYPE_RECIPE or
@@ -705,7 +708,7 @@ function IIfA:SetupBackpack()
 			IIFA_GUI_Header_Dropdown.comboBox = comboBox
 		end
 
-		function OnItemSelect(_, choiceText, choice)
+		local function OnItemSelect(_, choiceText, choice)
 	--		d("OnItemSelect", choiceText, choice)
 			IIfA:SetInventoryListFilter(choiceText)
 			PlaySound(SOUNDS.POSITIVE_CLICK)
@@ -751,7 +754,7 @@ function IIfA:SetupBackpack()
 		comboBox:SetSortsItems(false)
 
 		for i = 1, #validChoices do
-			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
+			local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
 			comboBox:AddItem(entry)
 			if qualityDict[validChoices[i]] == IIfA:GetInventoryListFilterQuality() then
 				comboBox:SetSelectedItem(validChoices[i])
