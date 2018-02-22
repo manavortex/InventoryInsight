@@ -40,9 +40,9 @@ function IIfA:RegisterForSceneChanges()
 end
 
 function IIfA:GetSceneSettings(sceneName)
-	
+
 	sceneName = sceneName or IIfA:GetCurrentSceneName()
-	
+
 
 	local settings = IIfA:GetSettings().frameSettings
 
@@ -65,17 +65,15 @@ end
 
 
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
-	
-	
 	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState))
 	if (tostring(newState) == "shown") then
 		sceneName = IIfA:GetCurrentSceneName()
 		local settings = IIfA:GetSceneSettings(sceneName)
 		self:RePositionFrame(settings)
-		
+
 	elseif (tostring(newState) == "hidden") then
 		IIFA_GUI:SetHidden(true)
-	end	
+	end
 end
 
 
@@ -85,8 +83,8 @@ function IIfA:SaveFrameInfo(calledFrom)
 	local sceneName = IIfA:GetCurrentSceneName()
 	local settings = IIfA:GetSceneSettings(sceneName)
 
-    settings.hidden    	=  IIFA_GUI:IsControlHidden()
-	
+    settings.hidden = IIFA_GUI:IsControlHidden()
+
 	if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
     	settings.lastX	= IIFA_GUI:GetLeft()
     	settings.lastY	= IIFA_GUI:GetTop()
@@ -107,7 +105,7 @@ function IIfA:ToggleInventoryFrame()
 		IIfA:GuiResizeScroll()
     	IIfA:RefreshInventoryScroll()
 	end
-	if not IIfA.data.dontFocusSearch then 
+	if not IIfA.data.dontFocusSearch then
 		IIFA_GUI_SearchBox:TakeFocus()
 	end
 	IIfA:SaveFrameInfo("ToggleInventoryFrame")

@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.06"
+IIfA.version 			= "3.07"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -281,51 +281,28 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:RebuildHouseMenuDropdowns()
 
-	local function setIfNil(value, defaultValue)
-		if nil ~= value then return end
-		value = defaultValue
-	end
-	local function setNil(value)
-		if nil ~= value then value = nil end
-	end
-
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
-	local function nukePositioning()
-		if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
-			ObjSettings.in2InventoryFrameSceneSettings = nil
-		end
-		if ObjSettings.in2InventoryFrameScenes ~= nil then
-			ObjSettings.in2InventoryFrameScenes = nil
-		end
-		if ObjSettings.valDocked ~= nil then
-			ObjSettings.valDocked = nil
-			ObjSettings.valLocked = nil
-			ObjSettings.valMinimized = nil
-			ObjSettings.valLastX = nil
-			ObjSettings.valLastY = nil
-			ObjSettings.valHeight = nil
-			ObjSettings.valWidth = nil
-			ObjSettings.valWideX = nil
-		end
+	if ObjSettings.in2InventoryFrameSceneSettings ~= nil then
+		ObjSettings.in2InventoryFrameSceneSettings = nil
 	end
-	nukePositioning()
-
-	local function considerWorldData()
-		-- keep EU and US items apart
-		local worldName = GetWorldName():gsub(" Megaserver", "")
-		IIfA.data[worldName] = IIfA.data[worldName] or {}
-		if IIfA.data[worldName].DBv3 == nil then
-			 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
-		end
-		IIfA.data.DBv3 = nil
-		IIfA.database = IIfA.data[worldName].DBv3
+	if ObjSettings.in2InventoryFrameScenes ~= nil then
+		ObjSettings.in2InventoryFrameScenes = nil
+	end
+	if ObjSettings.valDocked ~= nil then
+		ObjSettings.valDocked = nil
+		ObjSettings.valLocked = nil
+		ObjSettings.valMinimized = nil
+		ObjSettings.valLastX = nil
+		ObjSettings.valLastY = nil
+		ObjSettings.valHeight = nil
+		ObjSettings.valWidth = nil
+		ObjSettings.valWideX = nil
 	end
 
-
-
-	setNil(IIfA.settings.in2ToggleGuildBankDataCollection ~= nil)
-
+	if IIfA.settings.in2ToggleGuildBankDataCollection ~= nil then
+		IIfA.settings.in2ToggleGuildBankDataCollection = nil
+	end
 	if IIfA.data.in2ToggleGuildBankDataCollection ~= nil then
 		IIfA.data.bCollectGuildBankData = IIfA.data.in2ToggleGuildBankDataCollection
 		IIfA.data.in2ToggleGuildBankDataCollection = nil
@@ -360,8 +337,13 @@ function IIfA_onLoad(eventCode, addOnName)
 		end
 	end
 
-	setIfNil(IIfA.data.showStyleInfo, true)
-	setIfNil(ObjSettings.showStyleInfo, IIfA.data.showStyleInfo)
+	if IIfA.data.showStyleInfo == nil then
+		IIfA.data.showStyleInfo = true
+	end
+	if ObjSettings.showStyleInfo == nil then
+		ObjSettings.showStyleInfo = IIfA.data.showStyleInfo
+	end
+
 
 	-- 2-9-17 AM - convert saved data names into proper language for this session
     local lang = GetCVar("language.2")
@@ -432,9 +414,16 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:CreateTooltips()	-- setup the tooltip frames
 
 	-- manavortex, Feb. 22 2018: drop dbv2 support
-	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end 
+	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end
 
-	considerWorldData()
+	-- keep EU and US items apart
+	local worldName = GetWorldName():gsub(" Megaserver", "")
+	IIfA.data[worldName] = IIfA.data[worldName] or {}
+	if IIfA.data[worldName].DBv3 == nil then
+		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
+	end
+	IIfA.data.DBv3 = nil
+	IIfA.database = IIfA.data[worldName].DBv3
 
 	IIfA:ActionLayerInventoryUpdate()
 
@@ -445,8 +434,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 
-	IIfA.ignoredCharEquipment 		= IIfA.ignoredCharEquipment or {}
-	IIfA.ignoredCharInventories 	= IIfA.ignoredCharInventories or {}
+	IIfA.ignoredCharEquipment = IIfA.ignoredCharEquipment or {}
+	IIfA.ignoredCharInventories = IIfA.ignoredCharInventories or {}
 
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored()
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
