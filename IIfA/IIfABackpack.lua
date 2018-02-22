@@ -243,6 +243,9 @@ local function matchFilter(itemName, itemLink)
 			IIfA.filterGroup == "Body" then
 			if IIfA.filterGroup == "Weapons" then
 				itemType = GetItemLinkWeaponType(itemLink)
+				if itemType == WEAPONTYPE_SHIELD and IIfA.filterTypes == nil then		-- all weaps is selected, don't show shields in list
+					itemType = 0
+				end
 			elseif IIfA.filterGroup == "Body" then
 				-- Body takes extra arg at beginning of array, if array is used at all
 				-- Item type (armor, non-armor)
@@ -645,7 +648,6 @@ function IIfA:QueryAccountInventory(itemLink)
 				locationName = IIfA.CharIdToName[locationName]
 			end
 			if locationName ~= nil then
-
 				for x, QILocation in pairs(queryItem.locations) do
 					if (QILocation.name == locationName)then
 						QILocation.itemsFound = QILocation.itemsFound + location.itemCount
@@ -653,7 +655,7 @@ function IIfA:QueryAccountInventory(itemLink)
 					end
 				end
 
-				if nil ~= location.itemCount then
+				if location.itemCount ~= nil and location.itemCount > 0 then
 					if (not AlreadySavedLoc) and (location.itemCount > 0) then
 						newLocation = {}
 						newLocation.name = locationName
@@ -676,6 +678,9 @@ function IIfA:QueryAccountInventory(itemLink)
 	end
 	return queryItem
 end
+
+-- test query
+-- /script d(IIfA:QueryAccountInventory("|H0:item:134629:6:1:0:0:0:0:0:0:0:0:0:0:0:1:0:0:1:0:0:0|h|h"))
 
 function IIfA:SetSceneVisible(name, value)
 	IIfA:GetSettings().frameSettings[name].hidden = not value

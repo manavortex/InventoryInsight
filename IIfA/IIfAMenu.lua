@@ -105,7 +105,7 @@ function IIfA:CreateOptionsMenu()
 					name = "Wipe database",
 					tooltip = "Deletes all collected data",
 					func = function()
-						IIfA.database 			= {}
+						IIfA.database = {}
 						IIfA:ScanCurrentCharacterAndBank()
 					end,
 				}, -- button end

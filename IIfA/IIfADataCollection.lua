@@ -11,7 +11,7 @@ local function grabBagContent(bagId, override)
 	if bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN and not IsOwnerOfCurrentHouse() then return end
 
 	local bagItems = GetBagSize(bagId)
-	IIfA:DebugOut("grabBagContent - bagId = <<1>>", bagId)
+	IIfA:DebugOut("grabBagContent(<<1>>, <<2>>", bagId, override)
 	for slotId=0, bagItems, 1 do
 		local dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
@@ -286,10 +286,10 @@ function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not houseCollectibleId then return end
-	if not IIfA:GetHouseTracking() then return end
+
 
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
-	
+
 	if not IIfA.data.collectHouseData[houseCollectibleId] then
 		if IIfA:GetHouseTracking() and IIfA:GetIgnoredHouseIds()[houseCollectibleId] then
 			IIfA.trackedBags[houseCollectibleId] = false
@@ -308,7 +308,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 			if not ret[itemLink] then
 				ret[itemLink] = 1
 			else
-				ret[itemLink] = ret[itemLink] +1
+				ret[itemLink] = ret[itemLink] + 1
 			end
 		end
 	end
@@ -321,13 +321,14 @@ function IIfA:RescanHouse(houseCollectibleId)
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			IIfA:DebugOut("furniture item <<1>> x<<2>>", itemLink, itemCount)
-			IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA:GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 
 		end
 	end)
 
 end
 
+--[[ causing massive problems because we're creating the BSI entry while trying to use it from EvalBagItem
 -- try to read item link from bag/slot - if that's an empty string, we try to read it from BSI
 local function getItemLink(bagId, slotId)
 	if nil == bagId or nil == slotId then return end
@@ -341,8 +342,9 @@ local function getItemLink(bagId, slotId)
 	if nil == IIfA.BagSlotInfo[bagId] then return end
 	return IIfA.BagSlotInfo[bagId][slotId]
 end
+--]]
 
--- try to read item name from bag/slot - if that's empty, we read it from item link that we generated from BSI
+-- try to read item name from bag/slot - if that's empty, we read it from item link
 local function getItemName(bagId, slotId, itemLink)
 	local itemName = GetItemName(bagId, slotId)
 	if "" ~= itemName then return itemName end
@@ -425,14 +427,15 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 	local DBv3 = IIfA.database
 
 	-- item link is either passed as arg or we need to read it from the system
-	itemLink = itemLink or getItemLink(bagId, slotId)
+	itemLink = itemLink or GetItemLink(bagId, slotId)
+	itemLink = string.gsub(itemLink, '|H0', '|H1')		-- always store/eval with brackets on the link
 
 	--IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
 
 	-- return if we don't have any item to track
-	if nil == itemLink  then return end
+	if itemLink == nil or itemLink == "" then return end
 
-	-- item nams is either passed or we get it from bag/slot or item link
+	-- item names is either passed or we get it from bag/slot or item link
 	itemName = itemName or getItemName(bagId, slotId, itemLink) or EMPTY_STRING
 
 	-- item count is either passed or we have to get it from bag/slot ID or item link
@@ -440,19 +443,30 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 
 
 	-- get item key from crafting type
-	local usedInCraftingType, _ = GetItemCraftingInfo(bagId, slotId)
-	local itemType = GetItemType(bagId, slotId)
+	local usedInCraftingType, itemType
+	local qty, itemQuality
+
+	if bagId <= BAG_MAX_VALUE then
+		usedInCraftingType, _ = GetItemCraftingInfo(bagId, slotId)
+		_, qty, _, _, _, _, _, itemQuality = GetItemInfo(bagId, slotId)
+	else	-- these are furniture items in a house
+		usedInCraftingType = GetItemLinkCraftingSkillType(itemLink)
+		qty = itemCount or 0
+		itemQuality = GetItemLinkQuality(itemLink)
+	end
+
+	local itemType = GetItemLinkItemType(itemLink)
 
 	-- IIfA:DebugOut("CraftingType, ItemType <<1>>, <<2>>", usedInCraftingType, itemType)
 
-	local qty, itemQuality
-	_, qty, _, _, _, _, _, itemQuality = GetItemInfo(bagId, slotId)
 
 	if 0 == qty and itemLink then
 		itemQuality			= GetItemLinkQuality(itemLink)
 		usedInCraftingType 	= GetItemLinkCraftingSkillType(itemLink)
 		itemType 			= GetItemLinkItemType(itemLink)
 	end
+
+	itemLink = string.gsub(itemLink, '|H0', '|H1')
 
 	local itemKey
 	if bagId == BAG_VIRTUAL then
@@ -461,7 +475,6 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 		itemKey = IIfA:GetItemKey(itemLink, usedInCraftingType, itemType) or itemLink
 	end
 
-	IIfA:DebugOut("saving slot=<<1>> <<2>> x<<3>> -> <<4>>", slotId, itemLink, itemCount, itemKey)
 
 	if nil == itemKey then return end
 
@@ -481,7 +494,12 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 			DBitem.locations[location].itemCount = itemCount
 		end
 		if qty < 1 then
-			DBitem.locations[location].itemCount = getItemCount(bagId, slotId, itemLink)
+			qty = getItemCount(bagId, slotId, itemLink)
+			if qty == 0 then
+				DBitem.locations[location] = nil
+			else
+				DBitem.locations[location].itemCount = qty
+			end
 		end
 	else
 		DBv3[itemKey] = {}
@@ -494,12 +512,15 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 		DBv3[itemKey].locations[location].bagSlot = slotId
 		DBv3[itemKey].locations[location].itemCount = itemCount
 	end
+
 	if zo_strlen(itemKey) < 10 then
 		DBv3[itemKey].itemLink = itemLink
 	end
 	if (IIfA.trackedBags[bagId]) and fromXfer then
 		IIfA:ValidateItemCounts(bagId, slotId, DBv3[itemKey], itemKey, itemLink, true)
 	end
+
+	IIfA:DebugOut("saved bag/slot=<<1>>/<<2>> <<3>> x<<4>> -> <<5>>, loc=<<6>>", bagId, slotId, itemLink, itemCount, itemKey, location)
 
 	return DBv3[itemKey], itemKey
 
@@ -544,8 +565,7 @@ function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverrid
 end
 
 
-
-function IIfA:CollectAll()
+function IIfA:CollectAll(bagId, tracked)		-- the args aren't used, but by making them args to function, they're avail to the task
 	local bagItems = nil
 	local itemLink, dbItem = nil
 	local itemKey
@@ -553,42 +573,44 @@ function IIfA:CollectAll()
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
 	for bagId, tracked in pairs(BagList) do		-- do NOT use ipairs, it's non-linear list (holes in the # sequence)
-		-- call with libAsync to avoid lags
-		task:Call(function()
-			bagItems = GetBagSize(bagId)
-			if bagId == BAG_WORN then
-				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
-			elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
-				IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-			elseif bagId == BAG_BACKPACK then
-				IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
-			elseif bagId == BAG_VIRTUAL then
-				IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-			elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
-				if IsOwnerOfCurrentHouse() then
-					IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
-				else
-					tracked = false		-- prevent reading the house bag if we're not in our own home
+		if bagId <= BAG_MAX_VALUE then
+			-- call with libAsync to avoid lags
+			task:Call(function()
+				bagItems = GetBagSize(bagId)
+				if bagId == BAG_WORN then
+					IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
+				elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
+					IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+				elseif bagId == BAG_BACKPACK then
+					IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
+				elseif bagId == BAG_VIRTUAL then
+					IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+				elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
+					if IsOwnerOfCurrentHouse() then
+						IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
+					else
+						tracked = false		-- prevent reading the house bag if we're not in our own home
+					end
 				end
-			end
-			if tracked then
-				if bagId ~= BAG_VIRTUAL then
-					if bagId ~= BAG_SUBSCRIBER_BANK then
-						grabBagContent(bagId)
-						if bagId == BAG_BANK then
-							grabBagContent(BAG_SUBSCRIBER_BANK)
+				if tracked then
+					if bagId ~= BAG_VIRTUAL then
+						if bagId ~= BAG_SUBSCRIBER_BANK then
+							grabBagContent(bagId)
+							if bagId == BAG_BANK then
+								grabBagContent(BAG_SUBSCRIBER_BANK)
+							end
+						end
+					else -- it's bag virtual
+						local slotId = GetNextVirtualBagSlotId(nil)
+						while slotId ~= nil do
+							IIfA:EvalBagItem(bagId, slotId)
+							slotId = GetNextVirtualBagSlotId(slotId)
 						end
 					end
-				else -- it's bag virtual
-					local slotId = GetNextVirtualBagSlotId(nil)
-					while slotId ~= nil do
-						IIfA:EvalBagItem(bagId, slotId)
-						slotId = GetNextVirtualBagSlotId(slotId)
-					end
 				end
-			end
 
-		end)
+			end)
+		end
 	end
 
 	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
