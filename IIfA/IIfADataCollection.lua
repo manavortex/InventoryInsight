@@ -1,5 +1,6 @@
 local IIfA 			= IIfA
 local EMPTY_STRING 	= ""
+local _
 
 local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
@@ -12,7 +13,7 @@ local function grabBagContent(bagId, override)
 	local bagItems = GetBagSize(bagId)
 	IIfA:DebugOut("grabBagContent - bagId = <<1>>", bagId)
 	for slotId=0, bagItems, 1 do
-		dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
+		local dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
 end
 
@@ -150,7 +151,7 @@ function IIfA:ScanBank()
 		grabBagContent(BAG_SUBSCRIBER_BANK)
 	end):Then(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-		slotId = GetNextVirtualBagSlotId(slotId)
+		local slotId = GetNextVirtualBagSlotId(slotId)
 		while slotId ~= nil do
 			IIfA:EvalBagItem(BAG_VIRTUAL, slotId)
 			slotId = GetNextVirtualBagSlotId(slotId)
@@ -464,12 +465,12 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, itemCount, itemLink, itemName
 
 	if nil == itemKey then return end
 
-	itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
-	DBitem = DBv3[itemKey]
-	location = locationID or getLocation(location, bagId) or EMPTY_STRING
+	local itemFilterType = GetItemFilterTypeInfo(bagId, slotId) or 0
+	local DBitem = DBv3[itemKey]
+	local location = locationID or getLocation(location, bagId) or EMPTY_STRING
 
 	if(DBitem) then
-		DBitemlocation = DBitem.locations[location]
+		local DBitemlocation = DBitem.locations[location]
 		if DBitemlocation then
 			DBitemlocation.itemCount = DBitemlocation.itemCount + itemCount
 			DBitemlocation.bagSlot = DBitemlocation.bagSlot or slotId
@@ -579,7 +580,7 @@ function IIfA:CollectAll()
 						end
 					end
 				else -- it's bag virtual
-					slotId = GetNextVirtualBagSlotId(nil)
+					local slotId = GetNextVirtualBagSlotId(nil)
 					while slotId ~= nil do
 						IIfA:EvalBagItem(bagId, slotId)
 						slotId = GetNextVirtualBagSlotId(slotId)

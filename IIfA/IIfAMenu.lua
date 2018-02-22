@@ -4,6 +4,8 @@ IIfA = IIfA
 local LAM = LibStub("LibAddonMenu-2.0")
 local LMP = LibStub("LibMediaProvider-1.0")
 
+local id, guildName, deleteHouse, restoreHouse, name 
+
 local function getCharacterInventories()
 
 	local accountInventories = {}

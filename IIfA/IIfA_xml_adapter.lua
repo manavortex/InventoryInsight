@@ -40,7 +40,7 @@ end
  --]]
 
 function IIfA:GuiDock(bDock)
-	sceneName = IIfA:GetCurrentSceneName()
+	local sceneName = IIfA:GetCurrentSceneName()
 	-- docking not allowed when hud is active (it has no clue what it's docking to)
 	if bDock and sceneName == "hud" then
 		return
@@ -227,7 +227,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 	IIfA.filterGroup = filterGroup
 	IIfA.filterTypes = filterTypes
 
-	function SetSubSubFilters(_, subFiltName, choice)
+	local function SetSubSubFilters(_, subFiltName, choice)
 		IIfA.filterTypes = choice.subFiltTypes
 		IIfA:RefreshInventoryScroll()
 	end
@@ -242,7 +242,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 		end
 		comboBox:ClearItems()
 		comboBox:SetSortsItems(false)
-		entry = comboBox:CreateItemEntry("All", SetSubSubFilters)
+		local entry = comboBox:CreateItemEntry("All", SetSubSubFilters)
 		entry.subFiltTypes = IIfA.filterTypes
 		comboBox:AddItem(entry)
 		if IIfA.filterGroup == "Body" or		--:find("Body") ~= nil or
@@ -414,6 +414,8 @@ function IIfA:GuiReloadDimensions(settings, sceneName)
 end
 
 function IIfA:GuiResizeLines()
+	local lines 
+	
 	if not IIFA_GUI_ListHolder.lines then
 		lines = IIfA:CreateInventoryScroll()
 	end

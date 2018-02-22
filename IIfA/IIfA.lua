@@ -281,6 +281,14 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:RebuildHouseMenuDropdowns()
 
+	local function setIfNil(value, defaultValue)
+		if nil ~= value then return end
+		value = defaultValue
+	end
+	local function setNil(value)
+		if nil ~= value then value = nil end
+	end
+
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
 	local function nukePositioning()
@@ -303,9 +311,21 @@ function IIfA_onLoad(eventCode, addOnName)
 	end
 	nukePositioning()
 
-	if IIfA.settings.in2ToggleGuildBankDataCollection ~= nil then
-		IIfA.settings.in2ToggleGuildBankDataCollection = nil
+	local function considerWorldData()
+		-- keep EU and US items apart
+		local worldName = GetWorldName():gsub(" Megaserver", "")
+		IIfA.data[worldName] = IIfA.data[worldName] or {}
+		if IIfA.data[worldName].DBv3 == nil then
+			 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
+		end
+		IIfA.data.DBv3 = nil
+		IIfA.database = IIfA.data[worldName].DBv3
 	end
+
+
+
+	setNil(IIfA.settings.in2ToggleGuildBankDataCollection ~= nil)
+
 	if IIfA.data.in2ToggleGuildBankDataCollection ~= nil then
 		IIfA.data.bCollectGuildBankData = IIfA.data.in2ToggleGuildBankDataCollection
 		IIfA.data.in2ToggleGuildBankDataCollection = nil
@@ -340,13 +360,8 @@ function IIfA_onLoad(eventCode, addOnName)
 		end
 	end
 
-	if IIfA.data.showStyleInfo == nil then
-		IIfA.data.showStyleInfo = true
-	end
-	if ObjSettings.showStyleInfo == nil then
-		ObjSettings.showStyleInfo = IIfA.data.showStyleInfo
-	end
-
+	setIfNil(IIfA.data.showStyleInfo, true)
+	setIfNil(ObjSettings.showStyleInfo, IIfA.data.showStyleInfo)
 
 	-- 2-9-17 AM - convert saved data names into proper language for this session
     local lang = GetCVar("language.2")
@@ -416,83 +431,10 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:SetupBackpack()	-- setup the inventory frame
 	IIfA:CreateTooltips()	-- setup the tooltip frames
 
-	if (IIfA.data.bConvertedGlyphs == nil or IIfA.data.bConvertedLocType == nil) and IIfA.data.DBv3 == nil then
-		-- glyphs are currently stored by itemid, remove them so it can store them properly by item link
-		for itemLink, DBItem in pairs(IIfA.data.DBv2) do
-			if IIfA.data.bConvertedGlyphs == nil then
-				if DBItem.attributes.itemName:lower():find("glyph") ~= nil and itemLink:find("|") == nil then
-					IIfA.data.DBv2[itemLink] = nil
-				end
-			end
-			for locationName, locData in pairs(DBItem) do
-				if locData.locationType ~= nil then
-					locData.bagID = locData.locationType
-					locData.locationType = nil
-				end
-			end
-		end
-		IIfA.data.bConvertedGlyphs = true
-		IIfA.data.bConvertedLocType = true
-	end
-	if IIfA.data.bConvertedMotifs == nil and IIfA.data.DBv2 ~= nil then			-- 9-12-16 AM - added whole if to convert motifs to item ids
-		for itemLink, DBItem in pairs(IIfA.data.DBv2) do
-			if itemLink:find("|") ~= nil then			-- not a numeric itemid, it's a link
-				local itemType = GetItemLinkItemType(itemLink)
-				if itemType == ITEMTYPE_RACIAL_STYLE_MOTIF then		-- 9-12-16 AM - added because motifs now appear to have level info in them
-					itemKey = IIfA:GetItemID(itemLink)
-					if IIfA.data.DBv2[itemKey] == nil then
-						IIfA.data.DBv2[itemKey] = DBItem
-						IIfA.data.DBv2[itemLink] = nil
-						IIfA.data.DBv2[itemKey].itemLink = itemLink
-					else
-						for attrib, data in pairs(DBItem) do
-							if data.itemCount ~= nil then
-								if IIfA.data.DBv2[itemKey][attrib].itemCount ~= nil then
-									IIfA.data.DBv2[itemKey][attrib].itemCount = IIfA.data.DBv2[itemKey][attrib].itemCount + data.itemCount
-								else
-									IIfA.data.DBv2[itemKey][attrib] = data
-								end
-							end
-						end
-						IIfA.data.DBv2[itemKey].attributes.itemLink = itemLink
-						IIfA.data.DBv2[itemLink] = nil
-					end
-				end
-			end
-		end
-		IIfA.data.bConvertedMotifs = true
-	end
+	-- manavortex, Feb. 22 2018: drop dbv2 support
+	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end 
 
-	if IIfA.data.DBv2 ~= nil then
-		dbv3 = {}
-		for itemLink, DBItem in pairs(IIfA.data.DBv2) do
-			dbv3[itemLink] = {}
-			dbv3[itemLink].locations = {}
-			dbv3[itemLink].itemQuality = DBItem.attributes.itemQuality
-			dbv3[itemLink].itemName    = DBItem.attributes.itemName
-			dbv3[itemLink].filterType  = DBItem.attributes.filterType
-			if DBItem.attributes.itemLink ~= nil then
-				dbv3[itemLink].itemLink = DBItem.attributes.itemLink
-			end
-
-			for locname, locdata in pairs(DBItem) do
-				if locname ~= "attributes" then
-					dbv3[itemLink].locations[locname] = locdata
-				end
-			end
-		end
-		IIfA.data.DBv3 = dbv3
-		IIfA.data.DBv2 = nil
-	end
-
-	-- keep EU and US items apart
-	local worldName = GetWorldName():gsub(" Megaserver", "")
-	IIfA.data[worldName] = IIfA.data[worldName] or {}
-	if IIfA.data[worldName].DBv3 == nil then
-		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
-	end
-	IIfA.data.DBv3 = nil
-	IIfA.database = IIfA.data[worldName].DBv3
+	considerWorldData()
 
 	IIfA:ActionLayerInventoryUpdate()
 
@@ -503,8 +445,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
 
-	IIfA.ignoredCharEquipment = IIfA.ignoredCharEquipment or {}
-	IIfA.ignoredCharInventories = IIfA.ignoredCharInventories or {}
+	IIfA.ignoredCharEquipment 		= IIfA.ignoredCharEquipment or {}
+	IIfA.ignoredCharInventories 	= IIfA.ignoredCharInventories or {}
 
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored()
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
