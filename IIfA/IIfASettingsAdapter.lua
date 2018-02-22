@@ -4,22 +4,23 @@ IIfA.houseNameToIdTbl = {}
 local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
 
-local function GetRealCollectibleName(collectibleId)
-	local collectibleName = GetCollectibleNickname(collectibleId)
-	if collectibleName and #collectibleName == 0 then collectibleName = GetCollectibleName(collectibleId) end
-	return collectibleName
-end
- 
-function IIfA:IsCharacterInventoryIgnored(ignoreChar)
-	if not ignoreChar then return end
-	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
-	return IIfA.data.ignoredCharEquipment[ignoreChar]
+function IIfA:IsCharacterInventoryIgnored()
+	return IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] or false
 end
 
-function IIfA:IsCharacterEquipIgnored(ignoreChar)
-	if not ignoreChar then return end
-	ignoreChar = IIfA.CharNameToId[ignoreChar] or ignoreChar
-	return IIfA.data.ignoredCharInventories[ignoreChar]
+function IIfA:IgnoreCharacterInventory(value)
+	IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] = value
+
+	IIfA.trackedBags[BAG_BACKPACK] = not value
+	task:Call(function()
+		if value then
+			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
+		else
+			IIfA:ScanCurrentCharacter()
+		end
+	end):Then(function()
+		IIfA:RefreshInventoryScroll()
+	end)
 end
 
 function IIfA:IsCharacterEquipIgnored()
@@ -139,15 +140,16 @@ end
 function IIfA:GetTrackingWithHouseNames()
 	local ret = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
-		ret[GetRealCollectibleName(collectibleId)] = true
+		ret[GetCollectibleName(collectibleId)] = true
 	end
 	return ret
 end
+
 function IIfA:RebuildHouseMenuDropdowns()
 	local tracked = {}
 	local ignored = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
-		local collectibleName = GetRealCollectibleName(collectibleId)
+		local collectibleName = GetCollectibleName(collectibleId)
 		-- cache house name for lookup
 		IIfA.houseNameToIdTbl[collectibleName] = collectibleId
 		local targetTable = (trackIt and tracked) or ignored
