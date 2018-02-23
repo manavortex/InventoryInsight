@@ -39,6 +39,22 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
 	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not isNewItem, qty, itemLink)
 
+	-- once a bunch of items comes in, this will be created for each, but only the last one stays alive
+	-- so once all the items are finished coming in, it'll only need to update the shown list one time
+	local callbackName = "IIfA_RefreshInventoryScroll"
+    local function Update()
+        EVENT_MANAGER:UnregisterForUpdate(callbackName)
+		if IIFA_GUI:IsControlHidden() then
+			return
+		else
+			IIfA:RefreshInventoryScroll()
+		end
+    end
+
+    --cancel previously scheduled update if any
+    EVENT_MANAGER:UnregisterForUpdate(callbackName)
+    --register a new one
+    EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
 end
 
 

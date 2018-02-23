@@ -99,13 +99,13 @@ function CharBagFrame:FillCharAndBank()
 	spaceMax = spaceMax + bankMax + self.totSpaceMax
 
 	-- housing chests
-	local bInHouse, ctr, tempUsed, bFoundData
+	local bInHouse, ctr, tempUsed, bFoundData, tControl
 	local cName
 	local iChestCount = 0
 	local bInOwnedHouse = IsOwnerOfCurrentHouse()
 
-	for ctr = BAG_HOUSE_BANK_ONE,BAG_HOUSE_BANK_TEN do
-		local tControl = self.houseChestControls[ctr]
+	for ctr = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
+		tControl = self.houseChestControls[ctr]
 		if IsCollectibleUnlocked(GetCollectibleForHouseBankBag(ctr)) then
 			if bInOwnedHouse then
 				tempUsed = GetNumBagUsedSlots(ctr)
@@ -138,7 +138,7 @@ function CharBagFrame:FillCharAndBank()
 		end
 	end
 
-	local iFrameHeight, tControl
+	local iFrameHeight
 	local iDivCount = 2
 
 	if iChestCount > 0 then
