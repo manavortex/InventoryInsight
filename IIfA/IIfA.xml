@@ -135,7 +135,7 @@
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_BagButton" relativePoint="TOPRIGHT" offsetX="10" />
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_BagButton" relativePoint="BOTTOMRIGHT" offsetX="260" offsetY="5" />
 
-							<OnShow>	IIfA:GuiSetupDropdown(self)</OnShow>
+							<OnShow>IIfA:GuiSetupDropdown(self)</OnShow>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 						</Control>

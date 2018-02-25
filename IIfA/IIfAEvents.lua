@@ -24,17 +24,21 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 	end
 
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
+	local itemKey = IIfA:GetItemKey(itemLink, nil, nil)		-- yes, the nil's can be left off, but this way we know it's supposed to take 3 args)
 	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
-		itemLink = IIfA.BagSlotInfo[bagId][slotId]
+		itemKey = IIfA.BagSlotInfo[bagId][slotId]
+		if #itemLink < 10 then
+			itemLink = IIfA.database[itemKey].itemLink
+		end
 	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
 		IIfA.BagSlotInfo[bagId] = {}
-		IIfA.BagSlotInfo[bagId][slotId] = itemLink
+		IIfA.BagSlotInfo[bagId][slotId] = itemKey
 	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
-		IIfA.BagSlotInfo[bagId][slotId] = itemLink
+		IIfA.BagSlotInfo[bagId][slotId] = itemKey
 	end
 
 	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>",
-		itemLink, bagId, slotId, qty, inventoryUpdateReason, tostring(isNewItem))
+		itemLink, bagId, slotId, qty, inventoryUpdateReason, isNewItem)
 
 	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
 	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not isNewItem, qty, itemLink)
@@ -54,9 +58,11 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
     --cancel previously scheduled update if any
     EVENT_MANAGER:UnregisterForUpdate(callbackName)
     --register a new one
-    EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
+	if not IIFA_GUI:IsControlHidden() then		-- only update the frame if it's shown
+    	EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
+	end
 end
-
+-- |H1:item:16424:4:1:0:0:0:0:0:0:0:0:0:0:0:0:7:0:0:0:0:0|h|h
 
 local function IIfA_InventorySlotUpdate(...)
 	IIfA:InventorySlotUpdate(...)
@@ -82,10 +88,12 @@ local function IIfA_HouseEntered(eventCode)
 		IIfA:SetTrackingForHouse(houseCollectibleId,  IIfA:GetCollectingHouseData())
 	end
 	IIfA:GetTrackedBags()[houseCollectibleId] = IIfA:GetTrackedBags()[houseCollectibleId] or IIfA.data.collectHouseData[houseCollectibleId]
-	IIfA:RescanHouse(houseCollectibleId)
+	if IIfA:GetTrackedBags()[houseCollectibleId] then
+		IIfA:RescanHouse(houseCollectibleId)
+	end
 end
 
-local function IIfA_EventProc(...)
+local function IIfA_EventDump(...)
 	--d(...)
 	local l = {...}
 	local s = ""
@@ -108,7 +116,15 @@ local function IIfA_EventProc(...)
 end
 
 local function finv1(...)
-	d("inventory open error")
+	d("inventory slot changed")
+	IIfA_EventDump(...)
+end
+local function finv2(...)
+	d("inventory item destroyed")
+	IIfA_EventDump(...)
+end
+local function finv3(...)
+	d("inventory slot update")
 	IIfA_EventDump(...)
 end
 local function fgb1(...)
@@ -143,9 +159,9 @@ function IIfA:RegisterForEvents()
 	em:RegisterForEvent( "IIFA_InventorySlotUpdate", 	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, IIfA_InventorySlotUpdate)
 	em:AddFilterForEvent("IIFA_InventorySlotUpdate", 	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
 
---	em:RegisterForEvent("IIFA_unknown", EVENT_ITEM_SLOT_CHANGED, IIfA_EventDump)
---	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_USED, IIfA_EventDump)	-- arg 1 = event id, arg 2 = 27 (no clue)
---	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_DESTROYED, IIfA_EventDump)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_ITEM_SLOT_CHANGED, finv1)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_USED, IIfA_EventDump)	-- arg 1 = event id, arg 2 = 27 (slot #?)
+--	em:RegisterForEvent("IIFA_unknown", EVENT_INVENTORY_ITEM_DESTROYED, finv2)
 --	em:RegisterForEvent("IIFA_unknown", EVENT_JUSTICE_FENCE_UPDATE, IIfA_EventDump) -- # sold, # laundered is sent to event handler
 
 -- not helpful, no link at all on this callback
