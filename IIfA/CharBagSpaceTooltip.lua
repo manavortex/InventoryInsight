@@ -163,7 +163,7 @@ end
 -- add iteration for house chests
 -- if GetBagSize == 0, you've run out of chests to iterate (break out of loop)
 -- /script for i=BAG_HOUSE_BANK_ONE,BAG_MAX_VALUE do d(i .. GetCollectibleName(GetCollectibleForHouseBankBag(i))) end
--- /script for i=BAG_HOUSE_BANK_ONE,BAG_MAX_VALUE do d(IsCollectibleUnlocked(GetCollectibleForHouseBankBag(i))) end
+-- /script for i=BAG_HOUSE_BANK_ONE,BAG_MAX_VALUE do d(i .. " " .. IsCollectibleUnlocked(GetCollectibleForHouseBankBag(i))) end
 
 function CharBagFrame:RepaintSpaceUsed()
 	-- loop through characters

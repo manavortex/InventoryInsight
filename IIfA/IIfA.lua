@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.07"
+IIfA.version 			= "3.09"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -156,7 +156,7 @@ function IIfA:DebugOut(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
 	elseif a1 then
 		d(zo_strformat(output, a1))
 	elseif output then
-		d(zo_strformat(output))
+		d(output)
 	else
 		d("\n")
 	end
@@ -166,10 +166,6 @@ function IIfA:StatusAlert(message)
 	if (IIfA.data.bDebug) then
 		ZO_Alert(UI_ALERT_CATEGORY_ALERT, IIfA.defaultAlertSound, message)
 	end
-end
-
-function IIfA:BuildHouseLists()
-
 end
 
 function IIfA_onLoad(eventCode, addOnName)

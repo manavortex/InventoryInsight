@@ -83,16 +83,6 @@ function IIfA:GUIDoubleClick(control, button)
 	end
 end
 
-local function getItemLinkFromDB(itemLink, item)
-	local iLink = ""
-	if zo_strlen(itemLink) < 10 then
-		iLink = item.itemLink
-	else
-		iLink = itemLink
-	end
-	return iLink
-end
-
 local function getHouseIds()
 	local ret = {}
 	for houseName, houseId in pairs(IIfA:GetTrackedHouses()) do
@@ -356,45 +346,55 @@ function IIfA:UpdateScrollDataLinesData()
 	local index = 0
 	local dataLines = {}
 	local DBv3 = IIfA.database
-	local iLink, itemLink, iconFile, itemQuality, tempDataLine = nil
+	local itemLink, itemKey, iconFile, itemQuality, tempDataLine = nil
 	local itemTypeFilter, itemCount = 0
 	local match = false
 	local bWorn = false
+	local dbItem
 
 	if(DBv3)then
-		for itemLink, item in pairs(DBv3) do
-			iLink = getItemLinkFromDB(itemLink, item)
+		for itemKey, dbItem in pairs(DBv3) do
+			if zo_strlen(itemKey) < 10 then
+				itemLink = dbItem.itemLink
+			else
+				itemLink = itemKey
+			end
 
-			if (itemLink ~= "") then
+			if (itemKey ~= "") then
 
 				itemTypeFilter = 0
-				if (item.filterType) then
-					itemTypeFilter = item.filterType
+				if (dbItem.filterType) then
+					itemTypeFilter = dbItem.filterType
 				end
 
 				itemCount = 0
 				bWorn = false
-				local itemIcon = GetItemLinkIcon(iLink)
+				local itemIcon = GetItemLinkIcon(itemLink)
 
 				local locationName, locData
-				for locationName, locData in pairs(item.locations) do
+				for locationName, locData in pairs(dbItem.locations) do
 					itemCount = itemCount + (locData.itemCount or 0)
 					if DoesInventoryMatchList(locationName, locData) then
 						match = true
 					end
 					bWorn = bWorn or (locData.bagID == BAG_WORN)
 				end
+				if not dbItem.itemName or #dbItem.itemName == 0 then
+					p("Filling in missing itemName/Quality")
+					dbItem.itemName = GetItemLinkName(itemLink)
+                    dbItem.itemQuality = GetItemLinkQuality(itemLink)
+                end
 				tempDataLine = {
-					link = iLink, 		-- getItemLinkFromDB(itemLink, item),
+					link = itemLink,
 					qty = itemCount,
 					icon = itemIcon,
-					name = item.itemName,
-					quality = item.itemQuality,
+					name = dbItem.itemName,
+					quality = dbItem.itemQuality,
 					filter = itemTypeFilter,
 					worn = bWorn
 				}
 
-				if(itemCount > 0) and matchFilter(item.itemName, iLink) and matchQuality(item.itemQuality) and match then
+				if(itemCount > 0) and matchFilter(dbItem.itemName, itemLink) and matchQuality(dbItem.itemQuality) and match then
 					table.insert(dataLines, tempDataLine)
 				end
 				match = false
@@ -477,10 +477,6 @@ function IIfA:RefreshInventoryScroll()
 	IIfA:UpdateInventoryScroll()
 end
 
-
-
-
-
 function IIfA:SetItemCountPosition()
 	for i=1, IIFA_GUI_ListHolder.maxLines do
 		local line = IIFA_GUI_ListHolder.lines[i]
@@ -507,10 +503,6 @@ function IIfA:CreateLine(i, predecessor, parent)
 	line.qty = line:GetNamedChild("Qty")
 	line.worn = line:GetNamedChild("IconWorn")
 	line.stolen = line:GetNamedChild("IconStolen")
-
---	line.text:SetText(text)
---	line.itemLink = text
---	text=""
 
 	line:SetHidden(false)
 	line:SetMouseEnabled(true)
@@ -711,6 +703,7 @@ function IIfA:SetupBackpack()
 		local function OnItemSelect(_, choiceText, choice)
 	--		d("OnItemSelect", choiceText, choice)
 			IIfA:SetInventoryListFilter(choiceText)
+			IIfA:RefreshInventoryScroll()
 			PlaySound(SOUNDS.POSITIVE_CLICK)
 		end
 

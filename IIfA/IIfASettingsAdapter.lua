@@ -137,6 +137,7 @@ end
 function IIfA:GetHouseIdFromName(houseName)
 	return IIfA.houseNameToIdTbl[houseName]
 end
+
 function IIfA:GetTrackingWithHouseNames()
 	local ret = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
