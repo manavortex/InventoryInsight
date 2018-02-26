@@ -25,15 +25,15 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
 
 	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
 	local itemKey = IIfA:GetItemKey(itemLink, nil, nil)		-- yes, the nil's can be left off, but this way we know it's supposed to take 3 args)
-	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
+	if nil ~= itemLink and #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemKey = IIfA.BagSlotInfo[bagId][slotId]
-		if #itemLink < 10 then
+		if nil ~= itemKey and #itemLink < 10 then
 			itemLink = IIfA.database[itemKey].itemLink
 		end
-	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
+	elseif nil ~= itemLink and #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
 		IIfA.BagSlotInfo[bagId] = {}
 		IIfA.BagSlotInfo[bagId][slotId] = itemKey
-	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
+	elseif nil ~= itemLink and #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
 		IIfA.BagSlotInfo[bagId][slotId] = itemKey
 	end
 
