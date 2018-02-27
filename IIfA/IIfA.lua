@@ -460,16 +460,16 @@ function IIfA:MakeBSI()
 					if bs[idx] == nil then
 						bs[idx] = {}
 					end
-					if nil ~= idx and nil ~= data.bagSlot then
-						for bagSlot, qty in pairs(data.bagSlot) do
-							bs[idx][bagSlot] = itemKey
-						end
-					end
 					if data.bagSlot ~= nil and type(data.bagSlot) ~= "table" then
 						bagSlot = data.bagSlot
 						data.bagSlot = {}
 						data.bagSlot[bagSlot] = data.itemCount
 						data.itemCount = nil
+					end
+					if nil ~= idx and nil ~= data.bagSlot then
+						for bagSlot, qty in pairs(data.bagSlot) do
+							bs[idx][bagSlot] = itemKey
+						end
 					end
 				end
 			end
