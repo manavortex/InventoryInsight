@@ -871,7 +871,8 @@
 
 								<Control name="$(parent)_Subfilter_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" hidden="true">
 									<Dimensions x="150" y="30" />
-									<Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_SortName" relativePoint="TOPRIGHT" offsetX="90" offsetY="0"/>
+									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_SortBar" relativePoint="TOPRIGHT" offsetX="0" offsetY="-12"/>
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_SortBar" relativePoint="TOPRIGHT" offsetX="-50" offsetY="-38"/>
 								</Control>
 
 							</Controls>
