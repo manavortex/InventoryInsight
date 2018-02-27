@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.09b"
+IIfA.version 			= "3.10"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -31,6 +31,7 @@ IIfA.CurrSceneName 		= "hud"
 IIfA.bFilterOnSetName 	= false
 IIfA.searchFilter 		= ""
 IIfA.trackedHouses		= {}
+IIfA.EMPTY_STRING		= ""
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -49,13 +50,16 @@ IIfA.task			= task
 -- --------------------------------------------------------------
 
 -- BAG_SUBSCRIBER_BANK handled special in the CollectAll function - do NOT add to this list
+-- has to be in this list because it's checked for in more than a few places as "do I track"
 
 IIfA.trackedBags = {
 	[BAG_WORN] 				= true,
 	[BAG_BACKPACK] 			= true,
 	[BAG_BANK] 				= true,
+	[BAG_SUBSCRIBER_BANK]	= true,
 	[BAG_GUILDBANK] 		= true,
 	[BAG_VIRTUAL] 			= true,
+	[BAG_HOUSE_BANK_ONE] 	= true,
 	[BAG_HOUSE_BANK_TWO] 	= true,
 	[BAG_HOUSE_BANK_THREE]	= true,
 	[BAG_HOUSE_BANK_FOUR] 	= true,
@@ -81,22 +85,10 @@ IIfA.dropdownBankNames = {
 	"All Houses",
 }
 
-function IIfA:GetItemID(itemLink)
-	local ret = nil
-	if (itemLink) then
-		local data = itemLink:match("|H.:item:(.-)|h.-|h")
-		local itemID = zo_strsplit(':', data)		-- just get the number
-
-		-- because other functions may be comparing string to string, we can't make this be a number or it won't compare properly
-		ret = itemID
-	end
-	return ret
-end
-
 -- 7-26-16 AM - global func, not part of IIfA class, used in IIfA_OnLoad
 function IIfA_SlashCommands(cmd)
 
-	if (cmd == "") then
+	if (cmd == IIfA.EMPTY_STRING) then
     	d("[IIfA]:Please find the majority of options in the addon settings section of the menu under Inventory Insight.")
     	d(" ")
     	d("[IIfA]:Usage - ")
@@ -413,7 +405,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end
 
 	-- keep EU and US items apart
-	local worldName = GetWorldName():gsub(" Megaserver", "")
+	local worldName = GetWorldName():gsub(" Megaserver", IIfA.EMPTY_STRING)
 	IIfA.data[worldName] = IIfA.data[worldName] or {}
 	if IIfA.data[worldName].DBv3 == nil then
 		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
@@ -421,7 +413,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.data.DBv3 = nil
 	IIfA.database = IIfA.data[worldName].DBv3
 
-	IIfA:ActionLayerInventoryUpdate()
+--	IIfA:ActionLayerInventoryUpdate()
 
 	if not ObjSettings.frameSettings.hud.hidden then
 		IIfA:ProcessSceneChange("hud", "showing", "shown")
@@ -432,7 +424,6 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA.ignoredCharEquipment = IIfA.ignoredCharEquipment or {}
 	IIfA.ignoredCharInventories = IIfA.ignoredCharInventories or {}
-
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored()
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
 
@@ -455,8 +446,9 @@ end
 function IIfA:MakeBSI()
 	local bs = {}
 	local idx
-	local itemLink, DBItem, locname, data
-	for itemLink, DBItem in pairs(IIfA.database) do
+	local itemKey, DBItem, locname, data
+	local bagSlot, qty
+	for itemKey, DBItem in pairs(IIfA.database) do
 		if DBItem.locations then
 			for locname, data in pairs(DBItem.locations) do
 				if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
@@ -469,7 +461,15 @@ function IIfA:MakeBSI()
 						bs[idx] = {}
 					end
 					if nil ~= idx and nil ~= data.bagSlot then
-						bs[idx][data.bagSlot] = itemLink
+						for bagSlot, qty in pairs(data.bagSlot) do
+							bs[idx][bagSlot] = itemKey
+						end
+					end
+					if data.bagSlot ~= nil and type(data.bagSlot) ~= "table" then
+						bagSlot = data.bagSlot
+						data.bagSlot = {}
+						data.bagSlot[bagSlot] = data.itemCount
+						data.itemCount = nil
 					end
 				end
 			end
@@ -478,8 +478,6 @@ function IIfA:MakeBSI()
 	IIfA.BagSlotInfo = bs
 	return bs	-- return only used in IIfA:SaveBagSlotIndex when IIfA.BagSlotInfo is nil
 end
-
-
 
 --[[
 for reference
