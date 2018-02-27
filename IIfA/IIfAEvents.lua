@@ -14,34 +14,43 @@ end
 
 
 -- used by an event function
-function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, qty)
+function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, bNewItem, itemSoundCategory, inventoryUpdateReason, qty)
 
+	local sNewItem
 	if nil == bagId or nil == slotId then return end
-	if isNewItem then
-		isNewItem = "True"
+	if bNewItem then
+		sNewItem = "True"
 	else
-		isNewItem = "False"
+		sNewItem = "False"
 	end
 
-	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS) or ""
-	local itemKey = IIfA:GetItemKey(itemLink, nil, nil)		-- yes, the nil's can be left off, but this way we know it's supposed to take 3 args)
-	if nil ~= itemLink and #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
+	local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
+	if not itemLink then itemLink = IIfA.EMPTY_STRING end
+	local itemKey = IIfA:GetItemKey(itemLink, nil)		-- yes, the nil can be left off, but this way we know it's supposed to take a 2nd arg)
+	if not itemKey then itemKey = IIfA.EMPTY_STRING end
+	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemKey = IIfA.BagSlotInfo[bagId][slotId]
-		if nil ~= itemKey and nil ~= itemLink and nil ~= IIfA.database and #itemLink < 10 then
+		if #itemKey < 10 and IIfA.database[itemKey] then
 			itemLink = IIfA.database[itemKey].itemLink
+		elseif #itemKey >= 10 then
+			itemLink = itemKey
 		end
-	elseif nil ~= itemLink and #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
+--IIfA:DebugOut("no itemlink, lookup found key=<<1>>, link=<<2>>", itemKey, itemLink)
+	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId] == nil then
 		IIfA.BagSlotInfo[bagId] = {}
 		IIfA.BagSlotInfo[bagId][slotId] = itemKey
-	elseif nil ~= itemLink and #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
+--IIfA:DebugOut("New bag, new slot, bag=<<1>, slot=<<2>, key=<<3>>, link=<<4>>", bagId, slotId, itemKey, itemLink)
+	elseif #itemLink > 0 and IIfA.BagSlotInfo[bagId][slotId] == nil then
 		IIfA.BagSlotInfo[bagId][slotId] = itemKey
+--IIfA:DebugOut("Existing bag, new slot=<<1>>, key=<<2>>, link=<<3>>", slotId, itemKey, itemLink)
 	end
 
 	IIfA:DebugOut("Inv Slot Upd <<1>> - bag/slot <<2>>/<<3>> x<<4>>, new: <<6>>",
-		itemLink, bagId, slotId, qty, inventoryUpdateReason, isNewItem)
+		itemLink, bagId, slotId, qty, inventoryUpdateReason, sNewItem)
 
 	-- (bagId, slotNum, fromXfer, itemCount, itemLink, itemName, locationID)
-	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not isNewItem, qty, itemLink)
+	local dbItem, itemKey = self:EvalBagItem(bagId, slotId, not bNewItem, qty, itemLink)
+
 
 	-- once a bunch of items comes in, this will be created for each, but only the last one stays alive
 	-- so once all the items are finished coming in, it'll only need to update the shown list one time
@@ -62,7 +71,6 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, isNewItem, itemSound
     	EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
 	end
 end
--- |H1:item:16424:4:1:0:0:0:0:0:0:0:0:0:0:0:0:7:0:0:0:0:0|h|h
 
 local function IIfA_InventorySlotUpdate(...)
 	IIfA:InventorySlotUpdate(...)
@@ -96,7 +104,7 @@ end
 local function IIfA_EventDump(...)
 	--d(...)
 	local l = {...}
-	local s = ""
+	local s = IIfA.EMPTY_STRING
 	for name, data in pairs(l) do
 		if type(data) ~= "table" then
 			s = s .. name .. " = " .. tostring(data) .. "\r\n"
@@ -128,11 +136,11 @@ local function finv3(...)
 	IIfA_EventDump(...)
 end
 local function fgb1(...)
-	d("gb open error")
+	d("gb item add")
 	IIfA_EventDump(...)
 end
 local function fgb2(...)
-	d("gb updated qty")
+	d("gb item remove")
 	IIfA_EventDump(...)
 end
 local function fgb3(...)
@@ -170,7 +178,7 @@ function IIfA:RegisterForEvents()
 
 
 	-- Events for data collection
-	em:RegisterForEvent("IIFA_ALPUSH", 		EVENT_ACTION_LAYER_PUSHED, 	function() IIfA:ActionLayerInventoryUpdate() end)
+--	em:RegisterForEvent("IIFA_ALPUSH", 		EVENT_ACTION_LAYER_PUSHED, 	function() IIfA:ActionLayerInventoryUpdate() end)
 	em:RegisterForEvent("IIFA_BANK_OPEN",	EVENT_OPEN_BANK, 			function() IIfA:ScanBank() end)
 
 	-- on opening guild bank:

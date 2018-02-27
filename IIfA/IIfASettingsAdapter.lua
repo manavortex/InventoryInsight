@@ -88,7 +88,7 @@ end
 
 
 function IIfA:SetInventoryListFilter(value)
-	if not value or value == "" then value = "All" end
+	if not value or value == IIfA.EMPTY_STRING then value = "All" end
 	IIfA.InventoryListFilter = value
 
 	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()

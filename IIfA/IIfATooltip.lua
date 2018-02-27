@@ -27,7 +27,7 @@ function IIfA:CreateTooltips()
 end
 
 function IIfA:SetTooltipFont(font)
-	if not font or font == "" then font = "ZoFontGameMedium" end
+	if not font or font == IIfA.EMPTY_STRING then font = "ZoFontGameMedium" end
 --	d("SetTooltipFont called with " .. tostring(font))
 	IIfA:GetSettings().in2TooltipsFont = font
 --	IIFA_ITEM_TOOLTIP:GetNamedChild("_Label"):SetFont(font)
@@ -39,7 +39,7 @@ local function getTex(name)
 end
 
 IIfA.racialTextures = {
-	[0]		= { styleName = "", styleTexture = ""},
+	[0]		= { styleName = IIfA.EMPTY_STRING, styleTexture = IIfA.EMPTY_STRING},
 	[1]		= { styleName = zo_strformat("<<1>>", GetItemStyleName(1)), styleTexture = getTex("breton")}, 				-- Breton
 	[2]		= { styleName = zo_strformat("<<1>>", GetItemStyleName(2)), styleTexture = getTex("redguard")}, 			-- Redguard
 	[3]		= { styleName = zo_strformat("<<1>>", GetItemStyleName(3)), styleTexture = getTex("orsimer")}, 				-- Orc
@@ -102,23 +102,23 @@ IIfA.racialTextures = {
 	[60] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(60)), styleTexture = getTex("clockwork")}, 			-- Clockwork
 	[61] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(61)), styleTexture = getTex("bloodforge")}, 			-- Bloodforge
 	[62] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(62)), styleTexture = getTex("dreadhorn")}, 			-- Dreadhorn / Falkreath
-	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex("")}, 					-- Unused
-	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex("")},					-- Unused
+	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex(IIfA.EMPTY_STRING)},					-- Unused
 	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("apostle")},				-- Apostle
 	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("ebonshadow")},			-- Ebonshadow
-	[67] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(67)), styleTexture = getTex("")}, 					-- Unused
-	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex("")}, 					-- Unused
-	[69] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(69)), styleTexture = getTex("")}, 					-- Unused
-	[70] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(70)), styleTexture = getTex("")}, 					-- Unused
-	[71] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(71)), styleTexture = getTex("")}, 					-- Unused
-	[72] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(72)), styleTexture = getTex("")}, 					-- Unused
-	[73] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(73)), styleTexture = getTex("")}, 					-- Unused
-	[74] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(74)), styleTexture = getTex("")}, 					-- Unused
-	[75] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(75)), styleTexture = getTex("")}, 					-- Unused
-	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex("")}, 					-- Unused
-	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex("")}, 					-- Unused
-	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex("")}, 					-- Unused
-	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex("")}, 					-- Unused
+	[67] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(67)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[69] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(69)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[70] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(70)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[71] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(71)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[72] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(72)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[73] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(73)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[74] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(74)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[75] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(75)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
+	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 					-- Unused
 }
 
 -- check on icons Hlaalu, Redoran and Morag Tong not loading properly
@@ -130,7 +130,7 @@ IIfA.itemEquipTypeTextures = {
 	[EQUIP_TYPE_FEET]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
 	[EQUIP_TYPE_HAND]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
 	[EQUIP_TYPE_HEAD]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_INVALID]  =   "",
+	[EQUIP_TYPE_INVALID]  =   IIfA.EMPTY_STRING,
 	[EQUIP_TYPE_LEGS]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
 	[EQUIP_TYPE_MAIN_HAND]  =   "/esoui/art/inventory/inventory_tabicon_weapons_up.dds",
 	[EQUIP_TYPE_NECK]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
@@ -254,7 +254,7 @@ end
 
 function IIfA:GetEquippedItemLink(mouseOverControl)
 	local fullSlotName = mouseOverControl:GetName()
-	local slotName = string.gsub(fullSlotName, "ZO_CharacterEquipmentSlots", "")
+	local slotName = string.gsub(fullSlotName, "ZO_CharacterEquipmentSlots", IIfA.EMPTY_STRING)
 	local index = 0
 
 	if 		(slotName == "Head")		then index = 0
@@ -420,15 +420,15 @@ function IIfA:UpdateTooltip(tooltip)
 	local queryResults = IIfA:QueryAccountInventory(itemLink)
 	local itemStyleTexArray = getStyleIntel(itemLink)
 
-	if not itemStyleTexArray then itemStyleTexArray = {["styleTexture"] = "", ["styleName"] = ""} end
-	if itemStyleTexArray.styleName == nil then itemStyleTexArray = {["styleTexture"] = "", ["styleName"] = ""} end
+	if not itemStyleTexArray then itemStyleTexArray = {["styleTexture"] = IIfA.EMPTY_STRING, ["styleName"] = IIfA.EMPTY_STRING} end
+	if itemStyleTexArray.styleName == nil then itemStyleTexArray = {["styleTexture"] = IIfA.EMPTY_STRING, ["styleName"] = IIfA.EMPTY_STRING} end
 
 	if IIfA:GetSettings().bInSeparateFrame then
 		local parentTooltip = nil
 		if tooltip == IIFA_POPUP_TOOLTIP then parentTooltip = PopupTooltip end
 		if tooltip == IIFA_ITEM_TOOLTIP then parentTooltip = ItemTooltip end
 
-		if (not itemLink) or ((#queryResults.locations == 0) and (itemStyleTexArray.styleName == "")) then
+		if (not itemLink) or ((#queryResults.locations == 0) and (itemStyleTexArray.styleName == IIfA.EMPTY_STRING)) then
 			tooltip:SetHidden(true)
 			return
 		end
@@ -439,14 +439,14 @@ function IIfA:UpdateTooltip(tooltip)
 
 		tooltip:SetWidth(parentTooltip:GetWidth())
 
-		if itemStyleTexArray.styleName ~= "" then
+		if itemStyleTexArray.styleName ~= IIfA.EMPTY_STRING then
 			tooltip:AddLine(" ");
 		end
 
 		if(queryResults) then
 			if #queryResults.locations > 0 then
 				IIfA:DebugOut(queryResults)
-				if itemStyleTexArray.styleName ~= "" then
+				if itemStyleTexArray.styleName ~= IIfA.EMPTY_STRING then
 					ZO_Tooltip_AddDivider(tooltip)
 				end
 				for x, location in pairs(queryResults.locations) do
@@ -475,17 +475,17 @@ function IIfA:UpdateTooltip(tooltip)
 		styleIcon:SetTexture(itemStyleTexArray.styleTexture)
 		styleLabel:SetText(itemStyleTexArray.styleName)
 
-		styleLabel:SetHidden(itemStyleTexArray.styleName == "")
-		styleIcon:SetHidden(itemStyleTexArray.styleName == "")
+		styleLabel:SetHidden(itemStyleTexArray.styleName == IIfA.EMPTY_STRING)
+		styleIcon:SetHidden(itemStyleTexArray.styleName == IIfA.EMPTY_STRING)
 		IIfA:AnchorFrame(tooltip, parentTooltip)
 	else
-		if (not itemLink) or ((#queryResults.locations == 0) and (itemStyleTexArray.styleName == "")) then
+		if (not itemLink) or ((#queryResults.locations == 0) and (itemStyleTexArray.styleName == IIfA.EMPTY_STRING)) then
 			IIfA_HideTooltip(tooltip)
 			return
 		end
 
 		local bHasStyle
-		bHasStyle = not (itemStyleTexArray.styleName == nil or itemStyleTexArray.styleName == "")
+		bHasStyle = not (itemStyleTexArray.styleName == nil or itemStyleTexArray.styleName == IIfA.EMPTY_STRING)
 
 		-- only add/show the style info if it's got style
 		if bHasStyle then

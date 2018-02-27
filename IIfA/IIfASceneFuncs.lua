@@ -2,7 +2,7 @@
 
 
 function IIfA:GetCurrentSceneName()
-	local ret = ""
+	local ret = IIfA.EMPTY_STRING
 
 	-- [16:20] scene name: 65553, hidden: false
 	if not SCENE_MANAGER or not SCENE_MANAGER:GetCurrentScene() then
