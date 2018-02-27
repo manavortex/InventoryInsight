@@ -5,6 +5,19 @@ IIfA.task			= task
 
 local function p(...) IIfA:DebugOut(...) end
 
+local function IIfA_GetItemID(itemLink)
+	local ret = nil
+	if itemLink then
+		if GetItemLinkItemId then
+	   		ret = tostring(GetItemLinkItemId(itemLink))
+		else
+			local data = itemLink:match("|H.:item:(.-)|h.-|h")
+			ret = zo_strsplit(':', data)		-- just get the number
+		end
+	end
+	return ret
+end
+
 local function grabBagContent(bagId, override)
 	if bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN and not IsOwnerOfCurrentHouse() then return end
 
@@ -333,7 +346,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			IIfA:DebugOut("furniture item <<1>> x<<2>>", itemLink, itemCount)
-			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA:GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA_GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 		end
 	end)
 
@@ -345,19 +358,6 @@ local function getItemName(bagId, slotId, itemLink)
 	if IIfA.EMPTY_STRING ~= itemName then return itemName end
 	if nil == itemLink then return end
 	return GetItemLinkName(itemLink)
-end
-
-local function IIfA_GetItemID(itemLink)
-	local ret = nil
-	if itemLink then
-		if GetItemLinkItemId then
-	   		ret = tostring(GetItemLinkItemId(itemLink))
-		else
-			local data = itemLink:match("|H.:item:(.-)|h.-|h")
-			ret = zo_strsplit(':', data)		-- just get the number
-		end
-	end
-	return ret
 end
 
 -- returns the item's db key, we only save under the item link if we need to save level information etc, else we use the ID
@@ -423,7 +423,7 @@ end
 function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
 	-- d(zo_strformat("trying to add/remove <<1>> x <<2>> from houseCollectibleId <<3>>", itemLink, itemCount, houseCollectibleId))
 	local location = houseCollectibleId
-	IIfA:EvalBagItem(houseCollectibleId, IIfA:GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
+	IIfA:EvalBagItem(houseCollectibleId, IIfA_GetItemID(itemLink), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 end
 
 function IIfA:TableCount(tbl)
