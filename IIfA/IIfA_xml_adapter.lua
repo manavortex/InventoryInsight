@@ -180,7 +180,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 			return IIfA:GuiOnFilterButton(IIFA_GUI_Header_Filter:GetChild(1), MOUSE_BUTTON_INDEX_LEFT, "All", nil)
 		else
 			IIfA.LastSubFilterControl = control
-			local parentIdx = control:GetParent():GetName():gsub("IIFA_GUI_Header_Subfilter_", "")
+			local parentIdx = control:GetParent():GetName():gsub("IIFA_GUI_Header_Subfilter_", IIfA.EMPTY_STRING)
 			local parentControl = IIFA_GUI_Header_Filter:GetChild(parentIdx+1)
 			return IIfA:GuiOnFilterButton(parentControl, MOUSE_BUTTON_INDEX_LEFT, parentControl.filterText)
 		end
@@ -197,7 +197,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 		   IIfA.LastSubFilterControl:GetParent():SetHidden(true)
 		end
 		if filterGroup ~= "All" then
-			IIfA.LastSubFilterControl = IIFA_GUI_Header:GetNamedChild(control:GetName():gsub("IIFA_GUI_Header", ""):gsub("Filter_Button", "Subfilter_") .. "_Button0")
+			IIfA.LastSubFilterControl = IIFA_GUI_Header:GetNamedChild(control:GetName():gsub("IIFA_GUI_Header", IIfA.EMPTY_STRING):gsub("Filter_Button", "Subfilter_") .. "_Button0")
 			IIfA.LastSubFilterControl:SetState(BSTATE_PRESSED)
 		else
 			IIfA.LastSubFilterControl = nil
@@ -265,7 +265,7 @@ function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, 
 		IIFA_GUI_Header_SortBar_Subfilter_Dropdown:SetHidden(true)
 	end
 
-	
+
 	IIfA:GuiResizeScroll()
 
 	IIfA:RefreshInventoryScroll()
@@ -275,30 +275,30 @@ end
 -- IIFA_GUI_SearchBoxText is the "Filter by text search" text msg
 function IIfA:GuiOnSearchboxText(control)
 	local text = control:GetText()
-	IIFA_GUI_SearchBoxText:SetHidden(text ~= nil and text > "")
+	IIFA_GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
 	IIfA.searchFilter = zo_strlower(text)
     IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GuiOnSearchBoxClear(control)
-	IIFA_GUI_SearchBox:SetText("")
+	IIFA_GUI_SearchBox:SetText(IIfA.EMPTY_STRING)
 	IIFA_GUI_SearchBoxText:SetHidden(false)
-	IIfA.searchFilter = ""
+	IIfA.searchFilter = IIfA.EMPTY_STRING
     IIfA:RefreshInventoryScroll()
 end
 
 
 
-	-- We're inverting search order if same header is clicked twice. 
+	-- We're inverting search order if same header is clicked twice.
 IIfA.bSortQuality = false
 -- IIFA_GUI_ListHolder sort
-function IIfA:GuiOnSort(sortQuality)	
-		
+function IIfA:GuiOnSort(sortQuality)
+
 	if (IIfA.bSortQuality == sortQuality) then
 		IIfA.ScrollSortUp = not IIfA.ScrollSortUp
 	end
 	IIfA.bSortQuality = sortQuality
-	
+
 	local icon = IIFA_GUI_Header_SortBar.Icon
 
 	if (IIfA.ScrollSortUp) then
@@ -343,7 +343,7 @@ end
 function IIfA:GuiLineOnMouseEnter(lineControl)
 	if not lineControl then return end
 
-	if( lineControl.itemLink ~= nil and lineControl.itemLink ~= "") then
+	if( lineControl.itemLink ~= nil and lineControl.itemLink ~= IIfA.EMPTY_STRING) then
 		IIfA.TooltipLink = lineControl.itemLink
 		InitializeTooltip(ItemTooltip, lineControl, LEFT, 0, 0, 0)
 		ItemTooltip:SetLink(lineControl.itemLink)
@@ -414,8 +414,8 @@ function IIfA:GuiReloadDimensions(settings, sceneName)
 end
 
 function IIfA:GuiResizeLines()
-	local lines 
-	
+	local lines
+
 	if not IIFA_GUI_ListHolder.lines then
 		lines = IIfA:CreateInventoryScroll()
 	end

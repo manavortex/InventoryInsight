@@ -1,6 +1,7 @@
 local CharBagFrame = ZO_Object:Subclass()
 if IIfA == nil then IIfA = {} end
 IIfA.CharBagFrame = CharBagFrame
+CharBagFrame.EMPTY_STRING = ""
 
 --[[ not currently used
 local function HexToN(sHexVal)
@@ -49,7 +50,7 @@ end
 
 function CharBagFrame:ComputeColorAndText(spaceCurr, spaceMax)
 	local usedBagPercent = tonumber(spaceCurr) * 100 / tonumber(spaceMax)
-	local cs = ""
+	local cs = self.EMPTY_STRING
 	if spaceCurr == spaceMax then
 		cs = ColorStart(self.ColorFull)
 	else
@@ -125,7 +126,7 @@ function CharBagFrame:FillCharAndBank()
 				self:SetQty(tControl, "spaceUsed", self:ComputeColorAndText(tempUsed, GetBagSize(ctr)))
 				self:SetQty(tControl, "spaceMax", GetBagSize(ctr))
 				cName = GetCollectibleNickname(GetCollectibleForHouseBankBag(ctr))
-				if cName == "" then
+				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(GetCollectibleForHouseBankBag(ctr))
 				end
 				tControl:GetNamedChild("charName"):SetText(cName)

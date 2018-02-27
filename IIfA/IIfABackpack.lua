@@ -77,7 +77,7 @@ end
 
 function IIfA:GUIDoubleClick(control, button)
 	if button == MOUSE_BUTTON_INDEX_LEFT and control.itemLink then
-		if control.itemLink ~= "" then
+		if control.itemLink ~= IIfA.EMPTY_STRING then
 			ZO_ChatWindowTextEntryEditBox:SetText(ZO_ChatWindowTextEntryEditBox:GetText() .. zo_strformat(SI_TOOLTIP_ITEM_NAME, control.itemLink))
 		end
 	end
@@ -91,45 +91,44 @@ local function getHouseIds()
 	return ret
 end
 
+local function isHouse()
+	return IIfA:GetTrackingWithHouseNames()[locationName]
+end
+
+function IIfA:IsOneOf(value, comp1, comp2, comp3, comp4, comp5, comp6)
+	return nil ~= value and (value == comp6) or (value == comp5) or (value == comp4) or (value == comp3) or (value == comp2) or value == comp1
+end
 
 local function DoesInventoryMatchList(locationName, location)
 	local bagId 	= location.bagID
 	local filter 	= IIfA.InventoryListFilter
-
-	local function isHouse()
-		return IIfA:GetTrackingWithHouseNames()[locationName]
-	end
-
-	local function isOneOf(value, comp1, comp2, comp3, comp4, comp5, comp6)
-		return nil ~= value and (value == comp6) or (value == comp5) or (value == comp4) or (value == comp3) or (value == comp2) or value == comp1
-	end
 
 --	if locationName == "attributes" then return false end
 	if (filter == "All") then
 		return true
 
 	elseif (filter == "All Banks") then
-		return isOneOf(bagId, BAG_SUBSCRIBER_BANK, BAG_GUILDBANK) and IIfA.trackedBags[bagId]
+		return IIfA:IsOneOf(bagId, BAG_SUBSCRIBER_BANK, BAG_GUILDBANK) and IIfA.trackedBags[bagId]
 
 	elseif (filter == "All Guild Banks") then
-		return isOneOf(bagId, BAG_GUILDBANK)
+		return IIfA:IsOneOf(bagId, BAG_GUILDBANK)
 
 	elseif (filter == "All Characters") then
-		return isOneOf(bagId, BAG_BACKPACK, BAG_WORN)
+		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN)
 
 	elseif (filter == "Bank and Characters") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 
 	elseif(filter == "Bank and Current Character") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 			and locationName == IIfA.currentCharacterId
 
 	elseif(filter == "Bank and other characters") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 			and locationName ~= IIfA.currentCharacterId
 
 	elseif(filter == "Bank Only") then
-		return isOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK)
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK)
 
 	elseif(filter == "Craft Bag") then
 		return (bagId == BAG_VIRTUAL)
@@ -144,7 +143,7 @@ local function DoesInventoryMatchList(locationName, location)
 		return (bagId == IIfA:GetHouseIdFromName(filter))
 
 	else --Not a preset, must be a specific guildbank or character
-		if isOneOf(bagId, BAG_BACKPACK, BAG_WORN) then
+		if IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN) then
 			-- it's a character name, convert to Id, check that against location Name in the dbv3 table
 			if locationName == IIfA.CharNameToId[filter] then return true end
 		else
@@ -196,7 +195,7 @@ local function matchFilter(itemName, itemLink)
 	local searchFilter = IIfA.searchFilter
 	-- 17-7-30 AM - moved lowercasing to when it's created, one less call to lowercase for every item
 
-    local name = string.lower(itemName) or ""
+    local name = string.lower(itemName) or IIfA.EMPTY_STRING
 
 	-- text filter takes precedence
 	-- 3-6-17 AM - you're either filtering on a set name, or not - much less confusing (hopefully)
@@ -320,7 +319,7 @@ local function IIfA_FilterCompareUp(a, b)
 
 	local sort1 = (IIfA.bSortQuality and a.quality) or a.name
 	local sort2 = (IIfA.bSortQuality and b.quality) or b.name
-	return (sort1 or "") < (sort2 or "")
+	return (sort1 or IIfA.EMPTY_STRING) < (sort2 or IIfA.EMPTY_STRING)
 end
 local function IIfA_FilterCompareDown(a, b)
 	return IIfA_FilterCompareUp(b, a)
@@ -334,6 +333,16 @@ local function sort(dataLines)
 	elseif (not IIfA.ScrollSortUp) then
 		dataLines = table.sort(dataLines, IIfA_FilterCompareDown)
 	end
+end
+
+local function itemSum(location)
+	if type(location.bagSlot) ~= "table" then return 0 end
+	local totQty = 0
+	local bagSlot, itemCount
+	for bagSlot, itemCount in pairs(location.bagSlot) do
+		totQty = totQty + itemCount
+	end
+	return totQty
 end
 
 -- fill the shown item list with items that match current filter(s)
@@ -360,7 +369,7 @@ function IIfA:UpdateScrollDataLinesData()
 				itemLink = itemKey
 			end
 
-			if (itemKey ~= "") then
+			if (itemKey ~= IIfA.EMPTY_STRING) then
 
 				itemTypeFilter = 0
 				if (dbItem.filterType) then
@@ -373,7 +382,7 @@ function IIfA:UpdateScrollDataLinesData()
 
 				local locationName, locData
 				for locationName, locData in pairs(dbItem.locations) do
-					itemCount = itemCount + (locData.itemCount or 0)
+					itemCount = itemCount + itemSum(locData)
 					if DoesInventoryMatchList(locationName, locData) then
 						match = true
 					end
@@ -412,11 +421,11 @@ end
 local function fillLine(curLine, curItem)
 	local color
 	if curItem == nil then
-		curLine.itemLink = ""
+		curLine.itemLink = IIfA.EMPTY_STRING
 		curLine.icon:SetTexture(nil)
 		curLine.icon:SetAlpha(0)
-		curLine.text:SetText("")
-		curLine.qty:SetText("")
+		curLine.text:SetText(IIfA.EMPTY_STRING)
+		curLine.qty:SetText(IIfA.EMPTY_STRING)
 		curLine.worn:SetHidden(true)
 		curLine.stolen:SetHidden(true)
 	else
@@ -613,7 +622,6 @@ function IIfA:QueryAccountInventory(itemLink)
 		itemLink = string.gsub(itemLink, '|H0', '|H1')
 	end
 
-
 	local queryItem = {
 		link = itemLink,
 		locations = {},
@@ -622,19 +630,15 @@ function IIfA:QueryAccountInventory(itemLink)
 	local queryItemsFound = 0
 	local AlreadySavedLoc = false
 	local newLocation = {}
+	local itemCount = 0
 
-	local itemType = GetItemLinkItemType(itemLink)
-	if CanItemLinkBeVirtual(itemLink) or
-		itemType == ITEMTYPE_LOCKPICK or
-		itemType == ITEMTYPE_RECIPE or
-		itemType == ITEMTYPE_RACIAL_STYLE_MOTIF then
-		itemLink = IIfA:GetItemID(itemLink)
-	end
+	itemLink = IIfA:GetItemKey(itemLink)
 
 	local item = IIfA.database[itemLink]
 
 	if ((queryItem.link ~= nil) and (item ~= nil)) then
 		for locationName, location in pairs(item.locations) do
+			itemCount = itemSum(location)
 			AlreadySavedLoc = false
 			if location.bagID == BAG_WORN or location.bagID == BAG_BACKPACK then
 				locationName = IIfA.CharIdToName[locationName]
@@ -642,24 +646,24 @@ function IIfA:QueryAccountInventory(itemLink)
 			if locationName ~= nil then
 				for x, QILocation in pairs(queryItem.locations) do
 					if (QILocation.name == locationName)then
-						QILocation.itemsFound = QILocation.itemsFound + location.itemCount
+						QILocation.itemsFound = QILocation.itemsFound + itemCount
 						AlreadySavedLoc = true
 					end
 				end
 
-				if location.itemCount ~= nil and location.itemCount > 0 then
-					if (not AlreadySavedLoc) and (location.itemCount > 0) then
+				if itemCount ~= nil and itemCount > 0 then
+					if (not AlreadySavedLoc) and (itemCount > 0) then
 						newLocation = {}
 						newLocation.name = locationName
 
 						if location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then -- location is a housing chest
 							newLocation.name = GetCollectibleNickname(locationName)
-							if newLocation.name == "" then newLocation.name = GetCollectibleName(locationName) end
+							if newLocation.name == IIfA.EMPTY_STRING then newLocation.name = GetCollectibleName(locationName) end
 						elseif location.bagID == locationName then	-- location is a house
 							newLocation.name = GetCollectibleName(locationName)
 						end
 
-						newLocation.itemsFound = location.itemCount
+						newLocation.itemsFound = itemCount
 						newLocation.worn = location.bagID == BAG_WORN
 
 						table.insert(queryItem.locations, newLocation)
@@ -771,7 +775,7 @@ function IIfA:ProcessRightClick(control)
 
 	-- it's an IIFA list item, lets see if it has data, and allow menu if it does
 
-	if control.itemLink ~= "" then
+	if control.itemLink ~= IIfA.EMPTY_STRING then
 		zo_callLater(function()
 			AddCustomMenuItem(GetString(SI_ITEM_ACTION_LINK_TO_CHAT), function() IIfA:GUIDoubleClick(control, MOUSE_BUTTON_INDEX_LEFT) end, MENU_ADD_OPTION_LABEL)
 			AddCustomMenuItem("Missing Motifs to text", function() IIfA:FMC(control, "Private") end, MENU_ADD_OPTION_LABEL)
@@ -868,7 +872,7 @@ function IIfA:FMC(control, WhoSeesIt)
 	langChapNames["DE"] = {"Äxte", "Gürtel", "Stiefel", "Bogen", "Torsi", "Dolche", "Handschuhe", "Helme", "Beine", "Keulen", "Schilde", "Schultern", "Stäbe", "Schwerter" }
 	local chapnames = langChapNames[GetCVar("language.2")] or langChapNames["EN"]
 
-	if control.itemLink == nil or control.itemLink == "" then
+	if control.itemLink == nil or control.itemLink == IIfA.EMPTY_STRING then
 		d("Invalid item. Right-Click ignored.")
 		return
 	end
@@ -900,10 +904,10 @@ function IIfA:FMC(control, WhoSeesIt)
 		end
 	end
 
-	local s = ""
+	local s = IIfA.EMPTY_STRING
 	for i, val in pairs(chapnames) do
 		if val ~= nil then
-			if s == "" then
+			if s == IIfA.EMPTY_STRING then
 				s = val
 			else
 				s = string.format("%s, %s", s, val)
@@ -911,7 +915,7 @@ function IIfA:FMC(control, WhoSeesIt)
 		end
 	end
 
-	if s == "" then
+	if s == IIfA.EMPTY_STRING then
 		d("No motif chapters missing")
 	else
 		-- incomplete motif achieve

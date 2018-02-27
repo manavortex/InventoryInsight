@@ -1,14 +1,10 @@
- --this creates a menu for the addon.
-
--- IIfA doesn't exist at the point when this module is loaded, so this is useless
--- local IIfA = IIfA
+ --this creates static strings
 
 local strings = {
 	IIFA_BAG_BAGPACK 	= "Inventory",
 	IIFA_BAG_BANK 		= "Bank",
 	IIFA_BAG_CRAFTBAG 	= "CraftBag",
 }
-
 
 for stringId, stringValue in pairs(strings) do
 	ZO_CreateStringId(stringId, stringValue)
