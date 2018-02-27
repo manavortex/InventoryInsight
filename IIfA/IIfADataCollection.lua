@@ -377,6 +377,7 @@ function IIfA:GetItemKey(itemLink)
 	return itemLink
 end
 
+--[[
 local function getItemCount(bagId, slotId, itemLink)
 	local stackCountBackpack, stackCountBank, stackCountCraftBag, itemCount
 	if bagId > BAG_MAX_VALUE then return 1 end		-- it's furniture because of the out of range id, always count of 1
@@ -396,6 +397,18 @@ local function getItemCount(bagId, slotId, itemLink)
 	-- return 0 if no item count was found, possibly an out of date index to a house container that no longer exists
 	return 0
 end
+--]]
+
+local function getItemCount(bagId, slotId, itemLink)
+	if bagId > BAG_MAX_VALUE then return 1 end		-- it's furniture because of the out of range id, always count of 1
+
+	local _, itemCount =  GetItemInfo(bagId, slotId)
+	if itemCount > 0 then return itemCount end
+
+	-- return 0 if no item count was found, possibly an out of date index to a house container that no longer exists
+	return 0
+end
+
 
 local function getLocation(bagId)
 	if(bagId == BAG_BACKPACK or bagId == BAG_WORN) then
