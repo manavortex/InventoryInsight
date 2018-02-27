@@ -1,6 +1,6 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.09a
+## Version: 3.09b
 ## APIVersion: 100022
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## OptionalDependsOn: libFilters pChat
