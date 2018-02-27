@@ -666,17 +666,21 @@ function IIfA:ClearUnowned()
 	for ItemLink, DBItem in pairs(IIfA.database) do
 		n = 0
 		for ItemOwner, ItemData in pairs(DBItem.locations) do
-			n = n + 1
-			if ItemOwner ~= "Bank" and ItemOwner ~= "CraftBag" then
-				if ItemData.bagID == BAG_BACKPACK or ItemData.bagID == BAG_WORN then
-					if IIfA.CharIdToName[ItemOwner] == nil then
-						DBItem[ItemOwner] = nil
-						n = n - 1
-	  				end
-				elseif ItemData.bagID == BAG_GUILDBANK then
-					if IIfA.data.guildBanks[ItemOwner] == nil then
-						DBItem[ItemOwner] = nil
-						n = n - 1
+			if ItemOwner == IIfA.EMPTY_STRING then
+				DBItem.locations[IIfA.EMPTY_STRING] = nil
+			else
+				n = n + 1
+				if ItemOwner ~= "Bank" and ItemOwner ~= "CraftBag" then
+					if ItemData.bagID == BAG_BACKPACK or ItemData.bagID == BAG_WORN then
+						if IIfA.CharIdToName[ItemOwner] == nil then
+							DBItem[ItemOwner] = nil
+							n = n - 1
+	  					end
+					elseif ItemData.bagID == BAG_GUILDBANK then
+						if IIfA.data.guildBanks[ItemOwner] == nil then
+							DBItem[ItemOwner] = nil
+							n = n - 1
+						end
 					end
 				end
 			end
