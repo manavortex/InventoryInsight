@@ -451,6 +451,12 @@ function IIfA:MakeBSI()
 	for itemKey, DBItem in pairs(IIfA.database) do
 		if DBItem.locations then
 			for locname, data in pairs(DBItem.locations) do
+				if data.bagSlot ~= nil and type(data.bagSlot) ~= "table" then
+					bagSlot = data.bagSlot
+					data.bagSlot = {}
+					data.bagSlot[bagSlot] = data.itemCount
+					data.itemCount = nil
+				end
 				if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
 					(data.bagID ~= BAG_BACKPACK and data.bagID ~= BAG_WORN) then
 					idx = data.bagID
@@ -459,12 +465,6 @@ function IIfA:MakeBSI()
 					end
 					if bs[idx] == nil then
 						bs[idx] = {}
-					end
-					if data.bagSlot ~= nil and type(data.bagSlot) ~= "table" then
-						bagSlot = data.bagSlot
-						data.bagSlot = {}
-						data.bagSlot[bagSlot] = data.itemCount
-						data.itemCount = nil
 					end
 					if nil ~= idx and nil ~= data.bagSlot then
 						for bagSlot, qty in pairs(data.bagSlot) do

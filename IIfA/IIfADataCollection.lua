@@ -294,20 +294,6 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 end
 
 
---function IIfA:ActionLayerInventoryUpdate()
-	-- IIfA:CollectAll()
---end
-
-
---[[
-Data collection notes:
-	Currently crafting items are coming back from getitemlink with level info in them.
-	If it's a crafting item, strip the level info and store only the item number as the itemKey
-	Use function GetItemCraftingInfo, if usedInCraftingType indicates it's NOT a material, check for other item types
-
-	When showing items in tooltips, check for both stolen & owned, show both
---]]
-
 function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
@@ -360,6 +346,15 @@ local function getItemName(bagId, slotId, itemLink)
 	return GetItemLinkName(itemLink)
 end
 
+--[[
+Data collection notes:
+	Currently crafting items are coming back from getitemlink with level info in them.
+	If it's a crafting item, strip the level info and store only the item number as the itemKey
+	Use function GetItemCraftingInfo, if usedInCraftingType indicates it's NOT a material, check for other item types
+
+	When showing items in tooltips, check for both stolen & owned, show both
+--]]
+
 -- returns the item's db key, we only save under the item link if we need to save level information etc, else we use the ID
 function IIfA:GetItemKey(itemLink)
 
@@ -367,8 +362,8 @@ function IIfA:GetItemKey(itemLink)
 		return IIfA_GetItemID(itemLink)
 	else
 		-- other oddball items that might have level info in them
-		local itemType = GetItemLinkItemType(itemLink)
-		if	itemType == ITEMTYPE_LOCKPICK or
+		local itemType, subType = GetItemLinkItemType(itemLink)
+		if	(itemType == ITEMTYPE_TOOL and subType == SPECIALIZED_ITEMTYPE_TOOL) or
 			itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
 			itemType == ITEMTYPE_RECIPE then
 			return IIfA_GetItemID(itemLink)
@@ -376,28 +371,6 @@ function IIfA:GetItemKey(itemLink)
 	end
 	return itemLink
 end
-
---[[
-local function getItemCount(bagId, slotId, itemLink)
-	local stackCountBackpack, stackCountBank, stackCountCraftBag, itemCount
-	if bagId > BAG_MAX_VALUE then return 1 end		-- it's furniture because of the out of range id, always count of 1
-
-	-- try to find it by item link - only works for bag_backpack / bank / virtual
-	stackCountBackpack, stackCountBank, stackCountCraftBag = GetItemLinkStacks(itemLink)
-	if 		bagId == BAG_BACKPACK 	and 0 < stackCountBackpack 	then return stackCountBackpack
-	elseif 	bagId == BAG_BANK 		and 0 < stackCountBank 		then return stackCountBank
-	elseif 	bagId == BAG_VIRTUAL 	and 0 < stackCountCraftBag 	then return stackCountCraftBag
-	elseif  bagId == BAG_WORN then return 1
-	else
-		-- try to read item count from bag/slot
-		_, itemCount =  GetItemInfo(bagId, slotId)
-		if 0 < itemCount then return itemCount end
-	end
-
-	-- return 0 if no item count was found, possibly an out of date index to a house container that no longer exists
-	return 0
-end
---]]
 
 local function getItemCount(bagId, slotId, itemLink)
 	if bagId > BAG_MAX_VALUE then return 1 end		-- it's furniture because of the out of range id, always count of 1
@@ -423,15 +396,6 @@ local function getLocation(bagId)
 		return GetCollectibleForHouseBankBag(bagId)
 	end
 end
-
---[[
-function IIfA:SaveBagSlotIndex(bagId, slotId, itemLink)
-	if not bagId or not slotId then return end
-	IIfA.BagSlotInfo = IIfA.BagSlotInfo or IIfA:MakeBSI()
-	IIfA.BagSlotInfo[bagId] = IIfA.BagSlotInfo[bagId] or {}
-	IIfA.BagSlotInfo[bagId][slotId] = IIfA.BagSlotInfo[bagId][slotId] or itemLink
-end
- --]]
 
 function IIfA:AddOrRemoveFurnitureItem(itemLink, itemCount, houseCollectibleId, fromInitialize)
 	-- d(zo_strformat("trying to add/remove <<1>> x <<2>> from houseCollectibleId <<3>>", itemLink, itemCount, houseCollectibleId))
