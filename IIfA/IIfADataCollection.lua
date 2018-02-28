@@ -3,7 +3,10 @@ local _
 local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
 
-local function p(...) IIfA:DebugOut(...) end
+local function p(...) 
+	if nil == IIfA or nil == IIfA.DebugOut then return end 
+	IIfA:DebugOut(...)
+end
 
 local function IIfA_GetItemID(itemLink)
 	local ret = nil
@@ -22,7 +25,7 @@ local function grabBagContent(bagId, override)
 	if bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN and not IsOwnerOfCurrentHouse() then return end
 
 	local bagItems = GetBagSize(bagId)
-	IIfA:DebugOut("grabBagContent(<<1>>, <<2>>", bagId, override)
+	p("grabBagContent(<<1>>, <<2>>", bagId, override)
 	for slotId=0, bagItems, 1 do
 		local dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
@@ -68,7 +71,7 @@ function IIfA:CollectGuildBank()
 	if not IIfA.data.guildBanks then IIfA.data.guildBanks = {} end
 	local curGuild = GetGuildName(curGB)
 
-	IIfA:DebugOut("Collecting Guild Bank Data for " .. curGuild)
+	p("Collecting Guild Bank Data for " .. curGuild)
 
 	if IIfA.data.guildBanks[curGuild] ~= nil then
 		if not IIfA.data.guildBanks[curGuild].bCollectData then
@@ -87,18 +90,18 @@ function IIfA:CollectGuildBank()
 	IIfA.BagSlotInfo[curGuild] = nil
 	-- call with libAsync to avoid lag
 	task:Call(function()
-		IIfA:DebugOut("Collect guild bank - <<1>>", curGuild)
+		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
 		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
 		IIfA:ClearLocationData(curGuild)
-		IIfA:DebugOut(" - " .. #ZO_GuildBankBackpack.data .. " items")
+		p(" - " .. #ZO_GuildBankBackpack.data .. " items")
 		for i=1, #ZO_GuildBankBackpack.data do
 			local slotIndex = ZO_GuildBankBackpack.data[i].data.slotIndex
 			local dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
 			IIfA.BagSlotInfo[curGuild] = IIfA.BagSlotInfo[curGuild] or {}
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
-			IIfA:DebugOut("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
+			p("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
 		end
 	end)
 --	d("IIfA - Guild Bank Collected - " .. curGuild)
@@ -144,7 +147,7 @@ local function tryScanHouseBank()
 	for bagId = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
 		collectibleId = GetCollectibleForHouseBankBag(bagId)
 		if IsCollectibleUnlocked(collectibleId) then
-			IIfA:DebugOut(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
+			p(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
 			-- call with libAsync to avoid lag
 			task:Call(function()
 				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- required code - MUST stay here, or collectibleId is 0
@@ -237,7 +240,7 @@ end
 function IIfA:GuildBankReady()
 	-- call with libAsync to avoid lags
 	task:Call(function()
-		IIfA:DebugOut("GuildBankReady...")
+		p("GuildBankReady...")
 		IIfA.isGuildBankReady = false
 		IIfA:UpdateGuildBankData()
 	end):Then(function()
@@ -248,7 +251,7 @@ function IIfA:GuildBankReady()
 end
 
 function IIfA:GuildBankDelayReady()
-	IIfA:DebugOut("GuildBankDelayReady...")
+	p("GuildBankDelayReady...")
 	if not IIfA.isGuildBankReady then
 		IIfA.isGuildBankReady = true
 		-- call with libAsync to avoid lags
@@ -259,7 +262,7 @@ function IIfA:GuildBankDelayReady()
 end
 
 function IIfA:GuildBankAddRemove(eventID, slotId)
-	IIfA:DebugOut("Guild Bank Add or Remove...")
+	p("Guild Bank Add or Remove...")
 	-- call with libAsync to avoid lag
 	task:Call(function()
 		IIfA:UpdateGuildBankData()
@@ -269,7 +272,7 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 		local dbItem, itemKey
 		local guildName = GetGuildName(GetSelectedGuildBankId())
 		if eventID == EVENT_GUILD_BANK_ITEM_ADDED then
-			IIfA:DebugOut("GB Add - Slot <<1>>", slotId)
+			p("GB Add - Slot <<1>>", slotId)
 			dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotId, true)
 --			IIfA:ValidateItemCounts(BAG_GUILDBANK, slotId, dbItem, itemKey)
 			if not IIfA.BagSlotInfo[guildName] then
@@ -282,12 +285,12 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 				if #itemLink < 10 then
 					itemLink = IIfA.database[itemLink].itemLink
 				end
-				IIfA:DebugOut("GB Remove - Slot <<1>>, Link <<2>>, ", slotId, itemLink)
+				p("GB Remove - Slot <<1>>, Link <<2>>, ", slotId, itemLink)
 				dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotId, false, nil, itemLink)
 --				IIfA:ValidateItemCounts(BAG_GUILDBANK, slotId, dbItem, itemKey)
 				IIfA.BagSlotInfo[guildName][slotId] = nil
 			else
-				IIfA:DebugOut("GB Remove - Slot <<1>> - no BSI found", slotId)
+				p("GB Remove - Slot <<1>> - no BSI found", slotId)
 			end
 		end
 	end)
@@ -331,7 +334,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 	end):Then(function()
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
-			IIfA:DebugOut("furniture item <<1>> x<<2>>", itemLink, itemCount)
+			p("furniture item <<1>> x<<2>>", itemLink, itemCount)
 			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA_GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 		end
 	end)
@@ -426,7 +429,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 
 	itemLink = string.gsub(itemLink, '|H0', '|H1')		-- always store/eval with brackets on the link
 	if #itemLink < 10 then
-		IIfA:DebugOut("Item link error - <<1>> should be > 10, but it's an itemKey instead", itemLink)
+		p("Item link error - <<1>> should be > 10, but it's an itemKey instead", itemLink)
 		-- deliberate crash
 		IIfA.database.junk["nothing"] = "something"
 	end
@@ -438,7 +441,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
-	--IIfA:DebugOut("trying to save <<1>> x<<2>>", itemLink, itemCount)
+	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
 
 	local itemQuality = GetItemLinkQuality(itemLink)
 
@@ -466,10 +469,10 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 				IIfA.BagSlotInfo[bagId][slotId] = nil
 			end
 		else
-IIfA:DebugOut(DBitem.locations[location])
+p(DBitem.locations[location])
 			if DBitem.locations[location] then
 				if DBitem.locations[location].bagSlot[slotId] then
-IIfA:DebugOut("Adding to slot " .. slotId)
+p("Adding to slot " .. slotId)
 					DBitem.locations[location].bagSlot[slotId] = DBitem.locations[location].bagSlot[slotId] + itemCount
 					if DBitem.locations[location].bagSlot[slotId] == 0 then
 						DBitem.locations[location].bagSlot[slotId] = nil
@@ -480,11 +483,11 @@ IIfA:DebugOut("Adding to slot " .. slotId)
 						end
 					end
 				else
-IIfA:DebugOut("Overwriting slot " .. slotId)
+p("Overwriting slot " .. slotId)
 					DBitem.locations[location].bagSlot[slotId] = itemCount
 				end
 			else
-IIfA:DebugOut("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, itemCount)
+p("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, itemCount)
 				DBitem.locations[location] = {}
 				DBitem.locations[location].bagID = bagId
 				DBitem.locations[location].bagSlot = {}
@@ -505,7 +508,7 @@ IIfA:DebugOut("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, ite
 	end
 
 	if IIfA:TableCount(DBitem.locations[location].bagSlot) == 0 then
-IIfA:DebugOut("Zapping location=<<1>>, bag=<<2>>, slot=<<3>>", location, bagId, slotId)
+p("Zapping location=<<1>>, bag=<<2>>, slot=<<3>>", location, bagId, slotId)
 		DBitem.locations[location] = nil
 	end
 
@@ -516,7 +519,7 @@ IIfA:DebugOut("Zapping location=<<1>>, bag=<<2>>, slot=<<3>>", location, bagId, 
 --		IIfA:ValidateItemCounts(bagId, slotId, DBv3[itemKey], itemKey, itemLink, true)
 --	end
 
-	IIfA:DebugOut("saved bag/slot=<<1>>/<<2>> <<3>> x<<4>> -> <<5>>, loc=<<6>>", bagId, slotId, itemLink, itemCount, itemKey, location)
+	p("saved bag/slot=<<1>>/<<2>> <<3>> x<<4>> -> <<5>>, loc=<<6>>", bagId, slotId, itemLink, itemCount, itemKey, location)
 
 	return DBv3[itemKey], itemKey
 
@@ -537,7 +540,7 @@ function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverrid
 	else
 		itemLink = itemKey
 	end
-	IIfA:DebugOut(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotId))
+	p(zo_strformat("ValidateItemCounts: <<1>> in bag <<2>>/<<3>>", itemLink, bagID, slotId))
 
 	for locName, data in pairs(dbItem.locations) do
 		if (data.bagID == BAG_GUILDBANK and locName == guildName) or
@@ -670,7 +673,7 @@ function IIfA:ClearLocationData(location, bagID)		-- if loc is characterid, bagI
 	end
 
 	if(DBv3)then
-		IIfA:DebugOut(zo_strformat("IIfA:ClearLocationData(<<1>>, <<2>>)", location, bagID))
+		p(zo_strformat("IIfA:ClearLocationData(<<1>>, <<2>>)", location, bagID))
 
 		for itemName, itemData in pairs(DBv3) do
 			itemLocation = itemData.locations[location]
