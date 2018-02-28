@@ -3,8 +3,8 @@ local _
 local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
 
-local function p(...) 
-	if nil == IIfA or nil == IIfA.DebugOut then return end 
+local function p(...)
+	if nil == IIfA or nil == IIfA.DebugOut then return end
 	IIfA:DebugOut(...)
 end
 
@@ -462,7 +462,9 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 
 	if(DBitem) then
 		if itemCount == 0 then
-			DBitem.locations[location].bagSlot[slotId] = nil
+			if DBitem.locations[location] and DBitem.locations[location].bagSlot then
+				DBitem.locations[location].bagSlot[slotId] = nil
+			end
 			if bagId == BAG_GUILDBANK then
 				IIfA.BagSlotInfo[location][slotId] = nil
 			else
