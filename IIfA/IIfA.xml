@@ -151,7 +151,7 @@
 <!-- Filter Group -->
 						<Control name="$(parent)_Filter" mouseEnabled="true">
 							<Dimensions x="300" y="30" />
-							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="50" offsetY="80"/>
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="30" offsetY="80"/>
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="50" offsetY="110"/>
 							<Controls>
 								<Button name="$(parent)_Button0">
@@ -248,7 +248,7 @@
 
 <!-- SubFilter Groups -->
 						<Control name="$(parent)_Subfilter" mouseEnabled="true" hidden="true">
-							<Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="2"/>
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMLEFT" offsetX="-10" offsetY="2"/>
 							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMRIGHT" offsetX="0"/>
 							<DimensionConstraints minY="10"/>
 							<Controls>
@@ -341,7 +341,7 @@
 											<Dimensions x="38" y="38"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Heavy")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_HEAVY, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_HEAVY, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Heavy", "Medium", "Light", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
 											<Textures	normal="EsoUI/art/icons/progression_tabicon_armorheavy_up.dds"
 														pressed="EsoUI/art/icons/progression_tabicon_armorheavy_down.dds"
 														mouseOver="EsoUI/art/icons/progression_tabicon_armorheavy_over.dds" />
@@ -837,7 +837,7 @@
 
 						<Control name="$(parent)_SortBar" mouseEnabled="true">
 
-							<Anchor point="TOPLEFT" 	relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMLEFT" offsetX="-45"  offsetY="10" />
+							<Anchor point="TOPLEFT" 	relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMLEFT" offsetX="-10"  offsetY="10" />
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="40" />
 
 							<Controls>
@@ -870,9 +870,9 @@
 								</Control>
 
 								<Control name="$(parent)_Subfilter_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" hidden="true">
-									<Dimensions x="150" y="30" />
+									<Dimensions y="30" />
 									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_SortBar" relativePoint="TOPRIGHT" offsetX="0" offsetY="-12"/>
-									<Anchor point="TOPRIGHT" relativeTo="$(parent)_SortBar" relativePoint="TOPRIGHT" offsetX="-50" offsetY="-38"/>
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_SortBar" relativePoint="TOPRIGHT" offsetX="-40" offsetY="-38"/>
 								</Control>
 
 							</Controls>
@@ -936,7 +936,7 @@
 				<Button name="$(parent)_SetNameOnly">
 					<Anchor point="TOPLEFT" relativeTo="$(parent)_Search" relativePoint="TOPRIGHT" offsetX="5" offsetY="-5"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-5" offsetY="-5" />
-
+					<Dimensions x="115" />
 					<OnMouseUp>		IIfA:SetNameFilterToggle()</OnMouseUp>
 					<OnMouseEnter>	IIfA:GuiShowTooltip(self, "Filter on set name only")</OnMouseEnter>
 					<OnMouseExit>	IIfA:GuiHideTooltip(self)</OnMouseExit>
