@@ -516,7 +516,7 @@ p("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, itemCount)
 		DBitem = DBv3[itemKey]
 	end
 
-	if IIfA:TableCount(DBitem.locations[location].bagSlot) == 0 then
+	if DBitem.locations and DBitem.locations[location] and IIfA:TableCount(DBitem.locations[location].bagSlot) == 0 then
 p("Zapping location=<<1>>, bag=<<2>>, slot=<<3>>", location, bagId, slotId)
 		DBitem.locations[location] = nil
 	end

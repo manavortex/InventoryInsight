@@ -257,21 +257,23 @@ function IIfA:GetEquippedItemLink(mouseOverControl)
 	local slotName = string.gsub(fullSlotName, "ZO_CharacterEquipmentSlots", IIfA.EMPTY_STRING)
 	local index = 0
 
-	if 		(slotName == "Head")		then index = 0
-	elseif	(slotName == "Neck") 		then index = 1
-	elseif	(slotName == "Chest") 		then index = 2
-	elseif	(slotName == "Shoulder") 	then index = 3
-	elseif	(slotName == "MainHand") 	then index = 4
-	elseif	(slotName == "OffHand") 	then index = 5
-	elseif	(slotName == "Belt") 		then index = 6
-	elseif	(slotName == "Costume") 	then index = 7
-	elseif	(slotName == "Leg") 		then index = 8
-	elseif	(slotName == "Foot") 		then index = 9
-	elseif	(slotName == "Ring1") 		then index = 11
-	elseif	(slotName == "Ring2") 		then index = 12
-	elseif	(slotName == "Glove") 		then index = 16
-	elseif	(slotName == "BackupMain") 	then index = 20
-	elseif	(slotName == "BackupOff") 	then index = 20
+	if 		slotName == "Head"			then index = 0
+	elseif	slotName == "Neck" 			then index = 1
+	elseif	slotName == "Chest" 		then index = 2
+	elseif	slotName == "Shoulder" 		then index = 3
+	elseif	slotName == "MainHand" 		then index = 4
+	elseif	slotName == "OffHand" 		then index = 5
+	elseif	slotName == "Belt" 			then index = 6
+	elseif	slotName == "Costume" 		then index = 7
+	elseif	slotName == "Leg" 			then index = 8
+	elseif	slotName == "Foot" 			then index = 9
+	elseif	slotName == "Ring1" 		then index = 11
+	elseif	slotName == "Ring2" 		then index = 12
+	elseif	slotName == "Glove" 		then index = 16
+	elseif	slotName == "BackupMain" 	then index = 20
+	elseif	slotName == "BackupOff" 	then index = 21
+	elseif	slotName == "Poison" 		then index = 13
+	elseif	slotName == "BackupPoison"	then index = 14
 	end
 
 	local itemLink = GetItemLink(0, index, LINK_STYLE_BRACKETS)

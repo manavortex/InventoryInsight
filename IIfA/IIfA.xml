@@ -341,7 +341,7 @@
 											<Dimensions x="38" y="38"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Heavy")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_HEAVY, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Heavy", "Medium", "Light", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_HEAVY, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
 											<Textures	normal="EsoUI/art/icons/progression_tabicon_armorheavy_up.dds"
 														pressed="EsoUI/art/icons/progression_tabicon_armorheavy_down.dds"
 														mouseOver="EsoUI/art/icons/progression_tabicon_armorheavy_over.dds" />
