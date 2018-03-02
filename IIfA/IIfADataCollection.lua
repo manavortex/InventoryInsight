@@ -99,9 +99,9 @@ function IIfA:CollectGuildBank()
 		for i=1, #ZO_GuildBankBackpack.data do
 			local slotIndex = ZO_GuildBankBackpack.data[i].data.slotIndex
 			local dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
+			p("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
 			IIfA.BagSlotInfo[curGuild] = IIfA.BagSlotInfo[curGuild] or {}
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
-			p("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
 		end
 	end)
 --	d("IIfA - Guild Bank Collected - " .. curGuild)
