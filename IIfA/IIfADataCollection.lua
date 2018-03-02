@@ -90,6 +90,8 @@ function IIfA:CollectGuildBank()
 	IIfA.BagSlotInfo[curGuild] = nil
 	-- call with libAsync to avoid lag
 	task:Call(function()
+		if not IIfA then return end 
+		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
 		guildData.items = #ZO_GuildBankBackpack.data
