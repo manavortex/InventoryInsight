@@ -474,8 +474,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 p(DBitem.locations[location])
 			if DBitem.locations[location] then
 				if type(DBitem.locations[location].bagSlot) ~= "table" then
-					local bagSlot
-					bagSlot = data.bagSlot
+					local bagSlot = DBitem.locations[location].bagSlot
 					DBitem.locations[location].bagSlot = {}
 					DBitem.locations[location].bagSlot[bagSlot] = DBitem.locations[location].itemCount
 					DBitem.locations[location].itemCount = nil
