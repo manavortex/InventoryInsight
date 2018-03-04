@@ -11,7 +11,7 @@ for stringId, stringValue in pairs(strings) do
 	SafeAddVersion(stringId, 1)
 end
 
-
+--[[ no longer needed
 function IIfA_SetButtonFilterText(control)
 	local buttonIdxNames = {
 		[1] = "All",
@@ -26,3 +26,4 @@ function IIfA_SetButtonFilterText(control)
 	local buttonIdx = control:GetName():gsub("IIFA_GUI_Header_Filter_Button", "") + 1
 	control.filterText = buttonIdxNames[buttonIdx]
 end
+--]]

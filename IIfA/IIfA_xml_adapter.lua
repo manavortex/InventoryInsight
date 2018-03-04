@@ -171,21 +171,25 @@ end
 -- click functions
 function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, filterTypeNames)
 	-- identify if this is main or sub filter clicked
+	local ctrlName = control:GetName()
 
-	local b_isMain = control:GetName():find("Sub") == nil
---[[
-	if mouseButton == MOUSE_BUTTON_INDEX_RIGHT then
-		if b_isMain then
-			IIfA.LastFilterControl = control
-			return IIfA:GuiOnFilterButton(IIFA_GUI_Header_Filter:GetChild(1), MOUSE_BUTTON_INDEX_LEFT, "All", nil)
-		else
-			IIfA.LastSubFilterControl = control
-			local parentIdx = control:GetParent():GetName():gsub("IIFA_GUI_Header_Subfilter_", IIfA.EMPTY_STRING)
-			local parentControl = IIFA_GUI_Header_Filter:GetChild(parentIdx+1)
-			return IIfA:GuiOnFilterButton(parentControl, MOUSE_BUTTON_INDEX_LEFT, parentControl.filterText)
+	local b_isMain = ctrlName:find("Sub") == nil
+
+	if mouseButton == MOUSE_BUTTON_INDEX_RIGHT and (ctrlName:sub(#ctrlName - 1, #ctrlName) == "10" or ctrlName:sub(#ctrlName, #ctrlName) ~= "0") then
+		ctrlName = ctrlName:sub(1, #ctrlName - 1)
+		if ctrlName:sub(#ctrlName, #ctrlName) == "1" then
+			ctrlName = ctrlName:sub(1, #ctrlName - 1)
+		end
+		ctrlName = ctrlName .. "0"
+		local myButton = WINDOW_MANAGER:GetControlByName(ctrlName, "")
+		if myButton then
+			local onMouseUpHandlerFunc = myButton:GetHandler("OnMouseUp")
+			if onMouseUpHandlerFunc and type(onMouseUpHandlerFunc) == "function" then
+ 				onMouseUpHandlerFunc(myButton, nil)
+				return
+			end
 		end
 	end
---]]
 
 	if b_isMain then
 		if IIfA.LastFilterControl ~= nil then
