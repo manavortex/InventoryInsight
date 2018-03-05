@@ -356,10 +356,12 @@ function IIfA:UpdateScrollDataLinesData()
 	local dataLines = {}
 	local DBv3 = IIfA.database
 	local itemLink, itemKey, iconFile, itemQuality, tempDataLine = nil
-	local itemTypeFilter, itemCount = 0
+	local itemTypeFilter
+	local itemCount
 	local match = false
 	local bWorn = false
 	local dbItem
+	local totItems = 0
 
 	if(DBv3)then
 		for itemKey, dbItem in pairs(DBv3) do
@@ -381,6 +383,7 @@ function IIfA:UpdateScrollDataLinesData()
 				local itemIcon = GetItemLinkIcon(itemLink)
 
 				local locationName, locData
+				local itemCount = 0
 				for locationName, locData in pairs(dbItem.locations) do
 					itemCount = itemCount + itemSum(locData)
 					if DoesInventoryMatchList(locationName, locData) then
@@ -405,6 +408,7 @@ function IIfA:UpdateScrollDataLinesData()
 
 				if(itemCount > 0) and matchFilter(dbItem.itemName, itemLink) and matchQuality(dbItem.itemQuality) and match then
 					table.insert(dataLines, tempDataLine)
+					totItems = totItems + (itemCount or 0)
 				end
 				match = false
 			end
@@ -414,6 +418,10 @@ function IIfA:UpdateScrollDataLinesData()
 	IIFA_GUI_ListHolder.dataLines = dataLines
 	sort(IIFA_GUI_ListHolder.dataLines)
 	IIFA_GUI_ListHolder.dataOffset = 0
+
+	-- even if the counts aren't visible, update them so they show properly if user turns them on
+	IIFA_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
+	IIFA_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
 
 end
 
@@ -942,7 +950,6 @@ function IIfA:FilterByItemName(control)
 	itemName = GetItemLinkName(control.itemLink)
 
 	IIfA.searchFilter = itemName
-	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(true)
 	IIFA_GUI_SearchBox:SetText(itemName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
@@ -968,7 +975,6 @@ function IIfA:FilterByItemSet(control)
 	end
 
 	IIfA.searchFilter = setName
-	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(false)
 	IIFA_GUI_SearchBox:SetText(setName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = true

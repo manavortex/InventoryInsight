@@ -157,12 +157,12 @@
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>	-->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Items")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "All", nil)</OnMouseUp>
 									<Textures normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
-												pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+												pressed="EsoUI/art/inventory/inventory_tabicon_all_down.duntds"
 												mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
 									/>
 
@@ -170,7 +170,7 @@
 								<Button name="$(parent)_Button1">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Weapons")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", nil)</OnMouseUp>
@@ -182,7 +182,7 @@
 								<Button name="$(parent)_Button2">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Armor")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", nil)</OnMouseUp>
@@ -194,7 +194,7 @@
 								<Button name="$(parent)_Button3">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Consumables")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR})</OnMouseUp>
@@ -206,7 +206,7 @@
 								<Button name="$(parent)_Button4">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Crafting Materials")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER, ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_RUNE_POTENCY, ITEMTYPE_FISH, ITEMTYPE_FLAVORING, ITEMTYPE_INGREDIENT, ITEMTYPE_POISON_BASE, ITEMTYPE_POTION_BASE, ITEMTYPE_REAGENT, ITEMTYPE_RAW_MATERIAL, ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_SPICE, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER, ITEMTYPE_STYLE_MATERIAL})</OnMouseUp>
@@ -219,7 +219,7 @@
 								<Button name="$(parent)_Button5">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Furniture")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_CRAFTING_STATION, SPECIALIZED_ITEMTYPE_FURNISHING_LIGHT, SPECIALIZED_ITEMTYPE_FURNISHING_ORNAMENTAL, SPECIALIZED_ITEMTYPE_FURNISHING_SEATING, SPECIALIZED_ITEMTYPE_FURNISHING_TARGET_DUMMY})</OnMouseUp>
@@ -234,7 +234,7 @@
 								<Button name="$(parent)_Button6">
 									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="50" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized>
+<!--									<OnInitialized>IIfA_SetButtonFilterText(self)</OnInitialized> -->
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Miscellaneous")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_GLYPH_ARMOR, ITEMTYPE_GLYPH_JEWELRY, ITEMTYPE_GLYPH_WEAPON, ITEMTYPE_SOUL_GEM, ITEMTYPE_SIEGE, ITEMTYPE_LURE, ITEMTYPE_TOOL, ITEMTYPE_REPAIR, ITEMTYPE_TRASH, ITEMTYPE_TROPHY, ITEMTYPE_COLLECTIBLE, ITEMTYPE_FISH, ITEMTYPE_TREASURE})</OnMouseUp>
@@ -897,6 +897,22 @@
 							<OnMouseUp>self.locked = true</OnMouseUp>
 							<OnValueChanged>IIfA:GuiOnSliderUpdate(self, value)</OnValueChanged>
 						</Slider>
+
+						<Control name="$(parent)_Counts" verticalAlignment="LEFT">
+							<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetY="3" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetY="3" />
+							<Dimensions y="26" />
+							<Controls>
+								<Label name="$(parent)_Items" mouseEnabled="false" font="ZoFontGameSmall" text="Items" >
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
+								</Label>
+								<Label name="$(parent)_Slots" mouseEnabled="false" font="ZoFontGameSmall" text="Slots" >
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+									<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
+								</Label>
+							</Controls>
+						</Control>
 
 					</Controls>
 

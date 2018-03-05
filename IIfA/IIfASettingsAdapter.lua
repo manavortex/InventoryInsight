@@ -12,15 +12,12 @@ function IIfA:IgnoreCharacterInventory(value)
 	IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] = value
 
 	IIfA.trackedBags[BAG_BACKPACK] = not value
-	task:Call(function()
-		if value then
-			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
-		else
-			IIfA:ScanCurrentCharacter()
-		end
-	end):Then(function()
-		IIfA:RefreshInventoryScroll()
-	end)
+	if value then
+		IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
+	else
+		IIfA:ScanCurrentCharacter()
+	end
+	IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:IsCharacterEquipIgnored()
@@ -31,16 +28,14 @@ function IIfA:IgnoreCharacterEquip(value)
 	IIfA.data.ignoredCharEquipment[IIfA.currentCharacterId] = value
 
 	IIfA.trackedBags[BAG_WORN] = not value
-	task:Call(function()
-		if value then
-			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
-		else
-			IIfA:ScanCurrentCharacter()
-		end
-	end):Then(function()
-		IIfA:RefreshInventoryScroll()
-	end)
+	if value then
+		IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
+	else
+		IIfA:ScanCurrentCharacter()
+	end
+	IIfA:RefreshInventoryScroll()
 end
+
 function IIfA:GetCharacterList()
 	return IIfA.data.accountCharacters
 end
@@ -62,7 +57,7 @@ end
 
 function IIfA:SetSetNameFilterOnly(value)
 	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName
-	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
+	IIFA_GUI_Search_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
     IIfA:RefreshInventoryScroll()
 end
 
