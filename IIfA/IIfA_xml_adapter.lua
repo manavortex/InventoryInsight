@@ -498,7 +498,6 @@ function IIfA:RePositionFrame(settings)
 	IIFA_GUI_Header_GoldButton:SetHidden(bMinimize)
 	IIFA_GUI_Header_BagButton:SetHidden(bMinimize)
 	IIFA_GUI_Header_SortBar:SetHidden(bMinimize)
-	IIFA_GUI_SetNameOnly:SetHidden(bMinimize)
 
 	IIFA_GUI:ClearAnchors()
 	if bMinimize then

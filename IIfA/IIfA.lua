@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.12"
+IIfA.version 			= "3.13"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -179,6 +179,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		bDebug 					= false,
 		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight 	= true,
+		showItemStats			= false,
 		b_collectHouses			= false,
 		collectHouseData		= {},
 		ignoredCharEquipment	= {},
@@ -210,7 +211,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	-- initializing default values
 	local default = {
 		in2TextColors = IIFA_COLORDEF_DEFAULT:ToHex(),
-		showItemCountOnRight = true,
+		showItemCountOnRight	= true,
+		showItemStats			= false,
 
 		frameSettings =
 			{
@@ -379,7 +381,6 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.bFilterOnSetName = false
 		ObjSettings.bFilterOnSetName = false
 	end
-	-- IIFA_GUI_SetNameOnly_Checked:SetHidden(not IIfA.bFilterOnSetName)
 
 	IIFA_GUI_Header_Filter_Button0:SetState(BSTATE_PRESSED)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0
@@ -394,6 +395,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.colorHandler = ZO_ColorDef:New(ObjSettings.in2TextColors)
 	SLASH_COMMANDS["/ii"] = IIfA_SlashCommands
 	IIfA:CreateSettingsWindow(IIfA.settings, default)
+
+	IIFA_GUI_ListHolder_Counts:SetHidden(not IIfA:GetSettings().showItemStats)
 
 	IIfA.CharCurrencyFrame:Initialize(IIfA.data)
 	IIfA.CharBagFrame:Initialize(IIfA.data)

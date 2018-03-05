@@ -90,7 +90,7 @@ function IIfA:CollectGuildBank()
 	IIfA.BagSlotInfo[curGuild] = nil
 	-- call with libAsync to avoid lag
 	task:Call(function()
-		if not IIfA then return end 
+		if not IIfA then return end
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
@@ -151,12 +151,12 @@ local function tryScanHouseBank()
 		if IsCollectibleUnlocked(collectibleId) then
 			p(zo_strformat("tryScanHouseBank(<<1>>)", collectibleId))
 			-- call with libAsync to avoid lag
-			task:Call(function()
-				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- required code - MUST stay here, or collectibleId is 0
+--			task:Call(function()
+--				local collectibleId = GetCollectibleForHouseBankBag(bagId)		-- required code - MUST stay here if using task, or collectibleId is 0
 				IIfA:ClearLocationData(collectibleId)
-			end):Then(function()
+--			end):Then(function()
 				grabBagContent(bagId, true)
-			end)
+--			end)
 		end
 	end
 end
@@ -165,9 +165,9 @@ function IIfA:ScanBank()
 	-- call with libAsync to avoid lag
 	task:Call(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-	end):Then(function()
+--	end):Then(function()
 		grabBagContent(BAG_BANK)
-	end):Then(function()
+--	end):Then(function()
 		grabBagContent(BAG_SUBSCRIBER_BANK)
 	end):Then(function()
 		IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
@@ -197,7 +197,7 @@ function IIfA:CheckForAgedGuildBankData( days )
 	local results = false
 	local days = days or 5
 	if IIfA.data.bCollectGuildBankData then
-		IIfA:CleanEmptyGuildBug()
+		IIfA:UpdateGuildBankData()
 		for guildName, guildData in pairs(IIfA.data.guildBanks)do
 			local today = GetDate()
 			local lastCollected = guildData.lastCollected:match('(........)')
@@ -230,9 +230,7 @@ function IIfA:UpdateGuildBankData()
 			end
 		end
 	end
-end
 
-function IIfA:CleanEmptyGuildBug()
 	local emptyGuild = IIfA.data.guildBanks[IIfA.EMPTY_STRING]
 	if(emptyGuild)then
 		IIfA.data.guildBanks[IIfA.EMPTY_STRING] = nil
@@ -240,13 +238,11 @@ function IIfA:CleanEmptyGuildBug()
 end
 
 function IIfA:GuildBankReady()
-	-- call with libAsync to avoid lags
+	-- call with libAsync to avoid lag
 	task:Call(function()
 		p("GuildBankReady...")
 		IIfA.isGuildBankReady = false
 		IIfA:UpdateGuildBankData()
-	end):Then(function()
-		IIfA:CleanEmptyGuildBug()
 	end):Then(function()
 		IIfA:CollectGuildBank()
 	end)
@@ -265,11 +261,12 @@ end
 
 function IIfA:GuildBankAddRemove(eventID, slotId)
 	p("Guild Bank Add or Remove...")
+
+	if not IIfA.data.bCollectGuildBankData then return end
+
 	-- call with libAsync to avoid lag
 	task:Call(function()
 		IIfA:UpdateGuildBankData()
-		IIfA:CleanEmptyGuildBug()
-	end):Then(function()
 	--IIfA:CollectGuildBank()
 		local dbItem, itemKey
 		local guildName = GetGuildName(GetSelectedGuildBankId())
@@ -329,11 +326,11 @@ function IIfA:RescanHouse(houseCollectibleId)
 		end
 	end
 
-	-- call with libAsync to avoid lags
+	-- call with libAsync to avoid lag
 	task:Call(function()
 		-- clear and re-create, faster than conditionally updating
 		IIfA:ClearLocationData(houseCollectibleId)
-	end):Then(function()
+--	end):Then(function()
 		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			p("furniture item <<1>> x<<2>>", itemLink, itemCount)
@@ -589,7 +586,7 @@ function IIfA:CollectAll(bagId, tracked)		-- the args aren't used, but by making
 
 	for bagId, tracked in pairs(BagList) do		-- do NOT use ipairs, it's non-linear list (holes in the # sequence)
 		if bagId <= BAG_MAX_VALUE and bagId ~= BAG_SUBSCRIBER_BANK then -- ignore subscriber bank, it's handled along with the regular bank
-			-- call with libAsync to avoid lags
+			-- call with libAsync to avoid lag
 			task:Call(function()
 				bagItems = GetBagSize(bagId)
 				if bagId == BAG_WORN then
@@ -630,6 +627,7 @@ function IIfA:CollectAll(bagId, tracked)		-- the args aren't used, but by making
 
 	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
 	IIfA:ClearUnowned()
+
 	zo_callLater(function()
 		IIfA:MakeBSI()
 	end, 1000)

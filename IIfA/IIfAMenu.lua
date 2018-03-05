@@ -4,7 +4,7 @@ IIfA = IIfA
 local LAM = LibStub("LibAddonMenu-2.0")
 local LMP = LibStub("LibMediaProvider-1.0")
 
-local id, guildName, deleteHouse, restoreHouse, name 
+local id, guildName, deleteHouse, restoreHouse, name
 
 local function getCharacterInventories()
 
@@ -405,6 +405,18 @@ function IIfA:CreateOptionsMenu()
 			end,
 		},
 
+		{	-- checkbox: show item count/slot count stats
+			type = "checkbox",
+			tooltip = "Show Item Stats below list",
+			name = "Show Item Stats",
+			getFunc = function() return IIfA:GetSettings().showItemStats end,
+			setFunc = function(value)
+					IIfA:StatusAlert("[IIfA]:ItemStats[" .. tostring(value) .. "]")
+					IIfA:GetSettings().showItemStats = value
+					IIFA_GUI_ListHolder_Counts:SetHidden(not value)
+			end,
+		},
+
 		{
 			type = "dropdown",
 			name =  "Default Inventory Frame View",
@@ -447,7 +459,6 @@ function IIfA:CreateOptionsMenu()
 			setFunc = function(value)
 				IIfA:GetSettings().bFilterOnSetName = value
 				IIfA.bFilterOnSetName = value
-				-- IIFA_GUI_SetNameOnly_Checked:SetHidden(not value)
 			end,
 		}, -- checkbox end
 
