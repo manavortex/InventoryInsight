@@ -57,7 +57,7 @@ end
 
 function IIfA:SetSetNameFilterOnly(value)
 	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName
-	IIFA_GUI_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
+	IIFA_GUI_Search_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
     IIfA:RefreshInventoryScroll()
 end
 

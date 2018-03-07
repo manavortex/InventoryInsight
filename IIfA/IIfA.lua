@@ -21,7 +21,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.13a"
+IIfA.version 			= "3.13b"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -98,6 +98,7 @@ function IIfA_SlashCommands(cmd)
     	d("		debug - Enables debug functionality for the IIfA addon.")
     	d("		run - Runs the IIfA data collector.")
 		d("		color - Opens the color picker dialog to set tooltip text color.")
+		d("		toggle - Show/Hide IIfA")
 		return
 	end
 
@@ -122,6 +123,10 @@ function IIfA_SlashCommands(cmd)
 		local in2ColorPickerOnMouseUp = _in2OptionsColorPicker:GetHandler("OnMouseUp")
 		in2ColorPickerOnMouseUp(_in2OptionsColorPicker, nil, true)
 		return
+	end
+
+	if cmd == "toggle" then
+		IIfA:ToggleInventoryFrame()
 	end
 end
 
