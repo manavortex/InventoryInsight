@@ -1,27 +1,21 @@
 ------------------------------------------------------------------
 --IIfA.lua
---Original Author: Vicster0
---v0.8
+--v0.8 - Original Author: Vicster0
 -- v1.x and 2.x - rewrites by ManaVortex & AssemblerManiac
 -- v3.x - new features mainly by ManaVortex
 --[[
-	Collects inventory data for all characters on a single account
-	including the shared bank and makes this information available
-	on tooltips across the entire account providing the player
-	with useful insight into their account wide inventory.
+	Collects inventory data for all characters on a single account including the shared bank and makes this information available
+	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by
-	ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and
-	related logos are registered trademarks or trademarks of
-	ZeniMax Media Inc. in the United States and/or other countries.
-	All rights reserved."
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related 
+	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
 ------------------------------------------------------------------
 if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.13b"
+IIfA.version 			= "3.13c"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
