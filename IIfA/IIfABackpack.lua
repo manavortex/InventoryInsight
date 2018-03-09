@@ -108,7 +108,7 @@ local function DoesInventoryMatchList(locationName, location)
 		return true
 
 	elseif (filter == "All Banks") then
-		return IIfA:IsOneOf(bagId, BAG_SUBSCRIBER_BANK, BAG_GUILDBANK) and IIfA.trackedBags[bagId]
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_GUILDBANK) and IIfA.trackedBags[bagId]
 
 	elseif (filter == "All Guild Banks") then
 		return IIfA:IsOneOf(bagId, BAG_GUILDBANK)
