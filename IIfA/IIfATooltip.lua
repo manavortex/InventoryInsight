@@ -8,6 +8,24 @@ function IIfA:addStatsPopupTooltip(...)
 	d(...)
 end
 
+-- 2018-3-22 AM - duplicate ZO_Tooltip_AddDivider so we can set the color of our divider to match whatever is popped up (stolen or not)
+function IIfA:Tooltip_AddDivider(tooltipControl)
+    if not tooltipControl.dividerPool then
+        tooltipControl.dividerPool = ZO_ControlPool:New("ZO_BaseTooltipDivider", tooltipControl, "Divider")
+    end
+
+    local divider = tooltipControl.dividerPool:AcquireObject()
+
+    if divider then
+		if PopupTooltipDivider1 then	-- AM - new code
+			divider:SetColor(PopupTooltipDivider1:GetColor())
+		end                             -- AM - end new code
+        tooltipControl:AddControl(divider)
+        divider:SetAnchor(CENTER)
+    end
+end
+
+
 
 function IIfA:CreateTooltips()
 	WINDOW_MANAGER:CreateControlFromVirtual("IIFA_ITEM_TOOLTIP", ItemTooltipTopLevel, "IIFA_ITEM_TOOLTIP")
@@ -449,7 +467,7 @@ function IIfA:UpdateTooltip(tooltip)
 			if #queryResults.locations > 0 then
 				IIfA:DebugOut(queryResults)
 				if itemStyleTexArray.styleName ~= IIfA.EMPTY_STRING then
-					ZO_Tooltip_AddDivider(tooltip)
+					IIfA:Tooltip_AddDivider(tooltip)
 				end
 				for x, location in pairs(queryResults.locations) do
 					local textOut
@@ -501,7 +519,7 @@ function IIfA:UpdateTooltip(tooltip)
 			end
 
 			if tooltip.IIfA_TT_Ext then
-				ZO_Tooltip_AddDivider(tooltip)
+				IIfA:Tooltip_AddDivider(tooltip)
 				tooltip:AddControl(tooltip.IIfA_TT_Ext)
 				tooltip.IIfA_TT_Ext:SetAnchor(TOP)
 
@@ -515,7 +533,7 @@ function IIfA:UpdateTooltip(tooltip)
 
 		if(queryResults) then
 			if #queryResults.locations > 0 then
-				ZO_Tooltip_AddDivider(tooltip)
+				IIfA:Tooltip_AddDivider(tooltip)
 				for _, location in pairs(queryResults.locations) do
 					local textOut
 					if location.name == nil or location.itemsFound == nil then
