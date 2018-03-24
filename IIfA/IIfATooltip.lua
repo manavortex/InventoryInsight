@@ -17,14 +17,18 @@ function IIfA:Tooltip_AddDivider(tooltipControl)
     local divider = tooltipControl.dividerPool:AcquireObject()
 
     if divider then
-		if PopupTooltipDivider1 then	-- AM - new code
-			divider:SetColor(PopupTooltipDivider1:GetColor())
-		end                             -- AM - end new code
+		-- AM - new code
+		local Div1
+		div1 = tooltipControl:GetNamedChild("Divider1")
+		if div1 then
+--			d(div1:GetTextureFileName() .. " / " .. divider:GetTextureFileName())
+			divider:SetTexture(div1:GetTextureFileName())
+		end
+		-- AM - end new code
         tooltipControl:AddControl(divider)
         divider:SetAnchor(CENTER)
     end
 end
-
 
 
 function IIfA:CreateTooltips()
@@ -39,7 +43,7 @@ function IIfA:CreateTooltips()
 	ZO_PreHookHandler(ItemTooltip, 'OnAddGameData', IIfA_TooltipOnTwitch)
 	ZO_PreHookHandler(ItemTooltip, 'OnHide', IIfA_HideTooltip)
 
-	ZO_PreHook("ZO_PopupTooltip_SetLink", function(itemLink) IIfA.TooltipLink = itemLink end)
+	ZO_PreHook("ZO_PopupTooltip_SetLink", function(itemLink) IIfA.TooltipLink = itemLink IIfA:DebugOut("Prehook PT Setlink - " .. itemLink) end)
 
 	IIfA:SetTooltipFont(IIfA:GetSettings().in2TooltipsFont)
 end
@@ -252,8 +256,6 @@ function IIfA_TooltipOnTwitch(control, eventNum)
 				-- item tooltips appear where mouse is
 				return IIfA:UpdateTooltip(IIFA_ITEM_TOOLTIP)
 			elseif control == PopupTooltip then
-				-- popup tooltips have the X in the corner and usually pop up in center screen
-				IIfA.TooltipLink = PopupTooltip.lastLink
 				return IIfA:UpdateTooltip(IIFA_POPUP_TOOLTIP)
 			end
 		end
@@ -448,6 +450,10 @@ function IIfA:UpdateTooltip(tooltip)
 		if tooltip == IIFA_POPUP_TOOLTIP then parentTooltip = PopupTooltip end
 		if tooltip == IIFA_ITEM_TOOLTIP then parentTooltip = ItemTooltip end
 
+		IIfA:DebugOut(tooltip:GetName())
+		IIfA:DebugOut(itemLink)
+--		/script d("|H0:item:28666:25:1:0:0:0:0:0:0:0:0:0:0:0:16:0:0:0:1:0:0|h|h")
+
 		if (not itemLink) or ((#queryResults.locations == 0) and (itemStyleTexArray.styleName == IIfA.EMPTY_STRING)) then
 			tooltip:SetHidden(true)
 			return
@@ -469,16 +475,14 @@ function IIfA:UpdateTooltip(tooltip)
 				if itemStyleTexArray.styleName ~= IIfA.EMPTY_STRING then
 					IIfA:Tooltip_AddDivider(tooltip)
 				end
-				for x, location in pairs(queryResults.locations) do
+				for _, location in pairs(queryResults.locations) do
 					local textOut
 					if location.name == nil or location.itemsFound == nil then
-						d(location)
 						textOut = 'Error occurred'
 					else
 						textOut = string.format("%s x %s", location.name, location.itemsFound)
 					end
-
-					if location.worn then
+  					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
 					textOut = IIfA.colorHandler:Colorize(textOut)
@@ -537,7 +541,6 @@ function IIfA:UpdateTooltip(tooltip)
 				for _, location in pairs(queryResults.locations) do
 					local textOut
 					if location.name == nil or location.itemsFound == nil then
-						d(location)
 						textOut = 'Error occurred'
 					else
 						textOut = string.format("%s x %s", location.name, location.itemsFound)
