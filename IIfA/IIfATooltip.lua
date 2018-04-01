@@ -480,7 +480,7 @@ function IIfA:UpdateTooltip(tooltip)
 					if location.name == nil or location.itemsFound == nil then
 						textOut = 'Error occurred'
 					else
-						textOut = string.format("%s x %s", location.name, location.itemsFound)
+						textOut = zo_strformat("<<1>> x <<2>>", location.name, location.itemsFound)
 					end
   					if location.worn then
 						textOut = string.format("%s *", textOut)
@@ -543,7 +543,7 @@ function IIfA:UpdateTooltip(tooltip)
 					if location.name == nil or location.itemsFound == nil then
 						textOut = 'Error occurred'
 					else
-						textOut = string.format("%s x %s", location.name, location.itemsFound)
+						textOut = zo_strformat("<<1>> x <<2>>", location.name, location.itemsFound)
 					end
 					if location.worn then
 						textOut = string.format("%s *", textOut)
