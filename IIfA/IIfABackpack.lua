@@ -664,11 +664,21 @@ function IIfA:QueryAccountInventory(itemLink)
 						newLocation = {}
 						newLocation.name = locationName
 
-						if location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then -- location is a housing chest
+						if location.bagID == BAG_WORN or location.bagID == BAG_BACKPACK then
+							newLocation.bagLoc = BAG_BACKPACK
+						elseif location.bagID == BAG_BANK or location.bagID == BAG_SUBSCRIBER_BANK then
+							newLocation.bagLoc = BAG_BANK
+						elseif location.bagID == BAG_VIRTUAL then
+							newLocation.bagLoc = BAG_VIRTUAL
+						elseif location.bagID == BAG_GUILDBANK then
+							newLocation.bagLoc = BAG_GUILDBANK
+						elseif location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then -- location is a housing chest
 							newLocation.name = GetCollectibleNickname(locationName)
 							if newLocation.name == IIfA.EMPTY_STRING then newLocation.name = GetCollectibleName(locationName) end
+							newLocation.bagLoc = BAG_HOUSE_BANK_ONE
 						elseif location.bagID == locationName then	-- location is a house
 							newLocation.name = GetCollectibleName(locationName)
+							newLocation.bagLoc = 99
 						end
 
 						newLocation.itemsFound = itemCount

@@ -353,21 +353,76 @@ function IIfA:CreateOptionsMenu()
 					setFunc = function(value) 	IIfA:GetSettings().showStyleInfo = value end,
 				}, -- checkbox end
 
-				 {
+				{
 					type = "colorpicker",
-					name = 'Tooltip Inventory Information Text Color',
-					tooltip = 'Sets the color of the text for the inventory information that gets added to Tooltips.',
-					getFunc = function() return IIfA.colorHandler:UnpackRGBA() end,
+					name = 'Tooltip Owner Text Color - Characters',
+					tooltip = 'Sets the color of the text for the chacter owner information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerToon:UnpackRGBA() end,
 					setFunc = function(...)
-						IIfA.colorHandler:SetRGBA(...)
-						IIfA:GetSettings().in2TextColors = IIfA.colorHandler:ToHex()
+						IIfA.colorHandlerToon:SetRGBA(...)
+						IIfA:GetSettings().TextColorsToon = IIfA.colorHandlerToon:ToHex()
+					end
+				},
+
+				{
+					type = "colorpicker",
+					name = 'Tooltip Owner Text Color - Banks',
+					tooltip = 'Sets the color of the text for the bank owner information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerBank:UnpackRGBA() end,
+					setFunc = function(...)
+						IIfA.colorHandlerBank:SetRGBA(...)
+						IIfA:GetSettings().TextColorsBank = IIfA.colorHandlerBank:ToHex()
+					end
+				},
+
+				{
+					type = "colorpicker",
+					name = 'Tooltip Owner Text Color - Guild Banks',
+					tooltip = 'Sets the color of the text for guild bank owner information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerGBank:UnpackRGBA() end,
+					setFunc = function(...)
+						IIfA.colorHandlerGBank:SetRGBA(...)
+						IIfA:GetSettings().TextColorsGBank = IIfA.colorHandlerGBank:ToHex()
+					end
+				},
+
+				{
+					type = "colorpicker",
+					name = 'Tooltip Owner Text Color - House Chests',
+					tooltip = 'Sets the color of the text for housing container information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerHouseChest:UnpackRGBA() end,
+					setFunc = function(...)
+						IIfA.colorHandlerHouseChest:SetRGBA(...)
+						IIfA:GetSettings().TextColorsHouseChest = IIfA.colorHandlerHouseChest:ToHex()
+					end
+				},
+
+				{
+					type = "colorpicker",
+					name = 'Tooltip Owner Text Color - House Contents',
+					tooltip = 'Sets the color of the text for house location information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerHouse:UnpackRGBA() end,
+					setFunc = function(...)
+						IIfA.colorHandlerHouse:SetRGBA(...)
+						IIfA:GetSettings().TextColorsHouse = IIfA.colorHandlerHouse:ToHex()
+					end
+				},
+
+				{
+					type = "colorpicker",
+					name = 'Tooltip Owner Text Color - Craft Bag',
+					tooltip = 'Sets the color of the text for craft bag location information that gets added to Tooltips.',
+					getFunc = function() return IIfA.colorHandlerCraftBag:UnpackRGBA() end,
+					setFunc = function(...)
+						IIfA.colorHandlerCraftBag:SetRGBA(...)
+						IIfA:GetSettings().TextColorsCraftBag = IIfA.colorHandlerCraftBag:ToHex()
 					end
 				},
 
 				{
 					type = "dropdown",
 					name = "Tooltips Font",
-					tooltip = "The font used for location information added to both default and custom IN2 tooltips",
+					tooltip = "The font used for location information added to both default and custom tooltips",
 					choices = LMP:List('font'),
 					getFunc = function() return (IIfA:GetSettings().in2TooltipsFont or "ZoFontGame") end,
 					setFunc = function( choice )
@@ -379,7 +434,7 @@ function IIfA:CreateOptionsMenu()
 				{
 					type = "slider",
 					name = "Tooltip Font Size",
-					tooltip = "The font size used for location information added to both default and custom IIfA tooltips",
+					tooltip = "The font size used for location information added to both default and custom tooltips",
 					min = 5,
 					max = 40,
 					step = 1,

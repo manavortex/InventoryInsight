@@ -152,7 +152,7 @@
 						<Control name="$(parent)_Filter" mouseEnabled="true">
 							<Dimensions x="300" y="30" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="30" offsetY="80"/>
-							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="50" offsetY="110"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="110"/>
 							<Controls>
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>

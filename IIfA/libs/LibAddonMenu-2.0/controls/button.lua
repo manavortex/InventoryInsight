@@ -5,7 +5,7 @@
     tooltip = "Button's tooltip text.", -- string id or function returning a string (optional)
     width = "full", --or "half" (optional)
     disabled = function() return db.someBooleanSetting end, --or boolean (optional)
-    icon = "icon/path.dds", --(optional)
+    icon = "icon\\path.dds", --(optional)
     isDangerous = false, -- boolean, if set to true, the button text will be red and a confirmation dialog with the button label and warning text will show on click before the callback is executed (optional)
     warning = "Will need to reload the UI.", --(optional)
     reference = "MyAddonButton", -- unique global reference to control (optional)

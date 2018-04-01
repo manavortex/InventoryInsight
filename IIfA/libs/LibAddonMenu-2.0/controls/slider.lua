@@ -9,7 +9,7 @@
     clampInput = true, -- boolean, if set to false the input won't clamp to min and max and allow any number instead (optional)
     decimals = 0, -- when specified the input value is rounded to the specified number of decimals (optional)
     autoSelect = false, -- boolean, automatically select everything in the text input field when it gains focus (optional)
-    inputLocation = "below", -- or "right", determines where the input field is shown. This should not be used within the addon menu and is for custom sliders (optional)
+    inputLocation = "below", -- or "right", determines where the input field is shown. This should not be used within the addon menu and is for custom sliders (optional) 
     tooltip = "Slider's tooltip text.", -- or string id or function returning a string (optional)
     width = "full", --or "half" (optional)
     disabled = function() return db.someBooleanSetting end, --or boolean (optional)
@@ -77,7 +77,7 @@ end
 
 function LAMCreateControl.slider(parent, sliderData, controlName)
     local control = LAM.util.CreateLabelAndContainerControl(parent, sliderData, controlName)
-    local isInputOnRight = sliderData.inputLocation == "right"
+    local isInputOnRight = sliderData.inputLocation == "right" 
 
     --skipping creating the backdrop...  Is this the actual slider texture?
     control.slider = wm:CreateControl(nil, control.container, CT_SLIDER)
@@ -104,7 +104,7 @@ function LAMCreateControl.slider(parent, sliderData, controlName)
     bg:SetCenterColor(0, 0, 0)
     bg:SetAnchor(TOPLEFT, slider, TOPLEFT, 0, 4)
     bg:SetAnchor(BOTTOMRIGHT, slider, BOTTOMRIGHT, 0, -4)
-    bg:SetEdgeTexture("EsoUI\\Art\\Tooltips\\UI-SliderBackdrop.dds", 32, 4)
+    bg:SetEdgeTexture("EsoUI\\Art\\Tooltips\\UI-SliderBackdrop.dds", 32, 4) 
 
     control.minText = wm:CreateControl(nil, slider, CT_LABEL)
     local minText = control.minText
@@ -123,7 +123,7 @@ function LAMCreateControl.slider(parent, sliderData, controlName)
         control.slidervalueBG:SetDimensions(60, 26)
         control.slidervalueBG:SetAnchor(LEFT, slider, RIGHT, 5, 0)
     else
-        control.slidervalueBG:SetDimensions(50, 18)
+        control.slidervalueBG:SetDimensions(50, 16)
         control.slidervalueBG:SetAnchor(TOP, slider, BOTTOM, 0, 0)
     end
     control.slidervalue = wm:CreateControlFromVirtual(nil, control.slidervalueBG, "ZO_DefaultEditForBackdrop")

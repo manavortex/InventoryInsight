@@ -34,7 +34,7 @@ local BANK = ZO_PlayerBankBackpack
 local ITEMTOOLTIP = ZO_ItemToolTip
 local POPUPTOOLTIP = ZO_PopupToolTip
 
-local IIFA_COLORDEF_DEFAULT = ZO_ColorDef:New("3399FF")
+local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
 local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
@@ -159,6 +159,45 @@ function IIfA:StatusAlert(message)
 	end
 end
 
+function IIfA:TextColorFixup(settings)
+	d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
+	if settings.TextColorsToon == nil then
+		if settings.in2TextColors then
+			d("old = " .. settings.in2TextColors)
+			self.colorHandlerToon = ZO_ColorDef:New(settings.in2TextColors)
+			self.colorHandlerBank = ZO_ColorDef:New(settings.in2TextColors)
+			self.colorHandlerGBank = ZO_ColorDef:New(settings.in2TextColors)
+			self.colorHandlerHouse = ZO_ColorDef:New(settings.in2TextColors)
+			self.colorHandlerHouseChest = ZO_ColorDef:New(settings.in2TextColors)
+			self.colorHandlerCraftBag = ZO_ColorDef:New(settings.in2TextColors)
+		else
+			d("Using default textcolors")
+			self.colorHandlerToon = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+			self.colorHandlerBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+			self.colorHandlerGBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+			self.colorHandlerHouse = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+			self.colorHandlerHouseChest = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+			self.colorHandlerCraftBag = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
+		end
+		settings.TextColorsToon = self.colorHandlerToon:ToHex()
+		settings.TextColorsBank = self.colorHandlerBank:ToHex()
+		settings.TextColorsGBank = self.colorHandlerGBank:ToHex()
+		settings.TextColorsHouse = self.colorHandlerHouse:ToHex()
+		settings.TextColorsHouseChest = self.colorHandlerHouse:ToHex()
+		settings.TextColorsCraftBag = self.colorHandlerCraftBag:ToHex()
+		settings.in2TextColors = nil
+	else
+		d("using saved textcolors")
+		self.colorHandlerToon = ZO_ColorDef:New(settings.TextColorsToon)
+		self.colorHandlerBank = ZO_ColorDef:New(settings.TextColorsBank)
+		self.colorHandlerGBank = ZO_ColorDef:New(settings.TextColorsGBank)
+		self.colorHandlerHouse = ZO_ColorDef:New(settings.TextColorsHouse)
+		self.colorHandlerHouseChest = ZO_ColorDef:New(settings.TextColorsHouseChest)
+		self.colorHandlerCraftBag = ZO_ColorDef:New(settings.TextColorsCraftBag)
+	end
+end
+
+
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
 		return
@@ -176,7 +215,6 @@ function IIfA_onLoad(eventCode, addOnName)
 	local defaultGlobal = {
 		saveSettingsGlobally 	= true,
 		bDebug 					= false,
-		in2TextColors 			= IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight 	= true,
 		showItemStats			= false,
 		b_collectHouses			= false,
@@ -209,7 +247,6 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	-- initializing default values
 	local default = {
-		in2TextColors = IIFA_COLORDEF_DEFAULT:ToHex(),
 		showItemCountOnRight	= true,
 		showItemStats			= false,
 
@@ -391,7 +428,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	_, point, relTo, relPoint, offsX, offsY = IIFA_GUI_ListHolder:GetAnchor(1)
 	IIFA_GUI_ListHolder.savedAnchor2 = {point, relTo, relPoint, offsX, offsY}
 
-	IIfA.colorHandler = ZO_ColorDef:New(ObjSettings.in2TextColors)
+	IIfA:TextColorFixup(IIfA:GetSettings())
+
 	SLASH_COMMANDS["/ii"] = IIfA_SlashCommands
 	IIfA:CreateSettingsWindow(IIfA.settings, default)
 
