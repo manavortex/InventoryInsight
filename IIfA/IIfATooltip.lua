@@ -485,8 +485,20 @@ function IIfA:UpdateTooltip(tooltip)
   					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
-					-- p("IIfA:UpdateTooltip -> <<1>>", textOut)
-					tooltip:AddLine(IIfA.colorHandler:Colorize(textOut))
+					if location.bagLoc == BAG_BACKPACK then		-- all of the bagLocs are distilled down to single locations (bag_worn or bag_backpack are all bag_backpack for this table element)
+						textOut = IIfA.colorHandlerToon:Colorize(textOut)
+					elseif location.bagLoc == BAG_BANK then
+						textOut = IIfA.colorHandlerBank:Colorize(textOut)
+					elseif location.bagLoc == BAG_GUILDBANK then
+						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
+					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == BAG_VIRTUAL then
+						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
+					end
+					tooltip:AddLine(textOut)
 				end
 			end
 		end
@@ -547,7 +559,20 @@ function IIfA:UpdateTooltip(tooltip)
 					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
-					tooltip:AddLine(IIfA.colorHandler:Colorize(textOut))
+					if location.bagLoc == BAG_BACKPACK then		-- all of the bagLocs are distilled down to single locations (bag_worn or bag_backpack are all bag_backpack for this table element)
+						textOut = IIfA.colorHandlerToon:Colorize(textOut)
+					elseif location.bagLoc == BAG_BANK then
+						textOut = IIfA.colorHandlerBank:Colorize(textOut)
+					elseif location.bagLoc == BAG_GUILDBANK then
+						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
+					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == BAG_VIRTUAL then
+						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
+					end
+					tooltip:AddLine(textOut)
 				end
 			end
 		end
