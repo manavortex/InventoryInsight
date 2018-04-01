@@ -160,7 +160,7 @@ function IIfA:StatusAlert(message)
 end
 
 function IIfA:TextColorFixup(settings)
-	d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
+	-- d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
 	if settings.TextColorsToon == nil then
 		if settings.in2TextColors then
 			d("old = " .. settings.in2TextColors)
