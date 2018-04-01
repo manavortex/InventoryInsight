@@ -66,12 +66,12 @@ end
 
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
 	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState))
-	if (tostring(newState) == "shown") then
+	if SCENE_SHOWN == newState then
 		sceneName = IIfA:GetCurrentSceneName()
 		local settings = IIfA:GetSceneSettings(sceneName)
 		self:RePositionFrame(settings)
 
-	elseif (tostring(newState) == "hidden") then
+	elseif SCENE_HIDDEN == newState then
 		IIFA_GUI:SetHidden(true)
 	end
 end
