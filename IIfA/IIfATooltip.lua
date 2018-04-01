@@ -485,9 +485,8 @@ function IIfA:UpdateTooltip(tooltip)
   					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
-					textOut = IIfA.colorHandler:Colorize(textOut)
 					-- p("IIfA:UpdateTooltip -> <<1>>", textOut)
-					tooltip:AddLine(textOut)
+					tooltip:AddLine(IIfA.colorHandler:Colorize(textOut))
 				end
 			end
 		end
@@ -548,8 +547,7 @@ function IIfA:UpdateTooltip(tooltip)
 					if location.worn then
 						textOut = string.format("%s *", textOut)
 					end
-					textOut = IIfA.colorHandler:Colorize(textOut)
-					tooltip:AddLine(textOut)
+					tooltip:AddLine(IIfA.colorHandler:Colorize(textOut))
 				end
 			end
 		end
