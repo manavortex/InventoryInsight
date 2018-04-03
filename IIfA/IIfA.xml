@@ -193,7 +193,7 @@
 									<Dimensions x="40" y="40" />
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Consumables")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY})</OnMouseUp>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY, ITEMTYPE_CROWN_ITEM})</OnMouseUp>
 									<Textures normal="EsoUI/art/inventory/inventory_tabicon_consumables_up.dds"
 												pressed="EsoUI/art/inventory/inventory_tabicon_consumables_down.dds"
 												mouseOver="EsoUI/art/inventory/inventory_tabicon_consumables_over.dds"
@@ -399,18 +399,18 @@
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-25" offsetY="0"/>
 									<Controls>
 										<Button name="$(parent)_Button0">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Consumables")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_MASTER_WRIT, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY})</OnMouseUp>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_MASTER_WRIT, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY, ITEMTYPE_CROWN_ITEM })</OnMouseUp>
 											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
 															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
 															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button1">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Food")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_FOOD})</OnMouseUp>
@@ -420,8 +420,8 @@
 												mouseOver = "IIfA/assets/consumables/food/food_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button2">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Drink")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_DRINK})</OnMouseUp>
@@ -431,8 +431,8 @@
 												mouseOver = "IIfA/assets/consumables/drinks/drink_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button3">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Recipes")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_RECIPE, SPECIALIZED_ITEMTYPE_RECIPE_BLACKSMITHING_DIAGRAM_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_CLOTHIER_PATTERN_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_WOODWORKING_BLUEPRINT_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_ENCHANTING_SCHEMATIC_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_ALCHEMY_FORMULA_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_PROVISIONING_DESIGN_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_PROVISIONING_STANDARD_FOOD}, {"Placeholder", "Diagrams", "Patterns", "Blueprints", "Schematics", "Formulae", "Faux Food/Candles", "Food/Drink"})</OnMouseUp>
@@ -442,8 +442,8 @@
 												mouseOver = "IIfA/assets/consumables/recipes/recipe_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button4">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Potions")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_POTION})</OnMouseUp>
@@ -453,8 +453,8 @@
 												mouseOver = "IIfA/assets/consumables/potion/potion_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button5">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Poisons")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_POISON})</OnMouseUp>
@@ -464,8 +464,8 @@
 												mouseOver = "IIfA/assets/consumables/poison/poison_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button6">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Motifs")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_RACIAL_STYLE_MOTIF})</OnMouseUp>
@@ -475,8 +475,8 @@
 												mouseOver = "IIfA/assets/consumables/motifs/motif_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button7">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Master Writs")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_MASTER_WRIT})</OnMouseUp>
@@ -486,8 +486,8 @@
 												mouseOver = "esoui/art/crafting/formulae_tabicon_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button8">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Containers")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER})</OnMouseUp>
@@ -497,8 +497,8 @@
 												mouseOver = "IIfA/assets/consumables/containers/container_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button9">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Repair")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_TOOL, ITEMTYPE_AVA_REPAIR, ITEMTYPE_CROWN_REPAIR})</OnMouseUp>
@@ -508,8 +508,8 @@
 												mouseOver = "IIfA/assets/consumables/repair/repair_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button10">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button9" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button9" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Trophy")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_TROPHY})</OnMouseUp>
@@ -517,6 +517,18 @@
 												normal = "esoui/art/campaign/campaign_tabicon_leaderboard_up.dds"
 												pressed = "esoui/art/campaign/campaign_tabicon_leaderboard_down.dds"
 												mouseOver = "esoui/art/campaign/campaign_tabicon_leaderboard_over.dds"
+											 />
+										</Button>
+										<Button name="$(parent)_Button11">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button10" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Crown")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CROWN_ITEM})</OnMouseUp>
+											<Textures
+												normal = "esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_up.dds"
+												pressed = "esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_down.dds"
+												mouseOver = "esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_over.dds"
 											 />
 										</Button>
 									</Controls>

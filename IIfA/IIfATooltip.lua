@@ -43,7 +43,7 @@ function IIfA:CreateTooltips()
 	ZO_PreHookHandler(ItemTooltip, 'OnAddGameData', IIfA_TooltipOnTwitch)
 	ZO_PreHookHandler(ItemTooltip, 'OnHide', IIfA_HideTooltip)
 
-	ZO_PreHook("ZO_PopupTooltip_SetLink", function(itemLink) IIfA.TooltipLink = itemLink  end)
+	ZO_PreHook("ZO_PopupTooltip_SetLink", function(itemLink) IIfA.TooltipLink = itemLink end)
 
 	IIfA:SetTooltipFont(IIfA:GetSettings().in2TooltipsFont)
 end
