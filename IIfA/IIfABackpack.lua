@@ -740,8 +740,6 @@ function IIfA:SetupBackpack()
 				comboBox:SetSelectedItem(validChoices[i])
 			end
 		end
-
---		return IIFA_GUI_Header_Dropdown
 	end
 
 	local function createInventoryDropdownQuality()
@@ -831,9 +829,9 @@ function IIfA:FMC(control, WhoSeesIt)
 		[14] = ITEM_STYLE_CHAPTER_SWORDS,
 		}
 --]]
-
 -- following lookup turns a motif number "Crafting Motif 33: Thieves Guild Axes" into an achieve lookup
 -- |H1:achievement:1318:16383:1431113493|h|h
+-- the index is the # from the motif text, NOT any internal value
 	local motifAchieves =
 		{
 		[15] = 1144,	-- Dwemer
@@ -878,6 +876,7 @@ function IIfA:FMC(control, WhoSeesIt)
 		[55] = 2097,	-- Dreadhorn
 		[56] = 2044,	-- Apostle
 		[57] = 2045,	-- Ebonshadow
+		[60] = 2120,	-- Worm Cult
 		}
 
 --		local i, a

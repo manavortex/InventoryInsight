@@ -26,6 +26,7 @@ local function grabBagContent(bagId, override)
 
 	local bagItems = GetBagSize(bagId)
 	p("grabBagContent(<<1>>, <<2>>", bagId, override)
+	local slotId
 	for slotId=0, bagItems, 1 do
 		local dbItem, itemKey = IIfA:EvalBagItem(bagId, slotId, false, nil, nil, nil, nil, override)
 	end
@@ -575,62 +576,72 @@ function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverrid
 		end
 	end
 end
- --]]
+--]]
 
-function IIfA:CollectAll(bagId, tracked)		-- the args aren't used, but by making them args to function, they're avail to the task
-	local bagItems = nil
-	local itemLink, dbItem = nil
-	local itemKey
-	local location = IIfA.EMPTY_STRING
+local function CollectBag(bagId, tracked)
+	if bagId <= BAG_MAX_VALUE and bagId ~= BAG_SUBSCRIBER_BANK then -- ignore subscriber bank, it's handled along with the regular bank
+		local bagItems
+		bagItems = GetBagSize(bagId)
+		if bagId == BAG_WORN then
+			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
+		elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
+			IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
+		elseif bagId == BAG_BACKPACK then
+			IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
+		elseif bagId == BAG_VIRTUAL then
+			IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
+		elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
+			if IsOwnerOfCurrentHouse() then
+				IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
+			else
+				tracked = false		-- prevent reading the house bag if we're not in our own home
+			end
+		end
+		if tracked then
+			if bagId ~= BAG_VIRTUAL then
+				if bagId ~= BAG_SUBSCRIBER_BANK then
+					grabBagContent(bagId)
+					if bagId == BAG_BANK then
+						grabBagContent(BAG_SUBSCRIBER_BANK)
+					end
+				end
+			else -- it's bag virtual
+				local slotId = GetNextVirtualBagSlotId(nil)
+				while slotId ~= nil do
+					IIfA:EvalBagItem(bagId, slotId)
+					slotId = GetNextVirtualBagSlotId(slotId)
+				end
+			end
+		end
+	end
+end
+
+function IIfA:CollectAll(b_useAsync)
 	local BagList = IIfA:GetTrackedBags() -- 20.1. mana: Iterating over a list now
 
+	local bagId, tracked
 	for bagId, tracked in pairs(BagList) do		-- do NOT use ipairs, it's non-linear list (holes in the # sequence)
-		if bagId <= BAG_MAX_VALUE and bagId ~= BAG_SUBSCRIBER_BANK then -- ignore subscriber bank, it's handled along with the regular bank
-			-- call with libAsync to avoid lag
-			task:Call(function()
-				bagItems = GetBagSize(bagId)
-				if bagId == BAG_WORN then
-					IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_WORN)
-				elseif bagId == BAG_BANK then	-- do NOT add BAG_SUBSCRIBER_BANK here, it'll wipe whatever already got put into the bank on first hit
-					IIfA:ClearLocationData(GetString(IIFA_BAG_BANK))
-				elseif bagId == BAG_BACKPACK then
-					IIfA:ClearLocationData(IIfA.currentCharacterId, BAG_BACKPACK)
-				elseif bagId == BAG_VIRTUAL then
-					IIfA:ClearLocationData(GetString(IIFA_BAG_CRAFTBAG))
-				elseif bagId >= BAG_HOUSE_BANK_ONE and bagId <= BAG_HOUSE_BANK_TEN then
-					if IsOwnerOfCurrentHouse() then
-						IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
-					else
-						tracked = false		-- prevent reading the house bag if we're not in our own home
-					end
-				end
-				if tracked then
-					if bagId ~= BAG_VIRTUAL then
-						if bagId ~= BAG_SUBSCRIBER_BANK then
-							grabBagContent(bagId)
-							if bagId == BAG_BANK then
-								grabBagContent(BAG_SUBSCRIBER_BANK)
-							end
-						end
-					else -- it's bag virtual
-						local slotId = GetNextVirtualBagSlotId(nil)
-						while slotId ~= nil do
-							IIfA:EvalBagItem(bagId, slotId)
-							slotId = GetNextVirtualBagSlotId(slotId)
-						end
-					end
-				end
-
-			end)
+		if b_useAsync then
+			task:Call(function() CollectBag(bagId, tracked) end)
+		else
+			CollectBag(bagId, tracked)
 		end
 	end
 
-	-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
-	IIfA:ClearUnowned()
 
-	zo_callLater(function()
-		IIfA:MakeBSI()
-	end, 1000)
+	-- when b_useAsync is true, this isn't being called from the player unloaded event, so we need to re-make bag/slot index
+	if b_useAsync then
+		-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
+		-- 4-4-18 AM - need to call AFTER collectbag is called
+		task:Call(function() IIfA:ClearUnowned() end)
+		zo_callLater(function()
+			IIfA:MakeBSI()
+		end, 1000)
+	else
+		-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
+		-- 4-4-18 AM - call immediately after collectbag calls above
+		IIfA:ClearUnowned()
+	end
 end
 
 

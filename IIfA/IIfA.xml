@@ -130,7 +130,8 @@
 						</Button>
 
 
-						<Control name="$(parent)_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" >
+<!-- 						<Control name="$(parent)_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true"> -->
+						<Control name="$(parent)_Dropdown" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH">
 							<Dimensions y="29" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_BagButton" relativePoint="TOPRIGHT" offsetX="10" />
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_BagButton" relativePoint="BOTTOMRIGHT" offsetX="250" offsetY="5" />
