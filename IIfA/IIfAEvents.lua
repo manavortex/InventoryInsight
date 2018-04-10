@@ -6,7 +6,7 @@ local em 	= EVENT_MANAGER
 -- 2015-3-7 AssemblerManiac - added code to collect inventory data at char disconnect
 local function IIfA_EventOnPlayerUnloaded()
 	-- update the stored inventory every time character logs out, will assure it's always right when viewing from other chars
-	IIfA:CollectAll()
+	IIfA:CollectAll(false)		-- don't call async lib
 
 	IIfA.CharCurrencyFrame:UpdateAssets()
 	IIfA.CharBagFrame:UpdateAssets()

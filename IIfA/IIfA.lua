@@ -15,7 +15,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.15"
+IIfA.version 			= "3.16"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -109,7 +109,7 @@ function IIfA_SlashCommands(cmd)
 
 	if (cmd == "run") then
 		d("[IIfA]:Running collector...")
-		IIfA:CollectAll()
+		IIfA:CollectAll(true)
 		return
 	end
 
@@ -280,6 +280,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.SearchHeight = IIFA_GUI_Search:GetHeight()
 
 	IIFA_GUI_ListHolder.rowHeight = 52	-- trying to find optimal size for this, set it in one spot for easier adjusting
+	IIFA_GUI_ListHolder:SetDrawLayer(0)	-- keep the scrollable dropdown ABOVE this one
+										-- (otherwise scrollable dropdown is shown like it's above the list, but the mouse events end up going through to the list)
 
 	IIfA.currentCharacterId = GetCurrentCharacterId()
 	IIfA.currentAccount = GetDisplayName()
@@ -467,7 +469,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.trackedBags[BAG_WORN] 		= not IIfA:IsCharacterEquipIgnored()
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
 
-	IIfA:CollectAll()
+	IIfA:CollectAll(true)
 
 
 end
