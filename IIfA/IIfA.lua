@@ -7,7 +7,7 @@
 	Collects inventory data for all characters on a single account including the shared bank and makes this information available
 	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder ScrollsÂ® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
 ------------------------------------------------------------------
@@ -160,10 +160,12 @@ function IIfA:StatusAlert(message)
 end
 
 function IIfA:TextColorFixup(settings)
+
 --	d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
+	-- d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
 	if settings.TextColorsToon == nil then
 		if settings.in2TextColors then
---			d("old = " .. settings.in2TextColors)
+			-- d("old = " .. settings.in2TextColors)
 			self.colorHandlerToon = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerBank = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerGBank = ZO_ColorDef:New(settings.in2TextColors)
@@ -171,7 +173,7 @@ function IIfA:TextColorFixup(settings)
 			self.colorHandlerHouseChest = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerCraftBag = ZO_ColorDef:New(settings.in2TextColors)
 		else
---			d("Using default textcolors")
+			-- d("Using default textcolors")
 			self.colorHandlerToon = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
 			self.colorHandlerBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
 			self.colorHandlerGBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
@@ -187,7 +189,7 @@ function IIfA:TextColorFixup(settings)
 		settings.TextColorsCraftBag = self.colorHandlerCraftBag:ToHex()
 		settings.in2TextColors = nil
 	else
---		d("using saved textcolors")
+		-- d("using saved textcolors")
 		self.colorHandlerToon = ZO_ColorDef:New(settings.TextColorsToon)
 		self.colorHandlerBank = ZO_ColorDef:New(settings.TextColorsBank)
 		self.colorHandlerGBank = ZO_ColorDef:New(settings.TextColorsGBank)
