@@ -476,7 +476,7 @@ function IIfA:CreateOptionsMenu()
 			type = "dropdown",
 			name =  "Default Inventory Frame View",
 			tooltip =  "The default view (in the dropdown) set when the inventory frame loads",
-			choices = IIfA.dropdownBankNames,
+			choices = IIfA.dropdownLocNames,
 			default = IIfA:GetSettings().in2DefaultInventoryFrameView,
 			getFunc = function() return IIfA:GetSettings().in2DefaultInventoryFrameView end,
 			setFunc = function( value )

@@ -492,9 +492,9 @@ function IIfA:UpdateTooltip(tooltip)
 					elseif location.bagLoc == BAG_GUILDBANK then
 						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
 					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
-						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
-					elseif location.bagLoc == 99 then
 						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
 					elseif location.bagLoc == BAG_VIRTUAL then
 						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
 					end
@@ -566,9 +566,9 @@ function IIfA:UpdateTooltip(tooltip)
 					elseif location.bagLoc == BAG_GUILDBANK then
 						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
 					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
-						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
-					elseif location.bagLoc == 99 then
 						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
 					elseif location.bagLoc == BAG_VIRTUAL then
 						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
 					end
@@ -578,7 +578,7 @@ function IIfA:UpdateTooltip(tooltip)
 		end
 	end
 end
-
+-- |H1:item:30357:175:1:0:0:0:0:0:0:0:0:0:0:0:0:36:0:0:0:0:0|h|h
 
 --[[
 on pts
