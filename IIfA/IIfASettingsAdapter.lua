@@ -178,7 +178,8 @@ function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if tonumber(houseCollectibleId) ~= houseCollectibleId then
 		realId = IIfA:GetHouseIdFromName(houseCollectibleId)
-		if not realId then d(houseCollectibleId); return end
+		-- if not realId then d(houseCollectibleId); return end
+		if not realId then return end
 		houseCollectibleId = realId
 	end
 	IIfA.data.collectHouseData[houseCollectibleId] 	= trackIt
