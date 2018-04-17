@@ -110,11 +110,11 @@ function CharBagFrame:FillCharAndBank()
 		if IsCollectibleUnlocked(GetCollectibleForHouseBankBag(ctr)) then
 			if bInOwnedHouse then
 				tempUsed = GetNumBagUsedSlots(ctr)
-				self.currAssets.houseChestSpace[ctr] = tempUsed
+				self.parent.houseChestSpace[ctr] = tempUsed
 				bFoundData = true
 			else
-				if self.currAssets.houseChestSpace[ctr] ~= nil then
-					tempUsed = self.currAssets.houseChestSpace[ctr]
+				if self.parent.houseChestSpace[ctr] ~= nil then
+					tempUsed = self.parent.houseChestSpace[ctr]
 					bFoundData = true
 				else
 					tempUsed = nil
@@ -135,7 +135,8 @@ function CharBagFrame:FillCharAndBank()
 			end
 		else
 			tControl:SetHeight(0)
-			self.currAssets.houseChestSpace[ctr] = nil
+			tControl:GetNamedChild("charName"):SetText("")
+			self.parent.houseChestSpace[ctr] = nil
 		end
 	end
 
@@ -241,6 +242,9 @@ function CharBagFrame:Initialize(objectForAssets)
 			self.charControl = tControl
 		else
 			if assets[charId] ~= nil then
+				if assets[charId].houseChestSpace ~= nil then
+					assets[charId].houseChestSpace = nil
+				end
 				if assets[charId].spaceUsed ~= nil then
 					self.totSpaceUsed = self.totSpaceUsed + assets[charId].spaceUsed
 					self.totSpaceMax = self.totSpaceMax + assets[charId].spaceMax
@@ -271,7 +275,7 @@ function CharBagFrame:Initialize(objectForAssets)
 	self.divider2 = tControl
 
 	self.houseChestControls = {}
-	self.currAssets.houseChestSpace = self.currAssets.houseChestSpace or {}
+	self.parent.houseChestSpace = self.parent.houseChestSpace or {}
 	local ctr
 	prevControl = self.divider2
 	for ctr = BAG_HOUSE_BANK_ONE,BAG_HOUSE_BANK_TEN do
