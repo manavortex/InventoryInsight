@@ -178,10 +178,10 @@ function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if tonumber(houseCollectibleId) ~= houseCollectibleId then
 		realId = IIfA:GetHouseIdFromName(houseCollectibleId)
-		-- if not realId then d(houseCollectibleId); return end
-		if not realId then return end
+		if not realId then d(houseCollectibleId) return end
 		houseCollectibleId = realId
 	end
+	if houseCollectibleId == 0 then return end
 	IIfA.data.collectHouseData[houseCollectibleId] 	= trackIt
 	IIfA:GetTrackedBags()[houseCollectibleId] 		= trackIt
 	IIfA:RebuildHouseMenuDropdowns()

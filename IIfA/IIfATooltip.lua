@@ -492,9 +492,9 @@ function IIfA:UpdateTooltip(tooltip)
 					elseif location.bagLoc == BAG_GUILDBANK then
 						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
 					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
-						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
-					elseif location.bagLoc == 99 then
 						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
 					elseif location.bagLoc == BAG_VIRTUAL then
 						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
 					end
@@ -566,9 +566,9 @@ function IIfA:UpdateTooltip(tooltip)
 					elseif location.bagLoc == BAG_GUILDBANK then
 						textOut = IIfA.colorHandlerGBank:Colorize(textOut)
 					elseif location.bagLoc == BAG_HOUSE_BANK_ONE then
-						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
-					elseif location.bagLoc == 99 then
 						textOut = IIfA.colorHandlerHouseChest:Colorize(textOut)
+					elseif location.bagLoc == 99 then
+						textOut = IIfA.colorHandlerHouse:Colorize(textOut)
 					elseif location.bagLoc == BAG_VIRTUAL then
 						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
 					end
@@ -578,26 +578,3 @@ function IIfA:UpdateTooltip(tooltip)
 		end
 	end
 end
-
-
---[[
-on pts
-/script d("|H1:item:122828:362:50:00000:0:0:0:0:0:0:0:0:0:0:0:38:0:0:0:10000:0|h|h |H1:item:048760:029:04:26848:2:1:0:0:0:0:0:0:0:0:1:06:1:1:0:00053:0|h|h")
-
-
-/script d("Redoran: |H1:item:122627:359:50:0:0:0:0:0:0:0:0:0:0:0:0:48:0:0:0:10000:0|h|h")
-/script d("Buoyant Armiger: |H1:item:126064:358:50:0:0:0:0:0:0:0:0:0:0:0:0:52:0:0:0:10000:0|h|h")
-/script d("MoragTong: |H1:item:45349:308:50:0:0:0:0:0:0:0:0:0:0:0:1:43:0:1:0:10000:0|h|h")
-
-red mountain - no icon, no style text - use get style func to find out what # it really is
-"of the worm" - same issue
-"ebon armory"
-hircine
-withered hand - same problem (of the necromancer)
-
-/script PopupTooltipIIFA_TT_Ext1_StyleIcon.idx=48 PopupTooltipIIFA_TT_Ext1_StyleIcon:SetTexture(IIfA.racialTextures[PopupTooltipIIFA_TT_Ext1_StyleIcon.idx].styleTexture) d(IIfA.racialTextures[PopupTooltipIIFA_TT_Ext1_StyleIcon.idx].styleName ..", "..PopupTooltipIIFA_TT_Ext1_StyleIcon.idx)
-
-/script PopupTooltipIIFA_TT_Ext1_StyleIcon:SetTexture("IIfA/assets/icons/ordinator.dds") PopupTooltipIIFA_TT_Ext1_StyleLabel:SetText("Ordinator")
-
-]]--
-

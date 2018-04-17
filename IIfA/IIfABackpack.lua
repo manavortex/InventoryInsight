@@ -588,7 +588,7 @@ function IIfA:GetCharacterList()
 end
 
 function IIfA:GetAccountInventoryList()
-	local accountInventories = IIfA.dropdownBankNames
+	local accountInventories = IIfA.dropdownLocNames
 
 
 -- get character names, will present in same order as character selection screen
@@ -616,7 +616,7 @@ function IIfA:GetAccountInventoryList()
 	end
 
 	if IIfA.data.b_collectHouses then
-		table.insert(accountInventories, "All Houses")
+		-- table.insert(accountInventories, "All Houses") --  4-11-18 AM - removed duplicate entry, it's in the dropdownLocNames already
 		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
 			table.insert(accountInventories, houseName)
 		end
@@ -730,6 +730,8 @@ function IIfA:SetupBackpack()
 		end
 
 		comboBox:SetSortsItems(false)
+
+		IIFA_GUI_Header_Dropdown.m_comboBox.m_height = 500		-- normal height is 250, so just double it (will be plenty tall for most users - even Mana)
 
 		local validChoices =  IIfA:GetAccountInventoryList()
 

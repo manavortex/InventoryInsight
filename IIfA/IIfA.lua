@@ -15,7 +15,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.16"
+IIfA.version 			= "3.17"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -65,7 +65,7 @@ IIfA.trackedBags = {
 	[BAG_HOUSE_BANK_TEN] 	= true,
 }
 
-IIfA.dropdownBankNames = {
+IIfA.dropdownLocNames = {
 	"All",
 	"All Banks",
 	"All Guild Banks",
@@ -160,10 +160,10 @@ function IIfA:StatusAlert(message)
 end
 
 function IIfA:TextColorFixup(settings)
-	-- d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
+--	d("settings.TextColorsCraftBag = " .. settings.TextColorsCraftBag)
 	if settings.TextColorsToon == nil then
 		if settings.in2TextColors then
-			-- d("old = " .. settings.in2TextColors)
+--			d("old = " .. settings.in2TextColors)
 			self.colorHandlerToon = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerBank = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerGBank = ZO_ColorDef:New(settings.in2TextColors)
@@ -171,7 +171,7 @@ function IIfA:TextColorFixup(settings)
 			self.colorHandlerHouseChest = ZO_ColorDef:New(settings.in2TextColors)
 			self.colorHandlerCraftBag = ZO_ColorDef:New(settings.in2TextColors)
 		else
-			-- d("Using default textcolors")
+--			d("Using default textcolors")
 			self.colorHandlerToon = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
 			self.colorHandlerBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
 			self.colorHandlerGBank = ZO_ColorDef:New(IIFA_COLOR_DEFAULT:ToHex())
@@ -187,7 +187,7 @@ function IIfA:TextColorFixup(settings)
 		settings.TextColorsCraftBag = self.colorHandlerCraftBag:ToHex()
 		settings.in2TextColors = nil
 	else
-		-- d("using saved textcolors")
+--		d("using saved textcolors")
 		self.colorHandlerToon = ZO_ColorDef:New(settings.TextColorsToon)
 		self.colorHandlerBank = ZO_ColorDef:New(settings.TextColorsBank)
 		self.colorHandlerGBank = ZO_ColorDef:New(settings.TextColorsGBank)
