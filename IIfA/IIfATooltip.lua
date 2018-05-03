@@ -395,7 +395,11 @@ function IIfA:getMouseoverLink()
     	if mouseOverControl.slotIndex and mouseOverControl.bagId then
 			return GetItemLink(mouseOverControl.bagId, mouseOverControl.slotIndex)
 		end
+	elseif name == 'ZO_ClaimLevelUpRewardsScreen_KeyboardListScrollChild' then
+--		ZO_ClaimLevelUpRewardsScreen_KeyboardListScrollChildZO_LevelUpRewards_RewardRow2Name
 
+	elseif name == 'DolgubonSetCrafterWindowMaterialListListContents' then
+		return mouseOverControl.data[1].Name
 	else
 --		d(mouseOverControl:GetName(), mouseOverControl)
 		p("Tooltip not processed - '" .. name .. "'")
