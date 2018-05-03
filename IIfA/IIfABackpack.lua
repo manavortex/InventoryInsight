@@ -712,13 +712,11 @@ function IIfA:GetSceneVisible(name)
 	end
 end
 
-
+-- general note for popup menus
+-- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
+-- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
 
 function IIfA:SetupBackpack()
-
--- to add submenus, investigate below function, LibCustomMenu.lua:428
--- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
--- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
 
 	local function createInventoryDropdown()
 		local comboBox, i, entry
