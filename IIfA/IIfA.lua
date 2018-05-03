@@ -289,7 +289,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.filterGroup = "All"
 	IIfA.filterTypes = nil
 
-	-- grabs data from bagpack, and worn bag when we first open the inventory
+	-- grabs data from backpack, and worn items when we first open the inventory
 	-- ZO_PreHook(PLAYER_INVENTORY, "ApplyBackpackLayout", IIfA.OnFirstInventoryOpen)
 	ZO_PreHook(BACKPACK_GUILD_BANK_LAYOUT_FRAGMENT, "ApplyBackpackLayout", IIfA.CollectGuildBank)
 
@@ -470,8 +470,6 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.trackedBags[BAG_BACKPACK] 	= not IIfA:IsCharacterInventoryIgnored()
 
 	IIfA:CollectAll(true)
-
-
 end
 
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)

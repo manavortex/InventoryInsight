@@ -82,9 +82,10 @@ function IIfA:GetInventoryListFilter()
 end
 
 
-function IIfA:SetInventoryListFilter(value)
+function IIfA:SetInventoryListFilter(value, bagId)
 	if not value or value == IIfA.EMPTY_STRING then value = "All" end
 	IIfA.InventoryListFilter = value
+	IIfA.InventoryListFilterBagId = bagId
 
 	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
 

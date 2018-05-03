@@ -102,6 +102,7 @@ end
 local function DoesInventoryMatchList(locationName, location)
 	local bagId 	= location.bagID
 	local filter 	= IIfA.InventoryListFilter
+	local filterBag = IIfA.InventoryListFilterBagId
 
 --	if locationName == "attributes" then return false end
 	if (filter == "All") then
@@ -120,12 +121,12 @@ local function DoesInventoryMatchList(locationName, location)
 		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 
 	elseif(filter == "Bank and Current Character") then
-		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
-			and locationName == IIfA.currentCharacterId
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK) or
+			(IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN) and locationName == IIfA.currentCharacterId)
 
 	elseif(filter == "Bank and other characters") then
-		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
-			and locationName ~= IIfA.currentCharacterId
+		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK) or
+			(IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN) and locationName ~= IIfA.currentCharacterId)
 
 	elseif(filter == "Bank Only") then
 		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK)
@@ -133,8 +134,11 @@ local function DoesInventoryMatchList(locationName, location)
 	elseif(filter == "Craft Bag") then
 		return (bagId == BAG_VIRTUAL)
 
-	elseif(filter == "Housing Storage") then
+	elseif(filter == "Housing Storage" and filterBag == nil) then
 		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0
+
+	elseif(filter == "Housing Storage" and filterBag ~= nil) then
+		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0 and bagId == filterBag
 
 	elseif(filter == "All Houses") then
 		return IIfA.data.collectHouseData[bagId]
@@ -455,7 +459,7 @@ local function fillLine(curLine, curItem)
 end
 
 function IIfA:SetDataLinesData()
-	p("SetDataLinesData")
+--	p("SetDataLinesData")
 
 	local curLine, curData
 	for i = 1, IIFA_GUI_ListHolder.maxLines do
@@ -712,8 +716,12 @@ end
 
 function IIfA:SetupBackpack()
 
+-- to add submenus, investigate below function, LibCustomMenu.lua:428
+-- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
+-- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
+
 	local function createInventoryDropdown()
-		local comboBox, i
+		local comboBox, i, entry
 
 		if IIFA_GUI_Header_Dropdown.comboBox ~= nil then
 			comboBox = IIFA_GUI_Header_Dropdown.comboBox
@@ -729,6 +737,24 @@ function IIfA:SetupBackpack()
 			PlaySound(SOUNDS.POSITIVE_CLICK)
 		end
 
+		local function OnChestSelect(_, choiceText, choice)
+p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
+			local ctr, cName, cId
+			for ctr = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
+				cId = GetCollectibleForHouseBankBag(ctr)
+				cName = GetCollectibleNickname(cId)
+				if cName == self.EMPTY_STRING then
+					cName = GetCollectibleName(cId)
+				end
+				if cName == choiceText then
+					IIfA:SetInventoryListFilter("Housing Storage", ctr)
+					break
+				end
+			end
+			IIfA:RefreshInventoryScroll()
+			PlaySound(SOUNDS.POSITIVE_CLICK)
+		end
+
 		comboBox:SetSortsItems(false)
 
 		IIFA_GUI_Header_Dropdown.m_comboBox.m_height = 500		-- normal height is 250, so just double it (will be plenty tall for most users - even Mana)
@@ -740,6 +766,19 @@ function IIfA:SetupBackpack()
 			comboBox:AddItem(entry)
 			if validChoices[i] == IIfA:GetInventoryListFilter() then
 				comboBox:SetSelectedItem(validChoices[i])
+			end
+		end
+
+		local ctr, cName, cId
+		for ctr = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
+			cId = GetCollectibleForHouseBankBag(ctr)
+			if IsCollectibleUnlocked(cId) then
+				cName = GetCollectibleNickname(cId)
+				if cName == self.EMPTY_STRING then
+					cName = GetCollectibleName(cId)
+				end
+				entry = comboBox:CreateItemEntry(cName, OnChestSelect)
+				comboBox:AddItem(entry)
 			end
 		end
 	end

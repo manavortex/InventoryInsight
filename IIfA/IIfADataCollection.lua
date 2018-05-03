@@ -55,7 +55,7 @@ function IIfA:DeleteGuildData(name)
 	end
 end
 
-function IIfA:CollectGuildBank()
+function IIfA:CollectGuildBank(curGuild)
 
 	-- add roomba support
 	if Roomba and Roomba.WorkInProgress and Roomba.WorkInProgress() then
@@ -70,7 +70,7 @@ function IIfA:CollectGuildBank()
 	end
 
 	if not IIfA.data.guildBanks then IIfA.data.guildBanks = {} end
-	local curGuild = GetGuildName(curGB)
+	curGuild = GetGuildName(curGB)
 
 	p("Collecting Guild Bank Data for " .. curGuild)
 
@@ -95,21 +95,35 @@ function IIfA:CollectGuildBank()
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
-		guildData.items = #ZO_GuildBankBackpack.data
+		local itemCount, i, slotIndex
+		itemCount = 0
+		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
+		while slotIndex do
+			itemCount = itemCount + 1
+			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
+		end
+
+		p("GuildBank Item Count = " .. itemCount)
+
+--		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
+
 		IIfA:ClearLocationData(curGuild)
-		p(" - " .. #ZO_GuildBankBackpack.data .. " items")
-		for i=1, #ZO_GuildBankBackpack.data do
-			local slotIndex = ZO_GuildBankBackpack.data[i].data.slotIndex
+
+		itemCount = 0
+		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
+		while slotIndex do
+			itemCount = itemCount + 1
 			local dbItem, itemKey = IIfA:EvalBagItem(BAG_GUILDBANK, slotIndex)
-			p("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
+--			p("Collect guild bank from <<1>> - slot/key <<2>> / <<3>>", curGuild, slotIndex, itemKey)
 			if not IIfA.BagSlotInfo or not curGuild then return end -- be paranoid because this might happen in the middle of unloading
 			IIfA.BagSlotInfo[curGuild] = IIfA.BagSlotInfo[curGuild] or {}
 			if not IIfA.BagSlotInfo[curGuild] then return end  -- be paranoid because this might happen in the middle of unloading
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
+			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
 		end
 	end)
---	d("IIfA - Guild Bank Collected - " .. curGuild)
+	p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 end
 
 
@@ -246,7 +260,6 @@ function IIfA:GuildBankReady()
 		p("GuildBankReady...")
 		IIfA.isGuildBankReady = false
 		IIfA:UpdateGuildBankData()
-	end):Then(function()
 		IIfA:CollectGuildBank()
 	end)
 end
@@ -255,10 +268,7 @@ function IIfA:GuildBankDelayReady()
 	p("GuildBankDelayReady...")
 	if not IIfA.isGuildBankReady then
 		IIfA.isGuildBankReady = true
-		-- call with libAsync to avoid lags
-		task:Call(function()
-			IIfA:GuildBankReady()
-		end)
+		IIfA:GuildBankReady()
 	end
 end
 
@@ -418,7 +428,6 @@ function IIfA:TableCount(tbl)
 end
 
 function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, locationID)
-
 	if not IIfA.trackedBags[bagId] then return end
 
 	IIfA.database = IIfA.database or {}
@@ -441,6 +450,8 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	itemName = itemName or getItemName(bagId, slotId, itemLink)
 
 	-- item count is either passed or we have to get it from bag/slot ID or item link
+	local bAddQty = false
+	if qty ~= nil then bAddQty = true end
 	itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
@@ -473,7 +484,6 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 				IIfA.BagSlotInfo[bagId][slotId] = nil
 			end
 		else
-p(DBitem.locations[location])
 			if DBitem.locations[location] then
 				if type(DBitem.locations[location].bagSlot) ~= "table" then
 					local bagSlot = DBitem.locations[location].bagSlot
@@ -482,8 +492,11 @@ p(DBitem.locations[location])
 					DBitem.locations[location].itemCount = nil
 				end
 				if DBitem.locations[location].bagSlot[slotId] then
-p("Adding to slot " .. slotId)
-					DBitem.locations[location].bagSlot[slotId] = DBitem.locations[location].bagSlot[slotId] + itemCount
+					if bAddQty then
+						DBitem.locations[location].bagSlot[slotId] = DBitem.locations[location].bagSlot[slotId] + itemCount
+					else
+						DBitem.locations[location].bagSlot[slotId] = itemCount
+					end
 					if DBitem.locations[location].bagSlot[slotId] == 0 then
 						DBitem.locations[location].bagSlot[slotId] = nil
 						if bagId == BAG_GUILDBANK then
@@ -493,11 +506,9 @@ p("Adding to slot " .. slotId)
 						end
 					end
 				else
-p("Overwriting slot " .. slotId)
 					DBitem.locations[location].bagSlot[slotId] = itemCount
 				end
 			else
-p("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, itemCount)
 				DBitem.locations[location] = {}
 				DBitem.locations[location].bagID = bagId
 				DBitem.locations[location].bagSlot = {}
@@ -529,7 +540,7 @@ p("Adding loc=<<1>>, slot <<2>>, count=<<3>>", location, slotId, itemCount)
 --		IIfA:ValidateItemCounts(bagId, slotId, DBv3[itemKey], itemKey, itemLink, true)
 --	end
 
-	p("saved bag/slot=<<1>>/<<2>> <<3>> x<<4>> -> <<5>>, loc=<<6>>", bagId, slotId, itemLink, itemCount, itemKey, location)
+--	p("saved bag/slot=<<1>>/<<2>> <<3>> x<<4>> -> <<5>>, loc=<<6>>", bagId, slotId, itemLink, itemCount, itemKey, location)
 
 	return DBv3[itemKey], itemKey
 
@@ -596,7 +607,7 @@ local function CollectBag(bagId, tracked)
 			if IsOwnerOfCurrentHouse() then
 				IIfA:ClearLocationData(GetCollectibleForHouseBankBag(bagId))
 			else
-				tracked = false		-- prevent reading the house bag if we're not in our own home
+				return		-- prevent reading the house bag if we're not in our own home
 			end
 		end
 		if tracked then
