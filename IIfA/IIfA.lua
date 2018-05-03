@@ -15,7 +15,7 @@ if IIfA == nil then IIfA = {} end
 --local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.17"
+IIfA.version 			= "3.18"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
