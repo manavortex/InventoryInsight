@@ -70,6 +70,7 @@ IIfA.dropdownLocNames = {
 	"All Banks",
 	"All Guild Banks",
 	"All Characters",
+	"All Account Owned",
 	"Bank and Characters",
 	"Bank and Current Character",
 	"Bank and other characters",
