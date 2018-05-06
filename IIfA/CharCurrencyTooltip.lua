@@ -2,18 +2,19 @@ local CharCurrencyFrame = ZO_Object:Subclass()
 if IIfA == nil then IIfA = {} end
 IIfA.CharCurrencyFrame = CharCurrencyFrame
 
+local g_currenciesData = ZO_CURRENCIES_DATA
+local function GetCurrencyColor(currencyType)
+	return g_currenciesData[currencyType].color
+end
+
 function CharCurrencyFrame:SetQty(control, field, fieldType, qty)
 	local ctl = control:GetNamedChild(field)
+
 	if qty == nil then
 		qty = 0
 	end
-	ZO_CurrencyControl_SetSimpleCurrency(ctl, fieldType, qty, ZO_KEYBOARD_CARRIED_CURRENCY_OPTIONS)
-	-- text in control looks like this
-    -- "@|u0:4:currency:1,748,124|u|t12:12:EsoUI/Art/currency/currency_gold.dds|t",
-	-- need to chop off the |t and all after to get rid of the icon
 
-	local ctlText = ctl:GetText()
-	ctl:SetText(ctlText:sub(1, ctlText:find("|t") - 1))
+	ctl:SetText(GetCurrencyColor(fieldType):Colorize(ZO_CurrencyControl_FormatCurrency(qty)))
 end
 
 function CharCurrencyFrame:UpdateAssets()
