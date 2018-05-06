@@ -37,16 +37,21 @@ function CharCurrencyFrame:FillCharAndBank()
 	self:SetQty(self.charControl, "qtyTV", CURT_TELVAR_STONES, tv)
 	self:SetQty(self.charControl, "qtyAP", CURT_ALLIANCE_POINTS, ap)
 	self:SetQty(self.charControl, "qtyWV", CURT_WRIT_VOUCHERS, wv)
+	
+	local bankedMoney = GetBankedCurrencyAmount(CURT_MONEY)
+	local bankedTelVarStones = GetBankedCurrencyAmount(CURT_TELVAR_STONES)
+	local bankedAlliancePoints = GetBankedCurrencyAmount(CURT_ALLIANCE_POINTS)
+	local bankedWritVouchers = GetBankedCurrencyAmount(CURT_WRIT_VOUCHERS)
 
-	self:SetQty(self.bankControl, "qtyGold", CURT_MONEY, GetBankedCurrencyAmount(CURT_MONEY))
-	self:SetQty(self.bankControl, "qtyTV", CURT_TELVAR_STONES, GetBankedCurrencyAmount(CURT_TELVAR_STONES))
-	self:SetQty(self.bankControl, "qtyAP", CURT_ALLIANCE_POINTS, GetBankedCurrencyAmount(CURT_ALLIANCE_POINTS))
-	self:SetQty(self.bankControl, "qtyWV", CURT_WRIT_VOUCHERS, GetBankedCurrencyAmount(CURT_WRIT_VOUCHERS))
+	self:SetQty(self.bankControl, "qtyGold", CURT_MONEY, bankedMoney)
+	self:SetQty(self.bankControl, "qtyTV", CURT_TELVAR_STONES, bankedTelVarStones)
+	self:SetQty(self.bankControl, "qtyAP", CURT_ALLIANCE_POINTS, bankedAlliancePoints)
+	self:SetQty(self.bankControl, "qtyWV", CURT_WRIT_VOUCHERS, bankedWritVouchers)
 
-	gold = gold + GetBankedCurrencyAmount(CURT_MONEY) + self.totGold
-	tv = tv + GetBankedCurrencyAmount(CURT_TELVAR_STONES) + self.totTV
-	ap = ap + GetBankedCurrencyAmount(CURT_ALLIANCE_POINTS) + self.totAP
-	wv = wv + GetBankedCurrencyAmount(CURT_WRIT_VOUCHERS) + self.totWV
+	gold = gold + bankedMoney + self.totGold
+	tv = tv + bankedTelVarStones + self.totTV
+	ap = ap + bankedAlliancePoints + self.totAP
+	wv = wv + bankedWritVouchers + self.totWV
 
 	self:SetQty(self.totControl, "qtyGold", CURT_MONEY, gold)
 	self:SetQty(self.totControl, "qtyTV", CURT_TELVAR_STONES, tv)
