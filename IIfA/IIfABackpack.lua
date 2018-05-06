@@ -117,6 +117,10 @@ local function DoesInventoryMatchList(locationName, location)
 	elseif (filter == "All Characters") then
 		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN)
 
+	elseif (filter == "All Account Owned") then
+		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_VIRTUAL) or
+			(nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0)
+
 	elseif (filter == "Bank and Characters") then
 		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
 
