@@ -118,7 +118,7 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 
 	for i=1, GetNumCharacters() do
 		local charName, _, _, _, _, alliance, charId, _ = GetCharacterInfo(i)
-		charName = charName:sub(1, charName:find("%^") - 1)
+		charName = zo_strformat(SI_UNIT_NAME, charName)
 		tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_" .. i, self.frame, "IIFA_CharCurrencyRow")
 		if i == 1 then
 			tControl:SetAnchor(TOPLEFT, prevControl:GetNamedChild("_Title"), BOTTOMLEFT, 0, 26)
