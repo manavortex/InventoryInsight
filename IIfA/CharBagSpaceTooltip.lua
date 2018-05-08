@@ -135,7 +135,8 @@ function CharBagFrame:FillCharAndBank()
 			end
 		else
 			tControl:SetHeight(0)
-			self.currAssets.houseChestSpace[ctr] = nil
+-			tControl:GetNamedChild("charName"):SetText("")
+ -			self.parent.houseChestSpace[ctr] = nil
 		end
 	end
 
