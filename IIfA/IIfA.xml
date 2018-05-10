@@ -390,6 +390,16 @@
 															pressed="IIfA/assets/apparel/jewelry_down.dds"
 															mouseOver="IIfA/assets/apparel/jewelry_over.dds" />
 										</Button>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Vanity")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_DISGUISE, EQUIP_TYPE_COSTUME}, {"Placeholder", "Disguise", "Costume"})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/vanity_up.dds"
+															pressed="IIfA/assets/apparel/vanity_down.dds"
+															mouseOver="IIfA/assets/apparel/vanity_over.dds" />
+										</Button>
 									</Controls>
 								</Control>
 <!-- End SubFilter Group 2 - Armor/Clothing -->
