@@ -129,7 +129,7 @@ function CharBagFrame:FillCharAndBank()
 				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(GetCollectibleForHouseBankBag(ctr))
 				end
-				tControl:GetNamedChild("charName"):SetText(cName)
+				tControl:GetNamedChild("charName"):SetText(zo_strformat(SI_TOOLTIP_ITEM_TAG_FORMATER, cName))
 				spaceUsed = spaceUsed + tempUsed
 				spaceMax = spaceMax + GetBagSize(ctr)
 			end
@@ -140,20 +140,19 @@ function CharBagFrame:FillCharAndBank()
 		end
 	end
 
-	local iFrameHeight
 	local iDivCount = 2
-
 	if iChestCount > 0 then
 		self.divider3:SetHeight(3)
 		if not bFoundData then
+			local alertText = ZO_ERROR_COLOR:Colorize("Enter House once")
 			tControl = self.houseChestControls[BAG_HOUSE_BANK_ONE]
 			tControl:SetHeight(26)
-			tControl:GetNamedChild("charName"):SetText("Enter House once")
+			tControl:GetNamedChild("charName"):SetText(alertText)
 		end
 		iDivCount = iDivCount + 1
 	end
 
-	iFrameHeight = ((GetNumCharacters() + 4 + iChestCount) * 26) + (iDivCount * 3)		-- numchars + numChests + 4 (title line + bank + total + dividers)
+	local iFrameHeight = ((GetNumCharacters() + 4 + iChestCount) * 26) + (iDivCount * 3)	-- numchars + numChests + 4 (title line + bank + total + dividers)
 
 	self.frame:SetHeight(iFrameHeight)
 
