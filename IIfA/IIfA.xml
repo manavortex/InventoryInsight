@@ -5,14 +5,15 @@
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-25" offsetY="40" />
 
 			<OnMoveStop>IIfA:SaveFrameInfo("onMoveStop")</OnMoveStop>
+			<OnResizeStart> IIfA:onResizeStart() </OnResizeStart>
 			<OnResizeStop>IIfA:onResizeStop()</OnResizeStop>
-
+			
 			<Controls>
-				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
+				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
 
 				<Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
-					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT"/>
-					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="10" offsetX="10"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
 
 					<Controls>
 <!-- Lock/Unlock buttons -->
@@ -72,7 +73,7 @@
 						</Label>
 
 						<Button name="$(parent)_Hide">
-							<Anchor point="TOPRIGHT" relativeTo="IIFA_GUI" relativePoint="TOPRIGHT" offsetX="0" offsetY="3"/>
+							<Anchor point="TOPRIGHT" relativeTo="IIFA_GUI" relativePoint="TOPRIGHT" offsetX="-10" offsetY="13"/>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Hide window")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 							<OnMouseUp>IIfA:GUIButtonHideOnMouseUp()</OnMouseUp>
@@ -144,7 +145,7 @@
 						<Control name="$(parent)_Dropdown_Quality" inherits="ZO_ComboBox" mouseEnabled="true" >
 							<Dimensions y="29" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown" relativePoint="TOPRIGHT" offsetX="10" />
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY= "45"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-7" offsetY= "45"/>
 							<OnShow>IIfA:GuiSetupQualityDropdown(self)</OnShow>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
@@ -913,7 +914,7 @@
 				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
 					<DimensionConstraints  minY="52"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10"/>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-27" offsetY="-45"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
 					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
 
 					<Controls>
@@ -948,8 +949,8 @@
 
 				<Control name="$(parent)_Search" mouseEnabled="true" resizeToFitDescendents="false">
 
-					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="16" offsetY="-10"/>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-56" offsetY="-10"/>
+					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="22" offsetY="-20"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-60" offsetY="-20"/>
 					<Dimensions y="36" />
 					<Controls>
 						<EditBox name="$(parent)Box"  inherits="ZO_InventorySearchBox" >
