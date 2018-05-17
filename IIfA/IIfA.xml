@@ -145,7 +145,7 @@
 						<Control name="$(parent)_Dropdown_Quality" inherits="ZO_ComboBox" mouseEnabled="true" >
 							<Dimensions y="29" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown" relativePoint="TOPRIGHT" offsetX="10" />
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY= "45"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-7" offsetY= "45"/>
 							<OnShow>IIfA:GuiSetupQualityDropdown(self)</OnShow>
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
