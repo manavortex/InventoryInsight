@@ -440,9 +440,16 @@ function IIfA:GuiResizeLines()
 	end
 end
 
+function IIfA:onResizeStart()
+	EVENT_MANAGER:RegisterForUpdate(IIfA.name.."OnWindowResize", 50,function() IIfA:GuiResizeScroll() if not IIfA:GetSceneSettings().docked then
+		IIfA:UpdateInventoryScroll()
+	end end)
+end
+
 function IIfA:onResizeStop()
 	-- if you resize the box, you need to resize the list to go with it
 	-- local sceneName = IIfA:GetCurrentSceneName()
+	EVENT_MANAGER:UnregisterForUpdate(IIfA.name.."OnWindowResize")
 	local settings = IIfA:GetSceneSettings()
 
 	IIfA:SaveFrameInfo("onResizeStop")
@@ -452,8 +459,6 @@ function IIfA:onResizeStop()
 		IIfA:UpdateInventoryScroll()
 	end
 end
-
-
 
 -- put separate dock/minimize/restore sizing code into unified function so all resizing gets done in one place, one time
 function IIfA:RePositionFrame(settings)
