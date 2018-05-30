@@ -7,7 +7,7 @@
 			<OnMoveStop>IIfA:SaveFrameInfo("onMoveStop")</OnMoveStop>
 			<OnResizeStart> IIfA:onResizeStart() </OnResizeStart>
 			<OnResizeStop>IIfA:onResizeStop()</OnResizeStop>
-			
+
 			<Controls>
 				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
 
@@ -557,7 +557,7 @@
 											<Dimensions x="36" y="36"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Materials")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER, ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_RUNE_POTENCY, ITEMTYPE_FISH, ITEMTYPE_FLAVORING, ITEMTYPE_INGREDIENT, ITEMTYPE_POISON_BASE, ITEMTYPE_POTION_BASE, ITEMTYPE_REAGENT, ITEMTYPE_RAW_MATERIAL, ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_SPICE, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER, ITEMTYPE_STYLE_MATERIAL, ITEMTYPE_FURNISHING_MATERIAL})</OnMouseUp>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER, ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_RUNE_POTENCY, ITEMTYPE_FISH, ITEMTYPE_FLAVORING, ITEMTYPE_INGREDIENT, ITEMTYPE_POISON_BASE, ITEMTYPE_POTION_BASE, ITEMTYPE_REAGENT, ITEMTYPE_RAW_MATERIAL, ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_SPICE, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER, ITEMTYPE_STYLE_MATERIAL, ITEMTYPE_FURNISHING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_RAW_BOOSTER, ITEMTYPE_JEWELRY_TRAIT, ITEMTYPE_JEWELRY_RAW_TRAIT})</OnMouseUp>
 											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
 															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
 															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
@@ -598,6 +598,18 @@
 										<Button name="$(parent)_Button4">
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Jewlery Crafting")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL, ITEMTYPE_JEWELRY_RAW_TRAIT, ITEMTYPE_JEWELRYCRAFTING_RAW_BOOSTER, ITEMTYPE_JEWELRYCRAFTING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_BOOSTER},
+																																{"Raw Material", "Raw Trait Material", "Raw Plating", "Material", "Plating"})</OnMouseUp>
+											<Textures
+												normal = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_up.dds"
+												pressed = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_down.dds"
+												mouseOver = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Alchemy")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_REAGENT, ITEMTYPE_POTION_BASE, ITEMTYPE_POISON_BASE}, {"Reagent", "Potion Base", "Poison Base"})</OnMouseUp>
@@ -606,8 +618,8 @@
 												pressed = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_alchemy_down.dds"
 												mouseOver = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_alchemy_over.dds" />
 										</Button>
-										<Button name="$(parent)_Button5">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="36" y="36"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Enchanting")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
@@ -617,8 +629,8 @@
 												pressed = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_enchanting_down.dds"
 												mouseOver = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_enchanting_over.dds" />
 										</Button>
-										<Button name="$(parent)_Button6">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="36" y="36"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Provisioning")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
@@ -628,8 +640,8 @@
 												pressed = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_provisioning_down.dds"
 												mouseOver = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_provisioning_over.dds" />
 										</Button>
-										<Button name="$(parent)_Button7">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+										<Button name="$(parent)_Button8">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="36" y="36"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Styles")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
@@ -639,27 +651,16 @@
 												pressed = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_styleMaterial_down.dds"
 												mouseOver = "EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_styleMaterial_over.dds" />
 										</Button>
-										<Button name="$(parent)_Button8">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+										<Button name="$(parent)_Button9">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="36" y="36"/>
-											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Weapon Traits")</OnMouseEnter>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Traits")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_WEAPON_TRAIT})</OnMouseUp>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_JEWELRY_TRAIT}, {"Weapon", "Armor", "Jewelry"})</OnMouseUp>
 											<Textures
 												normal = "EsoUI/Art/Crafting/smithing_tabicon_weaponSet_up.dds"
 												pressed = "EsoUI/Art/Crafting/smithing_tabIcon_weaponSet_down.dds"
 												mouseOver = "EsoUI/Art/Crafting/smithing_tabIcon_weaponSet_over.dds" />
-										</Button>
-										<Button name="$(parent)_Button9">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
-											<Dimensions x="36" y="36"/>
-											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Armor Traits")</OnMouseEnter>
-											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT})</OnMouseUp>
-											<Textures
-												normal = "EsoUI/Art/Crafting/smithing_tabicon_armorSet_up.dds"
-												pressed = "EsoUI/Art/Crafting/smithing_tabIcon_armorSet_down.dds"
-												mouseOver = "EsoUI/Art/Crafting/smithing_tabIcon_armorSet_over.dds" />
 										</Button>
 										<Button name="$(parent)_Button10">
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button9" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
@@ -898,7 +899,7 @@
 								</Control>
 
 								<Control name="$(parent)_Subfilter_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" hidden="true">
-									<Dimensions x="125" />
+									<Dimensions x="118" />
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_SortQuality" relativePoint="TOPRIGHT" offsetX="0" offsetY="-2"/>
 									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Item Type Filter")</OnMouseEnter>
 									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
