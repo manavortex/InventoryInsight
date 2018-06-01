@@ -124,23 +124,23 @@ IIfA.racialTextures = {
 	[60] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(60)), styleTexture = getTex("clockwork")}, 			-- Refabricated (Clockwork)
 	[61] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(61)), styleTexture = getTex("bloodforge")}, 			-- Bloodforge
 	[62] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(62)), styleTexture = getTex("dreadhorn")}, 			-- Dreadhorn
-	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex(IIfA.EMPTY_STRING)},			-- Unused
+	[63] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(63)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[64] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(64)), styleTexture = getTex(IIfA.EMPTY_STRING)},	-- Unused
 	[65] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(65)), styleTexture = getTex("apostle")},				-- Apostle
 	[66] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(66)), styleTexture = getTex("ebonshadow")},			-- Ebonshadow
 	[67] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(67)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Undaunted
-	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
+	[68] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(68)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
 	[69] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(69)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Fang Lair
-	[70] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(70)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragon Priest
-	[71] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(71)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[72] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(72)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[73] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(73)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[74] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(74)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[75] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(75)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
-	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 		-- Unused
+	[70] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(70)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Scalecaller (dragon priest)
+	[71] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(71)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Psijic Order
+	[72] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(72)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Sapiarch
+	[73] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(73)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Welkynar
+	[74] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(74)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dremora
+	[75] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(75)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Pyandonean
+	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Divine Prosecution
+	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
 }
 
 -- check on icons Hlaalu, Redoran and Morag Tong not loading properly
