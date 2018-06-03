@@ -328,7 +328,7 @@ function IIfA:RescanHouse(houseCollectibleId)
 	local function getAllPlacedFurniture()
 		local ret = {}
 		 while(true) do
-			furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
+			local furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
 			if(not furnitureId) then return ret end
 			local itemLink = GetPlacedFurnitureLink(furnitureId, LINK_STYLE_BRACKETS)
 			if not ret[itemLink] then
@@ -452,7 +452,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	local bAddQty = false
 	if qty ~= nil then bAddQty = true end
-	itemCount = qty or getItemCount(bagId, slotId, itemLink)
+	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
 

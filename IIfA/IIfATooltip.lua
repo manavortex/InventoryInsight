@@ -18,7 +18,7 @@ function IIfA:Tooltip_AddDivider(tooltipControl)
 
     if divider then
 		-- AM - new code
-		local Div1
+		local div1
 		div1 = tooltipControl:GetNamedChild("Divider1")
 		if div1 then
 --			d(div1:GetTextureFileName() .. " / " .. divider:GetTextureFileName())

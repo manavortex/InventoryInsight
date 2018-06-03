@@ -802,7 +802,7 @@ p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 
 		local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox
 
-		function OnItemSelect(_, choiceText, choice)
+		local function OnItemSelect(_, choiceText, choice)
 			IIfA:SetInventoryListFilterQuality(getQualityDict()[choiceText])
 			PlaySound(SOUNDS.POSITIVE_CLICK)
 		end
