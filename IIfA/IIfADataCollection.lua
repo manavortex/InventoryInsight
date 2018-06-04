@@ -452,6 +452,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	local bAddQty = false
 	if qty ~= nil then bAddQty = true end
+
 	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
