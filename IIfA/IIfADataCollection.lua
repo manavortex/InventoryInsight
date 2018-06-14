@@ -122,8 +122,8 @@ function IIfA:CollectGuildBank(curGuild)
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
 			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
 		end
+		p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 	end)
-	p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 end
 
 
