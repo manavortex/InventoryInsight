@@ -312,7 +312,7 @@ end
 function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
-	if not houseCollectibleId then return end
+	if not houseCollectibleId or not IIfA.trackedBags[houseCollectibleId] then return end
 
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
 
