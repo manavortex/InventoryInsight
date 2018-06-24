@@ -444,6 +444,10 @@ local function fillLine(curLine, curItem)
 		curLine.qty:SetText(IIfA.EMPTY_STRING)
 		curLine.worn:SetHidden(true)
 		curLine.stolen:SetHidden(true)
+		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua
+		if IIfA.UpdateFCOISMarkerIcons ~= nil then
+			IIfA:UpdateFCOISMarkerIcons(curLine, false, false, -1)
+		end
 	else
 		local r, g, b, a = 255, 255, 255, 1
 		if (curItem.quality) then
@@ -459,6 +463,11 @@ local function fillLine(curLine, curItem)
 		curLine.qty:SetText(curItem.qty)
 		curLine.worn:SetHidden(not curItem.worn)
 		curLine.stolen:SetHidden(not IsItemLinkStolen(curItem.link))
+		--Show the FCOIS marker icons at the line, if enabled in the settings (create them if needed)  -> File plugins/FCOIS/IIfA_FCOIS.lua
+		if IIfA.UpdateFCOISMarkerIcons ~= nil then
+			local showFCOISMarkerIcons = IIfA:GetSettings().FCOISshowMarkerIcons
+			IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, showFCOISMarkerIcons, -1)
+		end
 	end
 end
 
