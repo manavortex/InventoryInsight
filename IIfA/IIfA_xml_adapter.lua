@@ -508,7 +508,7 @@ function IIfA:RePositionFrame(settings)
 	if bMinimize then
 		IIFA_GUI:SetResizeHandleSize(0)
 		-- have to change the constraints, it even constrains resizing by code, not just resize by sizing handles
-   		IIFA_GUI:SetDimensionConstraints(IIfA.minWidth, 33, -1, 1400)
+   		IIFA_GUI:SetDimensionConstraints(IIfA.minWidth, 44, -1, 1400)
 
 		IIFA_GUI:SetHeight(33)
 		IIFA_GUI:SetWidth(settings.width)
