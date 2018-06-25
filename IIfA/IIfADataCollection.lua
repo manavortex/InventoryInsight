@@ -81,7 +81,6 @@ function IIfA:CollectGuildBank(curGuild)
 	end
 
 	SelectGuildBank(curGB)
-	local itemCount = 0
 
 	if(IIfA.data.guildBanks[curGuild] == nil) then
 		IIfA.data.guildBanks[curGuild] = {}
@@ -95,7 +94,7 @@ function IIfA:CollectGuildBank(curGuild)
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
-		local i, slotIndex
+		local itemCount, slotIndex
 		itemCount = 0
 		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
 		while slotIndex do
@@ -105,7 +104,6 @@ function IIfA:CollectGuildBank(curGuild)
 
 		p("GuildBank Item Count = " .. itemCount)
 
---		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
 
 		IIfA:ClearLocationData(curGuild)
@@ -122,8 +120,8 @@ function IIfA:CollectGuildBank(curGuild)
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
 			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
 		end
+		p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 	end)
-	p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 end
 
 
@@ -452,6 +450,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	local bAddQty = false
 	if qty ~= nil then bAddQty = true end
+
 	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)

@@ -159,12 +159,15 @@ function IIfA:RebuildHouseMenuDropdowns()
 	end
 	IIfA.houseNamesIgnored = ignored
 	IIfA.houseNamesTracked = tracked
-endfunction IIfA:GetIgnoredHouseNames()
+end
+
+function IIfA:GetIgnoredHouseNames()
 	if nil == IIfA.houseNamesIgnored then
 		IIfA:RebuildHouseMenuDropdowns()
 	end
 	return IIfA.houseNamesIgnored
 end
+
 function IIfA:GetTrackedHouseNames()
 	if nil == IIfA.houseNamesIgnored then
 		IIfA:RebuildHouseMenuDropdowns()
@@ -179,6 +182,7 @@ function IIfA:GetAllHouseIds()
 	end
 	return ret
 end
+
 function IIfA:SetTrackingForHouse(houseCollectibleId, trackIt)
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if tonumber(houseCollectibleId) ~= houseCollectibleId then
