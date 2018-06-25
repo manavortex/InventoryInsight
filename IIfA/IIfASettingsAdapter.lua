@@ -137,7 +137,10 @@ end
 function IIfA:GetTrackingWithHouseNames()
 	local ret = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
-		ret[GetCollectibleName(collectibleId)] = true
+        local collectibleName = GetCollectibleName(collectibleId)
+        --remove gender specific characters from house name
+        collectibleName = zo_strformat("<<C:1>>", collectibleName)
+		ret[collectibleName] = true
 	end
 	return ret
 end
@@ -147,6 +150,8 @@ function IIfA:RebuildHouseMenuDropdowns()
 	local ignored = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
 		local collectibleName = GetCollectibleName(collectibleId)
+		--remove gender specific characters from house name
+        collectibleName = zo_strformat("<<C:1>>", collectibleName)
 		-- cache house name for lookup
 		IIfA.houseNameToIdTbl[collectibleName] = collectibleId
 		local targetTable = (trackIt and tracked) or ignored
@@ -154,8 +159,7 @@ function IIfA:RebuildHouseMenuDropdowns()
 	end
 	IIfA.houseNamesIgnored = ignored
 	IIfA.houseNamesTracked = tracked
-end
-function IIfA:GetIgnoredHouseNames()
+endfunction IIfA:GetIgnoredHouseNames()
 	if nil == IIfA.houseNamesIgnored then
 		IIfA:RebuildHouseMenuDropdowns()
 	end
