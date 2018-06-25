@@ -81,7 +81,6 @@ function IIfA:CollectGuildBank(curGuild)
 	end
 
 	SelectGuildBank(curGB)
-	local itemCount = 0
 
 	if(IIfA.data.guildBanks[curGuild] == nil) then
 		IIfA.data.guildBanks[curGuild] = {}
@@ -95,7 +94,7 @@ function IIfA:CollectGuildBank(curGuild)
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
-		local i, slotIndex
+		local itemCount, slotIndex
 		itemCount = 0
 		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
 		while slotIndex do
@@ -105,7 +104,6 @@ function IIfA:CollectGuildBank(curGuild)
 
 		p("GuildBank Item Count = " .. itemCount)
 
---		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
 
 		IIfA:ClearLocationData(curGuild)
