@@ -435,6 +435,19 @@ function IIfA:TableCount(tbl)
 	return cnt
 end
 
+--@Baetram:
+-- Added for other addons like FCOItemSaver to get the item instance or the unique ID
+-->Returns itemInstance or uniqueId as 1st return value
+-->Returns a boolean value as 2nd retun value: true if the bagId should build an itemInstance or unique ID / false if not
+local function getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
+    local itemInstanceOrUniqueId = 0
+    local isBagToBuildItemInstanceOrUniqueId = false
+    if FCOIS == nil then return 0, false end
+    --Call function within addon FCOItemSaver, file FCOIS_OtherAddons.lua -> IIfA section
+    itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = FCOIS.getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
+    return itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId
+end
+
 function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, locationID)
 	if not IIfA.trackedBags[bagId] then return end
 
@@ -462,6 +475,13 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	if qty ~= nil then bAddQty = true end
 
 	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
+
+    --@Baetram:
+	--Item instance/unique id  (needed for other addons like FCOItemSaver to (un)mark items via that id)
+	local itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = getItemInstanceOrUniqueId(bagId, slotId, itemLink)
+	if isBagToBuildItemInstanceOrUniqueId then
+		p("[EvalBagItem]Item instance or unique ID: <<1>>", itemInstanceOrUniqueId)
+	end
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
 
@@ -523,7 +543,12 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 				DBitem.locations[location].bagSlot = {}
 				DBitem.locations[location].bagSlot[slotId] = itemCount
 			end
-		end
+        end
+        --@Baetram:
+        --Added for other addons like FCOItemSaver. Only needed for non-account wide bags!
+        if isBagToBuildItemInstanceOrUniqueId then
+            DBitem.itemInstanceOrUniqueId = itemInstanceOrUniqueId
+        end
 	else
 		DBv3[itemKey] = {}
 		DBv3[itemKey].filterType = itemFilterType
@@ -534,6 +559,11 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 		DBv3[itemKey].locations[location].bagID = bagId
 		DBv3[itemKey].locations[location].bagSlot = {}
 		DBv3[itemKey].locations[location].bagSlot[slotId] = itemCount
+        --@Baetram:
+        --Added for other addons like FCOItemSaver. Only needed for non-account wide bags!
+        if isBagToBuildItemInstanceOrUniqueId then
+            DBv3[itemKey].itemInstanceOrUniqueId = itemInstanceOrUniqueId
+        end
 		DBitem = DBv3[itemKey]
 	end
 
