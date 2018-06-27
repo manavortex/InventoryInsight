@@ -757,6 +757,8 @@ p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(cId)
 				end
+                		--remove gender specific characters from house bank chest name
+                		cName = zo_strformat("<<C:1>>", cName)
 				if cName == choiceText then
 					IIfA:SetInventoryListFilter("Housing Storage", ctr)
 					break
@@ -788,6 +790,8 @@ p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(cId)
 				end
+                		--remove gender specific characters from house bank chest name
+                		cName = zo_strformat("<<C:1>>", cName)
 				entry = comboBox:CreateItemEntry(cName, OnChestSelect)
 				comboBox:AddItem(entry)
 			end

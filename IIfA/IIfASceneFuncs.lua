@@ -37,22 +37,34 @@ function IIfA:RegisterForSceneChanges()
 			end
 		end
 	end
+
+	INVENTORY_FRAGMENT:RegisterCallback("StateChange", function(...)
+	   	IIfA:ProcessInventoryTabChange("", ...)
+	end)
+	CRAFT_BAG_FRAGMENT:RegisterCallback("StateChange", function(...)
+	   	IIfA:ProcessInventoryTabChange("", ...)
+	end)
+	WALLET_FRAGMENT:RegisterCallback("StateChange", function(...)
+	   	IIfA:ProcessInventoryTabChange("", ...)
+	end)
+	QUICKSLOT_FRAGMENT:RegisterCallback("StateChange", function(...)
+	   	IIfA:ProcessInventoryTabChange("_quickSlots", ...)
+	end)
 end
 
 function IIfA:GetSceneSettings(sceneName)
 
 	sceneName = sceneName or IIfA:GetCurrentSceneName()
-
-
 	local settings = IIfA:GetSettings().frameSettings
-
 	if not settings[sceneName] then
 		-- if we have to create a new set of scene info, register it in the scene change too, it'll be set again during next opening
 
 		local scene = SCENE_MANAGER:GetScene(sceneName)
-		scene:RegisterCallback("StateChange", function(...)
-				IIfA:ProcessSceneChange(sceneName, ...)
-			end)
+		if scene then
+			scene:RegisterCallback("StateChange", function(...)
+					IIfA:ProcessSceneChange(sceneName, ...)
+				end)
+		end
 		-- save the settings in the settings table, base it on HUD
 		settings[sceneName] = ZO_DeepTableCopy(settings["hud"])
 		settings[sceneName].hidden = true
@@ -68,6 +80,23 @@ function IIfA:ProcessSceneChange(sceneName, oldState, newState)
 	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState))
 	if SCENE_SHOWN == newState then
 		sceneName = IIfA:GetCurrentSceneName()
+		if sceneName == "inventory" then
+			if not QUICKSLOT_FRAGMENT:IsHidden() then
+				sceneName = sceneName .. "_quickslots"
+			end
+		end
+		local settings = IIfA:GetSceneSettings(sceneName)
+		self:RePositionFrame(settings)
+	elseif SCENE_HIDDEN == newState then
+		IIFA_GUI:SetHidden(true)
+	end
+end
+
+
+function IIfA:ProcessInventoryTabChange(tabName, oldState, newState)
+	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", oldState, newState))
+	if newState == SCENE_SHOWN then
+		sceneName = "inventory" .. tabName
 		local settings = IIfA:GetSceneSettings(sceneName)
 		self:RePositionFrame(settings)
 
@@ -81,6 +110,10 @@ function IIfA:SaveFrameInfo(calledFrom)
 	if (calledFrom == "onHide") then return end
 
 	local sceneName = IIfA:GetCurrentSceneName()
+	if not QUICKSLOT_FRAGMENT:IsHidden() then
+		sceneName = sceneName .. "_quickslots"
+	end
+
 	local settings = IIfA:GetSceneSettings(sceneName)
 
     settings.hidden = IIFA_GUI:IsControlHidden()
@@ -95,7 +128,7 @@ function IIfA:SaveFrameInfo(calledFrom)
 	end
 end
 
--- called only from bindings.xml on keypress
+-- called from bindings.xml on keypress, and on /iifa toggle chat cmd
 function IIfA:ToggleInventoryFrame()
 	IIFA_GUI:SetHidden(not IIFA_GUI:IsControlHidden())
 	if not IIFA_GUI:IsControlHidden() then

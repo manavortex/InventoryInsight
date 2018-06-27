@@ -80,8 +80,7 @@ function IIfA:CollectGuildBank(curGuild)
 		end
 	end
 
-	SelectGuildBank(CurGB)
-	local count = 0
+	SelectGuildBank(curGB)
 
 	if(IIfA.data.guildBanks[curGuild] == nil) then
 		IIfA.data.guildBanks[curGuild] = {}
@@ -95,7 +94,7 @@ function IIfA:CollectGuildBank(curGuild)
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.data.guildBanks[curGuild]
-		local itemCount, i, slotIndex
+		local itemCount, slotIndex
 		itemCount = 0
 		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
 		while slotIndex do
@@ -105,7 +104,6 @@ function IIfA:CollectGuildBank(curGuild)
 
 		p("GuildBank Item Count = " .. itemCount)
 
---		guildData.items = #ZO_GuildBankBackpack.data
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
 
 		IIfA:ClearLocationData(curGuild)
@@ -122,11 +120,9 @@ function IIfA:CollectGuildBank(curGuild)
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
 			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
 		end
+		p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 	end)
-	p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 end
-
-
 
 function IIfA:ScanCurrentCharacter()
 
@@ -308,12 +304,15 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 	end)
 end
 
-
+function IIfA:IgnoreHouse(houseCollectibleId)
+    houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
+end
 function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not houseCollectibleId or not IIfA.trackedBags[houseCollectibleId] then return end
-
+    
+    -- if GetHouseCategoryType(GetCurrentZoneHouseId()) == HOUSE_CATEGORY_TYPE_NOTABLE then return end
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
 
 	if not IIfA.data.collectHouseData[houseCollectibleId] then
@@ -324,33 +323,42 @@ function IIfA:RescanHouse(houseCollectibleId)
 		IIfA.trackedBags[houseCollectibleId] = true
 	end
 
+    -- TODO: Debug this
 	--- stuff them all into an array
 	local function getAllPlacedFurniture()
 		local ret = {}
+        local counter = 1
+        local furnitureId = nil
 		 while(true) do
-			local furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
-			if(not furnitureId) then return ret end
+			furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
+			if (not furnitureId or counter > 10000 ) then return ret end
 			local itemLink = GetPlacedFurnitureLink(furnitureId, LINK_STYLE_BRACKETS)
-			if not ret[itemLink] then
-				ret[itemLink] = 1
-			else
-				ret[itemLink] = ret[itemLink] + 1
-			end
+			-- if not ret[itemLink] then
+				-- ret[itemLink] = 1
+			-- else
+            ret[itemLink] = ( ret[itemLink] or 1 ) + 1
+			-- end
+            counter = counter + 1
 		end
+        return ret
 	end
+    
+    IIfA.getAllPlacedFurniture = getAllPlacedFurniture
 
 	-- call with libAsync to avoid lag
 	task:Call(function()
 		-- clear and re-create, faster than conditionally updating
 		IIfA:ClearLocationData(houseCollectibleId)
---	end):Then(function()
-		for itemLink, itemCount in pairs(getAllPlacedFurniture()) do
+        
+   
+	end):Then(function()  -- TODO - can this go again? Having it in here at least prevented the crash
+        local placedFurniture = getAllPlacedFurniture()
+		for itemLink, itemCount in pairs(placedFurniture) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			p("furniture item <<1>> x<<2>>", itemLink, itemCount)
 			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA_GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 		end
 	end)
-
 end
 
 -- try to read item name from bag/slot - if that's empty, we read it from item link
@@ -452,6 +460,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	-- item count is either passed or we have to get it from bag/slot ID or item link
 	local bAddQty = false
 	if qty ~= nil then bAddQty = true end
+
 	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
 	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
@@ -697,12 +706,9 @@ function IIfA:ClearLocationData(location, bagID)		-- if loc is characterid, bagI
 	local itemLocation = nil
 	local LocationCount = 0
 	local itemName, itemData
-	local bChar
-	if bagID == nil then
-		bChar = nil
-	else
-		bChar = location == IIfA.currentCharacterId
-	end
+	
+    local bChar = (bagID == nil and nil) or location == IIfA.currentCharacterId
+	
 
 	if(DBv3)then
 		p(zo_strformat("IIfA:ClearLocationData(<<1>>, <<2>>)", location, bagID))

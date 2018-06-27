@@ -154,7 +154,7 @@ local function fgb4(...)
 	IIfA_EventDump(...)
 end
 local function fgb5(...)
-	d("gb items ready")
+	d("inventory fragment state change")
 	IIfA_EventDump(...)
 end
 
@@ -206,6 +206,7 @@ function IIfA:RegisterForEvents()
 
 	--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA:ProcessRightClick(rowControl) end)
+
 end
 
 
