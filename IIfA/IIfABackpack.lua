@@ -160,6 +160,11 @@ local function DoesInventoryMatchList(locationName, location)
 		end
 	end
 end
+--@Baetram:
+--Made the function global to be used in other addons like FCOItemSaver
+function IIfA:DoesInventoryMatchList(locationName, location)
+	return DoesInventoryMatchList(locationName, location)
+end
 
 local function matchCurrentInventory(locationName)
 --	if locationName == "attributes" then return false end
@@ -444,6 +449,10 @@ local function fillLine(curLine, curItem)
 		curLine.qty:SetText(IIfA.EMPTY_STRING)
 		curLine.worn:SetHidden(true)
 		curLine.stolen:SetHidden(true)
+		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua
+		if IIfA.UpdateFCOISMarkerIcons ~= nil then
+			IIfA:UpdateFCOISMarkerIcons(curLine, false, false, -1)
+		end
 	else
 		local r, g, b, a = 255, 255, 255, 1
 		if (curItem.quality) then
@@ -459,6 +468,11 @@ local function fillLine(curLine, curItem)
 		curLine.qty:SetText(curItem.qty)
 		curLine.worn:SetHidden(not curItem.worn)
 		curLine.stolen:SetHidden(not IsItemLinkStolen(curItem.link))
+		--Show the FCOIS marker icons at the line, if enabled in the settings (create them if needed)  -> File plugins/FCOIS/IIfA_FCOIS.lua
+		if IIfA.UpdateFCOISMarkerIcons ~= nil then
+			local showFCOISMarkerIcons = IIfA:GetSettings().FCOISshowMarkerIcons
+			IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, false, -1)
+		end
 	end
 end
 
@@ -623,6 +637,7 @@ function IIfA:GetAccountInventoryList()
 		end
 	end
 
+	--house banks
 	if IIfA.data.b_collectHouses then
 		-- table.insert(accountInventories, "All Houses") --  4-11-18 AM - removed duplicate entry, it's in the dropdownLocNames already
 		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
@@ -719,7 +734,6 @@ end
 -- general note for popup menus
 -- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
 -- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
-
 function IIfA:SetupBackpack()
 
 	local function createInventoryDropdown()
