@@ -442,7 +442,7 @@ end
 local function getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
     local itemInstanceOrUniqueId = 0
     local isBagToBuildItemInstanceOrUniqueId = false
-    if FCOIS == nil then return 0, false end
+    if FCOIS == nil or FCOIS.getItemInstanceOrUniqueId == nil then return 0, false end
     --Call function within addon FCOItemSaver, file FCOIS_OtherAddons.lua -> IIfA section
     itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = FCOIS.getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
     return itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId
