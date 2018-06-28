@@ -7,7 +7,7 @@
 	Collects inventory data for all characters on a single account including the shared bank and makes this information available
 	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder ScrollsÂ® and related
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
 ------------------------------------------------------------------
@@ -404,8 +404,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	if ObjSettings.FCOISshowMarkerIcons == nil then
 		ObjSettings.FCOISshowMarkerIcons = false
 		IIfA.data.FCOISshowMarkerIcons = false
-	end	
-	
+	end
+
 	if IIfA.data.guildBanks == nil then
 		IIfA.data.guildBanks = {}
 		local i
@@ -431,11 +431,11 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0
 
 	-- save off anchors for the ListHolder
-	local _, point, relTo, relPoint, offsX, offsY = IIFA_GUI_ListHolder:GetAnchor(0)
-	IIFA_GUI_ListHolder.savedAnchor1 = {point, relTo, relPoint, offsX, offsY}
+	--local _, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(0)
+	--IIFA_GUI_ListHolder.savedAnchor1 = {point, relTo, relPoint, offsX, offsY, constrains}
 
-	_, point, relTo, relPoint, offsX, offsY = IIFA_GUI_ListHolder:GetAnchor(1)
-	IIFA_GUI_ListHolder.savedAnchor2 = {point, relTo, relPoint, offsX, offsY}
+	--_, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(1)
+	--IIFA_GUI_ListHolder.savedAnchor2 = {point, relTo, relPoint, offsX, offsY, constrains}
 
 	IIfA:TextColorFixup(IIfA:GetSettings())
 
@@ -453,7 +453,7 @@ function IIfA_onLoad(eventCode, addOnName)
 	-- manavortex, Feb. 22 2018: drop dbv2 support
 	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end
 
-	-- keep EU and US items apart
+	-- store EU and US items separately
 	local worldName = GetWorldName():gsub(" Megaserver", IIfA.EMPTY_STRING)
 	IIfA.data[worldName] = IIfA.data[worldName] or {}
 	if IIfA.data[worldName].DBv3 == nil then

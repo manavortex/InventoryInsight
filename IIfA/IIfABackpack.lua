@@ -160,7 +160,8 @@ local function DoesInventoryMatchList(locationName, location)
 		end
 	end
 end
---@Baetram:
+
+--@Baertram:
 --Made the function global to be used in other addons like FCOItemSaver
 function IIfA:DoesInventoryMatchList(locationName, location)
 	return DoesInventoryMatchList(locationName, location)
@@ -637,7 +638,7 @@ function IIfA:GetAccountInventoryList()
 		end
 	end
 
-	--house banks
+	-- house item inventories
 	if IIfA.data.b_collectHouses then
 		-- table.insert(accountInventories, "All Houses") --  4-11-18 AM - removed duplicate entry, it's in the dropdownLocNames already
 		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
@@ -734,6 +735,7 @@ end
 -- general note for popup menus
 -- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
 -- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
+
 function IIfA:SetupBackpack()
 
 	local function createInventoryDropdown()

@@ -587,31 +587,35 @@ function IIfA:CreateOptionsMenu()
 			getFunc = function() return IIfA:GetSceneVisible("trade") end,
 			setFunc = function(value) IIfA:SetSceneVisible("trade", value) end,
 		},
-		
-		--Other addons
-		{
-		    type = "header",
-		    name = "Other addons",
-		},
-
-		--FCOItemSaver
-		{
-			type = "submenu",
-			name = "FCOItemSaver",
-			tooltip = "Manage settings for the addon FCOItemSaver within IIfA",
-			controls = {
-				{
-				    type = "checkbox",
-				    name = "Show marker icons",
-				    tooltip = "Shows FCOIS marker icons within the inventory frame rows",
-				    getFunc = function() return IIfA:GetSettings().FCOISshowMarkerIcons end,
-				    setFunc = function(value) IIfA:GetSettings().FCOISshowMarkerIcons = value end,
-				},
-			},
-		},		
 
 	-- options data end
 	}
+
+	if FCOIS then
+		optionsData[#optionsData + 1] =
+			--Other addons
+			{
+			    type = "header",
+			    name = "Other addons",
+			}
+		optionsData[#optionsData + 2] =
+			--FCOItemSaver
+			{
+				type = "submenu",
+				name = "FCOItemSaver",
+				tooltip = "Manage settings for the addon FCOItemSaver within IIfA",
+				controls = {
+					{
+					    type = "checkbox",
+					    name = "Show marker icons",
+					    tooltip = "Shows FCOIS marker icons within the inventory frame rows",
+					    getFunc = function() return IIfA:GetSettings().FCOISshowMarkerIcons end,
+					    setFunc = function(value) IIfA:GetSettings().FCOISshowMarkerIcons = value end,
+					},
+				},
+			}
+	end
+
 
 	-- run through list of options, find one with empty controls, add in the submenu for guild banks options
 	local i, data
