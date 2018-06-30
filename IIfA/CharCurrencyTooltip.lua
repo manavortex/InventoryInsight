@@ -38,7 +38,7 @@ function CharCurrencyFrame:FillCharAndBank()
 	self:SetQty(self.charControl, "qtyTV", CURT_TELVAR_STONES, tv)
 	self:SetQty(self.charControl, "qtyAP", CURT_ALLIANCE_POINTS, ap)
 	self:SetQty(self.charControl, "qtyWV", CURT_WRIT_VOUCHERS, wv)
-	
+
 	local bankedMoney = GetBankedCurrencyAmount(CURT_MONEY)
 	local bankedTelVarStones = GetBankedCurrencyAmount(CURT_TELVAR_STONES)
 	local bankedAlliancePoints = GetBankedCurrencyAmount(CURT_ALLIANCE_POINTS)
@@ -71,7 +71,7 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 	local tControl
 	local prevControl = self.frame
 	local currId = GetCurrentCharacterId()
-	
+
 	local iconSize = 18
 	prevControl:GetNamedChild("CURT_MONEY"):SetTexture(GetCurrencyKeyboardIcon(CURT_MONEY))
 	prevControl:GetNamedChild("CURT_MONEY"):SetDimensions(iconSize, iconSize)
@@ -164,26 +164,26 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider1", self.frame, "ZO_Options_Divider")
 	tControl:SetDimensions(490, 3)
-    tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
-    tControl:SetAlpha(1)
-	self.divider1 = tControl	
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAlpha(1)
+	self.divider1 = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Bank", self.frame, "IIFA_CharCurrencyRow")
 	tControl:GetNamedChild("charName"):SetText(GetString(SI_CURRENCYLOCATION1))
 	tControl:SetAnchor(TOPLEFT, self.divider1, BOTTOMLEFT, 0, 0)
 	self.bankControl = tControl
-	
+
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider2", self.frame, "ZO_Options_Divider")
 	tControl:SetDimensions(490, 3)
-    tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
-    tControl:SetAlpha(1)
+	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAlpha(1)
 	self.divider2 = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Tots", self.frame, "IIFA_CharCurrencyRow")
 	tControl:GetNamedChild("charName"):SetText("Totals")
 	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 0, 0)
 	self.totControl = tControl
-	
+
 
 	self.frame:SetHeight((GetNumCharacters() + 4) * 26)	-- numchars + 4 represents # chars + bank + total + title and col titles
 

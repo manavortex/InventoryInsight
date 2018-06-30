@@ -50,7 +50,7 @@ function IIfA:DeleteGuildData(name)
 			if guildName == name then
 				IIfA.data.guildBanks[name] = nil
 			end
-        end
+		end
 		IIfA:ClearUnowned()
 	end
 end
@@ -304,15 +304,11 @@ function IIfA:GuildBankAddRemove(eventID, slotId)
 	end)
 end
 
-function IIfA:IgnoreHouse(houseCollectibleId)
-    houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
-end
 function IIfA:RescanHouse(houseCollectibleId)
 
 	houseCollectibleId = houseCollectibleId or GetCollectibleIdForHouse(GetCurrentZoneHouseId())
 	if not houseCollectibleId or not IIfA.trackedBags[houseCollectibleId] then return end
-    
-    -- if GetHouseCategoryType(GetCurrentZoneHouseId()) == HOUSE_CATEGORY_TYPE_NOTABLE then return end
+
 	IIfA.data.collectHouseData[houseCollectibleId] = IIfA.data.collectHouseData[houseCollectibleId] or IIfA:GetHouseTracking()
 
 	if not IIfA.data.collectHouseData[houseCollectibleId] then
@@ -323,12 +319,12 @@ function IIfA:RescanHouse(houseCollectibleId)
 		IIfA.trackedBags[houseCollectibleId] = true
 	end
 
-    -- TODO: Debug this
+	-- TODO: Debug this
 	--- stuff them all into an array
 	local function getAllPlacedFurniture()
 		local ret = {}
-        local counter = 1
-        local furnitureId = nil
+		local counter = 1
+		local furnitureId = nil
 		 while(true) do
 			furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
 			if (not furnitureId or counter > 10000 ) then return ret end
@@ -336,29 +332,28 @@ function IIfA:RescanHouse(houseCollectibleId)
 			-- if not ret[itemLink] then
 				-- ret[itemLink] = 1
 			-- else
-            ret[itemLink] = ( ret[itemLink] or 1 ) + 1
+			ret[itemLink] = ( ret[itemLink] or 1 ) + 1
 			-- end
-            counter = counter + 1
+			counter = counter + 1
 		end
-        return ret
+		return ret
 	end
-    
-    IIfA.getAllPlacedFurniture = getAllPlacedFurniture
+	IIfA.getAllPlacedFurniture = getAllPlacedFurniture
 
 	-- call with libAsync to avoid lag
 	task:Call(function()
 		-- clear and re-create, faster than conditionally updating
 		IIfA:ClearLocationData(houseCollectibleId)
-        
-   
+
 	end):Then(function()  -- TODO - can this go again? Having it in here at least prevented the crash
-        local placedFurniture = getAllPlacedFurniture()
+		local placedFurniture = getAllPlacedFurniture()
 		for itemLink, itemCount in pairs(placedFurniture) do
 			-- (bagId, slotId, fromXfer, itemCount, itemLink, itemName, locationID)
 			p("furniture item <<1>> x<<2>>", itemLink, itemCount)
 			IIfA:EvalBagItem(houseCollectibleId, tonumber(IIfA_GetItemID(itemLink)), false, itemCount, itemLink, GetItemLinkName(itemLink), houseCollectibleId)
 		end
 	end)
+
 end
 
 -- try to read item name from bag/slot - if that's empty, we read it from item link
@@ -435,17 +430,17 @@ function IIfA:TableCount(tbl)
 	return cnt
 end
 
---@Baetram:
+--@Baertram:
 -- Added for other addons like FCOItemSaver to get the item instance or the unique ID
 -->Returns itemInstance or uniqueId as 1st return value
 -->Returns a boolean value as 2nd retun value: true if the bagId should build an itemInstance or unique ID / false if not
 local function getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
-    local itemInstanceOrUniqueId = 0
-    local isBagToBuildItemInstanceOrUniqueId = false
-    if FCOIS == nil or FCOIS.getItemInstanceOrUniqueId == nil then return 0, false end
-    --Call function within addon FCOItemSaver, file FCOIS_OtherAddons.lua -> IIfA section
-    itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = FCOIS.getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
-    return itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId
+	local itemInstanceOrUniqueId = 0
+	local isBagToBuildItemInstanceOrUniqueId = false
+	if FCOIS == nil or FCOIS.getItemInstanceOrUniqueId == nil then return 0, false end
+	--Call function within addon FCOItemSaver, file FCOIS_OtherAddons.lua -> IIfA section
+	itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = FCOIS.getItemInstanceOrUniqueId(bagId, slotIndex, itemLink)
+	return itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId
 end
 
 function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, locationID)
@@ -476,7 +471,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 
 	local itemCount = qty or getItemCount(bagId, slotId, itemLink)
 
-    --@Baetram:
+	--@Baertram:
 	--Item instance/unique id  (needed for other addons like FCOItemSaver to (un)mark items via that id)
 	local itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = getItemInstanceOrUniqueId(bagId, slotId, itemLink)
 	if isBagToBuildItemInstanceOrUniqueId then
@@ -543,12 +538,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 				DBitem.locations[location].bagSlot = {}
 				DBitem.locations[location].bagSlot[slotId] = itemCount
 			end
-        end
-        --@Baetram:
-        --Added for other addons like FCOItemSaver. Only needed for non-account wide bags!
-        if isBagToBuildItemInstanceOrUniqueId then
-            DBitem.itemInstanceOrUniqueId = itemInstanceOrUniqueId
-        end
+		end
 	else
 		DBv3[itemKey] = {}
 		DBv3[itemKey].filterType = itemFilterType
@@ -559,12 +549,13 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 		DBv3[itemKey].locations[location].bagID = bagId
 		DBv3[itemKey].locations[location].bagSlot = {}
 		DBv3[itemKey].locations[location].bagSlot[slotId] = itemCount
-        --@Baetram:
-        --Added for other addons like FCOItemSaver. Only needed for non-account wide bags!
-        if isBagToBuildItemInstanceOrUniqueId then
-            DBv3[itemKey].itemInstanceOrUniqueId = itemInstanceOrUniqueId
-        end
 		DBitem = DBv3[itemKey]
+	end
+
+	--@Baertram:
+	--Added for other addons like FCOItemSaver. Only needed for non-account wide bags!
+	if isBagToBuildItemInstanceOrUniqueId then
+		DBitem.itemInstanceOrUniqueId = itemInstanceOrUniqueId
 	end
 
 	if nil ~= location and DBitem.locations and DBitem.locations[location] and IIfA:TableCount(DBitem.locations[location].bagSlot) == 0 then
@@ -736,9 +727,10 @@ function IIfA:ClearLocationData(location, bagID)		-- if loc is characterid, bagI
 	local itemLocation = nil
 	local LocationCount = 0
 	local itemName, itemData
-	
-    local bChar = (bagID == nil and nil) or location == IIfA.currentCharacterId
-	
+	local bChar = nil
+	if bagID ~= nil then
+		bChar = location == IIfA.currentCharacterId
+	end
 
 	if(DBv3)then
 		p(zo_strformat("IIfA:ClearLocationData(<<1>>, <<2>>)", location, bagID))
@@ -764,40 +756,40 @@ end
 -- written by SirInsidiator
 --[[
 local function RewriteItemLink(itemLink)
-    local requiredLevel = select(6, ZO_LinkHandler_ParseLink(itemLink))
-    requiredLevel = tonumber(requiredLevel)
-    local trueRequiredLevel = GetItemLinkRequiredLevel(itemLink)
+	local requiredLevel = select(6, ZO_LinkHandler_ParseLink(itemLink))
+	requiredLevel = tonumber(requiredLevel)
+	local trueRequiredLevel = GetItemLinkRequiredLevel(itemLink)
 
-    itemLink = string.gsub(itemLink, "|H(%d):item:(.*)" , "|H0:item:%2")
+	itemLink = string.gsub(itemLink, "|H(%d):item:(.*)" , "|H0:item:%2")
 
-    if requiredLevel ~= trueRequiredLevel then
-        itemLink = string.gsub(itemLink, "|H0:item:(%d+):(%d+):(%d+)(.*)" , "|H0:item:%1:%2:".. trueRequiredLevel .."%4")
-    end
+	if requiredLevel ~= trueRequiredLevel then
+		itemLink = string.gsub(itemLink, "|H0:item:(%d+):(%d+):(%d+)(.*)" , "|H0:item:%1:%2:".. trueRequiredLevel .."%4")
+	end
 
-    return itemLink
+	return itemLink
 end
 
 local function GetItemIdentifier(itemLink)
-    local itemType = GetItemLinkItemType(itemLink)
-    local data = {zo_strsplit(":", itemLink:match("|H(.-)|h.-|h"))}
-    local itemId = data[3]
-    local level = GetItemLinkRequiredLevel(itemLink)
-    local cp = GetItemLinkRequiredChampionPoints(itemLink)
+	local itemType = GetItemLinkItemType(itemLink)
+	local data = {zo_strsplit(":", itemLink:match("|H(.-)|h.-|h"))}
+	local itemId = data[3]
+	local level = GetItemLinkRequiredLevel(itemLink)
+	local cp = GetItemLinkRequiredChampionPoints(itemLink)
 --	local results
 --	results.itemId = itemId
 --	results.itemType = itemType
 --	results.level = level
 --	results.cp = cp
-    if(itemType == ITEMTYPE_WEAPON or itemType == ITEMTYPE_ARMOR) then
-        local trait = GetItemLinkTraitInfo(itemLink)
-        return string.format("%s,%s,%d,%d,%d", itemId, data[4], trait, level, cp)
-    elseif(itemType == ITEMTYPE_POISON or itemType == ITEMTYPE_POTION) then
-        return string.format("%s,%d,%d,%s", itemId, level, cp, data[23])
+	if(itemType == ITEMTYPE_WEAPON or itemType == ITEMTYPE_ARMOR) then
+		local trait = GetItemLinkTraitInfo(itemLink)
+		return string.format("%s,%s,%d,%d,%d", itemId, data[4], trait, level, cp)
+	elseif(itemType == ITEMTYPE_POISON or itemType == ITEMTYPE_POTION) then
+		return string.format("%s,%d,%d,%s", itemId, level, cp, data[23])
 --    elseif(hasDifferentQualities[itemType]) then
 --        return string.format("%s,%s", itemId, data[4])
-    else
-        return itemId
-    end
+	else
+		return itemId
+	end
 end
 --]]
 function IIfA:RenameItems()

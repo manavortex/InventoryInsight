@@ -15,16 +15,16 @@ local function p(...) IIfA:DebugOut(...) end
 -- this is for the buttons
 local function enableFilterButton(num)
 	local buttonName = "Button"..num
-    local button = IIFA_GUI_Header_Filter:GetNamedChild(buttonName)
-    if button then
-        button:SetState(BSTATE_PRESSED)
-    end
+	local button = IIFA_GUI_Header_Filter:GetNamedChild(buttonName)
+	if button then
+		button:SetState(BSTATE_PRESSED)
+	end
 end
 local function disableFilterButton(num)
-    local button = IIFA_GUI_Header_Filter:GetNamedChild("Button"..num)
-    if button then
-        button:SetState(BSTATE_NORMAL)
-    end
+	local button = IIFA_GUI_Header_Filter:GetNamedChild("Button"..num)
+	if button then
+		button:SetState(BSTATE_NORMAL)
+	end
 end
 
 function IIfA:GetActiveFilter()
@@ -160,7 +160,8 @@ local function DoesInventoryMatchList(locationName, location)
 		end
 	end
 end
---@Baetram:
+
+--@Baertram:
 --Made the function global to be used in other addons like FCOItemSaver
 function IIfA:DoesInventoryMatchList(locationName, location)
 	return DoesInventoryMatchList(locationName, location)
@@ -201,14 +202,14 @@ function IIfA:getQualityDict()
 end
 
 local function matchFilter(itemName, itemLink)
-    local ret = true
+	local ret = true
 	local itemMatch = false
 	local hasSetInfo, setName
 
 	local searchFilter = IIfA.searchFilter
 	-- 17-7-30 AM - moved lowercasing to when it's created, one less call to lowercase for every item
 
-    local name = string.lower(itemName) or IIfA.EMPTY_STRING
+	local name = string.lower(itemName) or IIfA.EMPTY_STRING
 
 	-- text filter takes precedence
 	-- 3-6-17 AM - you're either filtering on a set name, or not - much less confusing (hopefully)
@@ -320,7 +321,7 @@ local function matchFilter(itemName, itemLink)
 			ret = ret and IsItemLinkStolen(itemLink)
 		end
 	end
-    return ret
+	return ret
 end
 local function matchQuality(itemQuality)
 	local quality = IIfA.InventoryListFilterQuality
@@ -407,8 +408,8 @@ function IIfA:UpdateScrollDataLinesData()
 				if not dbItem.itemName or #dbItem.itemName == 0 then
 					p("Filling in missing itemName/Quality")
 					dbItem.itemName = GetItemLinkName(itemLink)
-                    dbItem.itemQuality = GetItemLinkQuality(itemLink)
-                end
+					dbItem.itemQuality = GetItemLinkQuality(itemLink)
+				end
 				tempDataLine = {
 					link = itemLink,
 					qty = itemCount,
@@ -637,7 +638,7 @@ function IIfA:GetAccountInventoryList()
 		end
 	end
 
-	--house banks
+	-- house item inventories
 	if IIfA.data.b_collectHouses then
 		-- table.insert(accountInventories, "All Houses") --  4-11-18 AM - removed duplicate entry, it's in the dropdownLocNames already
 		for idx, houseName in pairs(IIfA:GetTrackedHouseNames()) do
@@ -734,6 +735,7 @@ end
 -- general note for popup menus
 -- example here http://www.esoui.com/downloads/info1146-LibCustomMenu.html
 -- AddCustomSubMenuItem(mytext, entries, myfont, normalColor, highlightColor, itemYPad)
+
 function IIfA:SetupBackpack()
 
 	local function createInventoryDropdown()
@@ -762,8 +764,8 @@ p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(cId)
 				end
-                		--remove gender specific characters from house bank chest name
-                		cName = zo_strformat("<<C:1>>", cName)
+				--remove gender specific characters from house bank chest name
+				cName = zo_strformat("<<C:1>>", cName)
 				if cName == choiceText then
 					IIfA:SetInventoryListFilter("Housing Storage", ctr)
 					break
@@ -795,8 +797,8 @@ p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 				if cName == self.EMPTY_STRING then
 					cName = GetCollectibleName(cId)
 				end
-                		--remove gender specific characters from house bank chest name
-                		cName = zo_strformat("<<C:1>>", cName)
+				--remove gender specific characters from house bank chest name
+				cName = zo_strformat("<<C:1>>", cName)
 				entry = comboBox:CreateItemEntry(cName, OnChestSelect)
 				comboBox:AddItem(entry)
 			end
@@ -1023,7 +1025,7 @@ function IIfA:FilterByItemName(control)
 	IIFA_GUI_SearchBox:SetText(itemName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
-    IIfA:RefreshInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 
 end
 
@@ -1048,7 +1050,7 @@ function IIfA:FilterByItemSet(control)
 	IIFA_GUI_SearchBox:SetText(setName)
 	IIFA_GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = true
-    IIfA:RefreshInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 
 end
 

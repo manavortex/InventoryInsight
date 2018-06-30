@@ -10,13 +10,13 @@ end
 
 -- 2018-3-22 AM - duplicate ZO_Tooltip_AddDivider so we can set the color of our divider to match whatever is popped up (stolen or not)
 function IIfA:Tooltip_AddDivider(tooltipControl)
-    if not tooltipControl.dividerPool then
-        tooltipControl.dividerPool = ZO_ControlPool:New("ZO_BaseTooltipDivider", tooltipControl, "Divider")
-    end
+	if not tooltipControl.dividerPool then
+		tooltipControl.dividerPool = ZO_ControlPool:New("ZO_BaseTooltipDivider", tooltipControl, "Divider")
+	end
 
-    local divider = tooltipControl.dividerPool:AcquireObject()
+	local divider = tooltipControl.dividerPool:AcquireObject()
 
-    if divider then
+	if divider then
 		-- AM - new code
 		local div1
 		div1 = tooltipControl:GetNamedChild("Divider1")
@@ -25,9 +25,9 @@ function IIfA:Tooltip_AddDivider(tooltipControl)
 			divider:SetTexture(div1:GetTextureFileName())
 		end
 		-- AM - end new code
-        tooltipControl:AddControl(divider)
-        divider:SetAnchor(CENTER)
-    end
+		tooltipControl:AddControl(divider)
+		divider:SetAnchor(CENTER)
+	end
 end
 
 
@@ -383,16 +383,16 @@ function IIfA:getMouseoverLink()
 	elseif name:sub(1, 44) == "ZO_TradingHouseItemPaneSearchResultsContents" then
 		data = mouseOverControl.dataEntry
 		if data then data = data.data end
-	    -- The only thing with 0 time remaining should be guild tabards, no
-    	-- stats on those!
-    	if not data or data.timeRemaining == 0 then return nil end
+		-- The only thing with 0 time remaining should be guild tabards, no
+		-- stats on those!
+		if not data or data.timeRemaining == 0 then return nil end
 		return GetTradingHouseSearchResultItemLink(data.slotIndex)
 
 	elseif name == "ZO_TradingHousePostedItemsListContents" then
 		return GetTradingHouseListingItemLink(mouseOverControl.dataEntry.data.slotIndex)
 
   	elseif name == 'ZO_TradingHouseLeftPanePostItemFormInfo' then
-    	if mouseOverControl.slotIndex and mouseOverControl.bagId then
+		if mouseOverControl.slotIndex and mouseOverControl.bagId then
 			return GetItemLink(mouseOverControl.bagId, mouseOverControl.slotIndex)
 		end
 	elseif name == 'ZO_ClaimLevelUpRewardsScreen_KeyboardListScrollChild' then
