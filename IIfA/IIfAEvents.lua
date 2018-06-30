@@ -57,20 +57,20 @@ IIfA:DebugOut("InventorySlotUpdate raw bagId/slotNum=<<1>>/<<2>>, Item='<<3>>', 
 	-- once a bunch of items comes in, this will be created for each, but only the last one stays alive
 	-- so once all the items are finished coming in, it'll only need to update the shown list one time
 	local callbackName = "IIfA_RefreshInventoryScroll"
-    local function Update()
-        EVENT_MANAGER:UnregisterForUpdate(callbackName)
+	local function Update()
+		EVENT_MANAGER:UnregisterForUpdate(callbackName)
 		if IIFA_GUI:IsControlHidden() then
 			return
 		else
 			IIfA:RefreshInventoryScroll()
 		end
-    end
+	end
 
-    --cancel previously scheduled update if any
-    EVENT_MANAGER:UnregisterForUpdate(callbackName)
-    --register a new one
+	--cancel previously scheduled update if any
+	EVENT_MANAGER:UnregisterForUpdate(callbackName)
+	--register a new one
 	if not IIFA_GUI:IsControlHidden() then		-- only update the frame if it's shown
-    	EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
+		EVENT_MANAGER:RegisterForUpdate(callbackName, 250, Update)
 	end
 end
 

@@ -282,14 +282,14 @@ function IIfA:GuiOnSearchboxText(control)
 	local text = control:GetText()
 	IIFA_GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
 	IIfA.searchFilter = zo_strlower(text)
-    IIfA:RefreshInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GuiOnSearchBoxClear(control)
 	IIFA_GUI_SearchBox:SetText(IIfA.EMPTY_STRING)
 	IIFA_GUI_SearchBoxText:SetHidden(false)
 	IIfA.searchFilter = IIfA.EMPTY_STRING
-    IIfA:RefreshInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 

@@ -258,8 +258,8 @@ function CharBagFrame:Initialize(objectForAssets)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider1", self.frame, "ZO_Options_Divider")
 	tControl:SetDimensions(288, 3)
-    tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
-    tControl:SetAlpha(1)
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAlpha(1)
 	self.divider1 = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Bank", self.frame, "IIFA_CharBagRow")
@@ -269,8 +269,8 @@ function CharBagFrame:Initialize(objectForAssets)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider2", self.frame, "ZO_Options_Divider")
 	tControl:SetDimensions(288, 3)
-    tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
-    tControl:SetAlpha(1)
+	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAlpha(1)
 	self.divider2 = tControl
 
 	self.houseChestControls = {}
@@ -287,8 +287,8 @@ function CharBagFrame:Initialize(objectForAssets)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Divider3", self.frame, "ZO_Options_Divider")
 	tControl:SetDimensions(288, 0)
-    tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
-    tControl:SetAlpha(1)
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAlpha(1)
 	self.divider3 = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_Bag_Row_Tots", self.frame, "IIFA_CharBagRow")

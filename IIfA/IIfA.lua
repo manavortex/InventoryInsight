@@ -84,14 +84,14 @@ IIfA.dropdownLocNames = {
 function IIfA_SlashCommands(cmd)
 
 	if (cmd == IIfA.EMPTY_STRING) then
-    	d("[IIfA]:Please find the majority of options in the addon settings section of the menu under Inventory Insight.")
-    	d(" ")
-    	d("[IIfA]:Usage - ")
-    	d("	/IIfA [options]")
-    	d(" 	")
-    	d("	Options")
-    	d("		debug - Enables debug functionality for the IIfA addon.")
-    	d("		run - Runs the IIfA data collector.")
+		d("[IIfA]:Please find the majority of options in the addon settings section of the menu under Inventory Insight.")
+		d(" ")
+		d("[IIfA]:Usage - ")
+		d("	/IIfA [options]")
+		d(" 	")
+		d("	Options")
+		d("		debug - Enables debug functionality for the IIfA addon.")
+		d("		run - Runs the IIfA data collector.")
 		d("		color - Opens the color picker dialog to set tooltip text color.")
 		d("		toggle - Show/Hide IIfA")
 		return
@@ -375,7 +375,7 @@ function IIfA_onLoad(eventCode, addOnName)
 
 
 	-- 2-9-17 AM - convert saved data names into proper language for this session
-    local lang = GetCVar("language.2")
+	local lang = GetCVar("language.2")
 	if IIfA.data.lastLang == nil or IIfA.data.lastLang ~= lang then
 		IIfA:RenameItems()
 		IIfA.data.lastLang = lang
@@ -400,7 +400,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.data.bFilterOnSetNameToo = false
 	end
 
-        --Other addons: FCOItemSaver
+	-- Other addons: FCOItemSaver
 	if ObjSettings.FCOISshowMarkerIcons == nil then
 		ObjSettings.FCOISshowMarkerIcons = false
 		IIfA.data.FCOISshowMarkerIcons = false

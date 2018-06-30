@@ -116,14 +116,14 @@ function IIfA:SaveFrameInfo(calledFrom)
 
 	local settings = IIfA:GetSceneSettings(sceneName)
 
-    settings.hidden = IIFA_GUI:IsControlHidden()
+	settings.hidden = IIFA_GUI:IsControlHidden()
 
 	if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
-    	settings.lastX	= IIFA_GUI:GetLeft()
-    	settings.lastY	= IIFA_GUI:GetTop()
+		settings.lastX	= IIFA_GUI:GetLeft()
+		settings.lastY	= IIFA_GUI:GetTop()
 		if not settings.minimized then
 			settings.width	= IIFA_GUI:GetWidth()
-    		settings.height	= IIFA_GUI:GetHeight()
+			settings.height	= IIFA_GUI:GetHeight()
 		end
 	end
 end
@@ -136,7 +136,7 @@ function IIfA:ToggleInventoryFrame()
 		-- get current camera mode so when we toggle off, we put it back to where it was (maybe, can think of some weird circumstances where it might screw it up)
 		SetGameCameraUIMode(true)
 		IIfA:GuiResizeScroll()
-    	IIfA:RefreshInventoryScroll()
+		IIfA:RefreshInventoryScroll()
 	end
 	if not IIfA.data.dontFocusSearch then
 		IIFA_GUI_SearchBox:TakeFocus()

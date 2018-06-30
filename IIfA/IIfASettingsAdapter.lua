@@ -1,8 +1,8 @@
 local IIfA = IIfA
 IIfA.houseNameToIdTbl = {}
 
-local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
-IIfA.task			= task
+local task 	= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task	= task
 
 function IIfA:IsCharacterInventoryIgnored()
 	return IIfA.data.ignoredCharInventories[IIfA.currentCharacterId] or false
@@ -58,7 +58,7 @@ end
 function IIfA:SetSetNameFilterOnly(value)
 	IIfA.bFilterOnSetName = not IIfA.bFilterOnSetName
 	IIFA_GUI_Search_SetNameOnly:SetState((IIfA.bFilterOnSetName and BSTATE_PRESSED) or BSTATE_NORMAL)
-    IIfA:RefreshInventoryScroll()
+	IIfA:RefreshInventoryScroll()
 end
 
 function IIfA:GetFocusSearchOnToggle()
@@ -137,9 +137,9 @@ end
 function IIfA:GetTrackingWithHouseNames()
 	local ret = {}
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
-        local collectibleName = GetCollectibleName(collectibleId)
-        --remove gender specific characters from house name
-        collectibleName = zo_strformat("<<C:1>>", collectibleName)
+		local collectibleName = GetCollectibleName(collectibleId)
+		--remove gender specific characters from house name
+		collectibleName = zo_strformat("<<C:1>>", collectibleName)
 		ret[collectibleName] = true
 	end
 	return ret
@@ -151,7 +151,7 @@ function IIfA:RebuildHouseMenuDropdowns()
 	for collectibleId, trackIt in pairs(IIfA.data.collectHouseData) do
 		local collectibleName = GetCollectibleName(collectibleId)
 		--remove gender specific characters from house name
-        collectibleName = zo_strformat("<<C:1>>", collectibleName)
+		collectibleName = zo_strformat("<<C:1>>", collectibleName)
 		-- cache house name for lookup
 		IIfA.houseNameToIdTbl[collectibleName] = collectibleId
 		local targetTable = (trackIt and tracked) or ignored

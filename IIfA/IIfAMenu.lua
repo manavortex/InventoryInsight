@@ -595,10 +595,10 @@ function IIfA:CreateOptionsMenu()
 		optionsData[#optionsData + 1] =
 			--Other addons
 			{
-			    type = "header",
-			    name = "Other addons",
+				type = "header",
+				name = "Other addons",
 			}
-		optionsData[#optionsData + 2] =
+		optionsData[#optionsData + 1] =
 			--FCOItemSaver
 			{
 				type = "submenu",
@@ -606,11 +606,11 @@ function IIfA:CreateOptionsMenu()
 				tooltip = "Manage settings for the addon FCOItemSaver within IIfA",
 				controls = {
 					{
-					    type = "checkbox",
-					    name = "Show marker icons",
-					    tooltip = "Shows FCOIS marker icons within the inventory frame rows",
-					    getFunc = function() return IIfA:GetSettings().FCOISshowMarkerIcons end,
-					    setFunc = function(value) IIfA:GetSettings().FCOISshowMarkerIcons = value end,
+						type = "checkbox",
+						name = "Show marker icons",
+						tooltip = "Shows FCOIS marker icons within the inventory frame rows",
+						getFunc = function() return IIfA:GetSettings().FCOISshowMarkerIcons end,
+						setFunc = function(value) IIfA:GetSettings().FCOISshowMarkerIcons = value end,
 					},
 				},
 			}
