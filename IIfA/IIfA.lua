@@ -26,6 +26,7 @@ IIfA.bFilterOnSetName 	= false
 IIfA.searchFilter 		= ""
 IIfA.trackedHouses		= {}
 IIfA.EMPTY_STRING		= ""
+IIfA.BagSlotInfo		= {}		-- 8-4-18 AM - make sure the table exists in case something tries to reference it before it's created.
 
 local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
@@ -485,9 +486,9 @@ function IIfA:ScanCurrentCharacterAndBank()
 
 	IIfA:ScanBank()
 	IIfA:ScanCurrentCharacter()
-	zo_callLater(function()
-		IIfA:MakeBSI()
-	end, 5000)
+--	zo_callLater(function()
+--		IIfA:MakeBSI()
+--	end, 5000)
 end
 
 function IIfA:MakeBSI()

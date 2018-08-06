@@ -940,6 +940,9 @@ function IIfA:FMC(control, WhoSeesIt)
 		[56] = 2044,	-- Apostle
 		[57] = 2045,	-- Ebonshadow
 		[60] = 2120,	-- Worm Cult
+		[61] = 2186, 	-- Psijic
+		[62] = 2187,	-- Sapiarch
+		[64] = 2285,	-- Pyandonean
 		}
 
 --		local i, a
