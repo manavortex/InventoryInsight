@@ -35,9 +35,11 @@ end
 function IIfA:DeleteCharacterData(name)
 	if (name) then
 		--delete selected character
-		for characterName, character in pairs(IIfA.data.accountCharacters) do
+		for characterName, charId in pairs(IIfA.CharNameToId) do
 			if(characterName == name) then
-				IIfA.data.accountCharacters[name] = nil
+--d("Deleting char " .. name .. ", Id=" .. charId)
+				IIfA.CharNameToId[name] = nil
+				IIfA.CharIdToName[charId] = nil
 			end
 		end
 	end
@@ -125,12 +127,6 @@ function IIfA:CollectGuildBank(curGuild)
 end
 
 function IIfA:ScanCurrentCharacter()
-
-	local playerName = GetUnitName('player')
-
-	IIfA.data.accountCharacters 			= IIfA.data.accountCharacters or {}
-	IIfA.data.accountCharacters[playerName] = IIfA.data.accountCharacters[playerName] or {}
-
 	IIfA:ClearLocationData(IIfA.currentCharacterId)
 
 	if not IIfA:IsCharacterEquipIgnored() then

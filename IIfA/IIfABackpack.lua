@@ -599,20 +599,19 @@ function IIfA:CreateInventoryScroll()
 end
 
 function IIfA:GetCharacterList()
-	local charInventories = {}
+	local charList = {}
 	for i=1, GetNumCharacters() do
 		local charName, _, _, _, _, _, _, _ = GetCharacterInfo(i)
 		charName = charName:sub(1, charName:find("%^") - 1)
-		if (nil == charInventories[charName]) then
-			table.insert(charInventories, charName)
+		if (nil == charList[charName]) then
+			table.insert(charList, charName)
 		end
 	end
-	return charInventories
+	return charList
 end
 
 function IIfA:GetAccountInventoryList()
 	local accountInventories = IIfA.dropdownLocNames
-
 
 -- get character names, will present in same order as character selection screen
 	for idx, charName in ipairs(IIfA:GetCharacterList()) do
@@ -939,7 +938,14 @@ function IIfA:FMC(control, WhoSeesIt)
 		[55] = 2097,	-- Dreadhorn
 		[56] = 2044,	-- Apostle
 		[57] = 2045,	-- Ebonshadow
+		[58] = 2190,	-- Fang Lair
+		[59] = 2189,	-- Scalecaller
 		[60] = 2120,	-- Worm Cult
+		[61] = 2186, 	-- Psijic
+		[62] = 2187,	-- Sapiarch
+		[63] = 2188,	-- Dremora
+		[64] = 2285,	-- Pyandonean
+		[67] = 2319,	-- Welkynar
 		}
 
 --		local i, a

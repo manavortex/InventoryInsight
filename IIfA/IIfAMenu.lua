@@ -6,20 +6,6 @@ local LMP = LibStub("LibMediaProvider-1.0")
 
 local id, guildName, deleteHouse, restoreHouse, name
 
-local function getCharacterInventories()
-
-	local accountInventories = {}
-
-	if nil ~= IIfA:GetCharacterList() then
-		for characterName, character in pairs(IIfA:GetCharacterList()) do
-			d("inserting " .. characterName)
-			table.insert(accountInventories, characterName)
-		end
-	end
-
-	return accountInventories
-end
-
 local function getGuildBanks()
 	local guildBanks = {}
 	if(IIfA.data.guildBanks) then

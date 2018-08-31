@@ -36,10 +36,6 @@ function IIfA:IgnoreCharacterEquip(value)
 	IIfA:RefreshInventoryScroll()
 end
 
-function IIfA:GetCharacterList()
-	return IIfA.data.accountCharacters
-end
-
 function IIfA:GetIgnoredCharacterList()
 	local ret = {}
 	local wasAdded = {}

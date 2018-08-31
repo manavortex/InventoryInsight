@@ -138,8 +138,8 @@ IIfA.racialTextures = {
 	[74] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(74)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dremora
 	[75] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(75)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Pyandonean
 	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Divine Prosecution
-	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
-	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Huntsman
+	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Silver Dawn
 	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
 }
 
