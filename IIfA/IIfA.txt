@@ -1,14 +1,13 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.18
-## APIVersion: 100023 100024
+## Version: 3.19
+## APIVersion: 100024 100025
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
 
 libs\LibStub\LibStub.lua
 libs\LibAsync\LibAsync.lua
 libs\LibCustomTitles\LibCustomTitles.lua
-libs\LibScroll\LibScroll.lua
 libs\LibMediaProvider-1.0\LibMediaProvider-1.0.lua
 libs\LibAddonMenu-2.0\LibAddonMenu-2.0.lua
 libs\LibAddonMenu-2.0\controls\panel.lua
@@ -26,8 +25,6 @@ libs\LibAddonMenu-2.0\controls\texture.lua
 libs\LibAddonMenu-2.0\controls\iconpicker.lua
 libs\LibAddonMenu-2.0\controls\divider.lua
 libs\LibCustomMenu\LibCustomMenu.lua
-libs\LibAsync\LibAsync.lua
-
 
 IIfA_Preload.lua
 
