@@ -1,30 +1,15 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.19
+## Version: 3.20
 ## APIVersion: 100024 100025
 ## SavedVariables: IIfA_Settings IIfA_Data
+## DependsOn: LibStub LibCustomMenu LibMediaProvider-1.0 LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
 
-libs\LibStub\LibStub.lua
-libs\LibAsync\LibAsync.lua
+; pChat is optional dependency because it should be loaded BEFORE any other addon so it provides
+; load time debugging
+
 libs\LibCustomTitles\LibCustomTitles.lua
-libs\LibMediaProvider-1.0\LibMediaProvider-1.0.lua
-libs\LibAddonMenu-2.0\LibAddonMenu-2.0.lua
-libs\LibAddonMenu-2.0\controls\panel.lua
-libs\LibAddonMenu-2.0\controls\submenu.lua
-libs\LibAddonMenu-2.0\controls\button.lua
-libs\LibAddonMenu-2.0\controls\checkbox.lua
-libs\LibAddonMenu-2.0\controls\colorpicker.lua
-libs\LibAddonMenu-2.0\controls\custom.lua
-libs\LibAddonMenu-2.0\controls\description.lua
-libs\LibAddonMenu-2.0\controls\dropdown.lua
-libs\LibAddonMenu-2.0\controls\editbox.lua
-libs\LibAddonMenu-2.0\controls\header.lua
-libs\LibAddonMenu-2.0\controls\slider.lua
-libs\LibAddonMenu-2.0\controls\texture.lua
-libs\LibAddonMenu-2.0\controls\iconpicker.lua
-libs\LibAddonMenu-2.0\controls\divider.lua
-libs\LibCustomMenu\LibCustomMenu.lua
 
 IIfA_Preload.lua
 
