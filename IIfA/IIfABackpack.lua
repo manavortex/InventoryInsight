@@ -755,7 +755,7 @@ function IIfA:SetupBackpack()
 		end
 
 		local function OnChestSelect(_, choiceText, choice)
-p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
+-- p("OnChestSelect '<<1>>' - <<2>>", choiceText, choice)
 			local ctr, cName, cId
 			for ctr = BAG_HOUSE_BANK_ONE, BAG_HOUSE_BANK_TEN do
 				cId = GetCollectibleForHouseBankBag(ctr)
