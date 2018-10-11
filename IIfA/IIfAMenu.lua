@@ -8,8 +8,8 @@ local id, guildName, deleteHouse, restoreHouse, name
 
 local function getGuildBanks()
 	local guildBanks = {}
-	if(IIfA.data.guildBanks) then
-		for guildName, guildData in pairs(IIfA.data.guildBanks) do
+	if IIfA.guildBanks then
+		for guildName, guildData in pairs(IIfA.guildBanks) do
 			if guildData.bCollectData == nil then
 				guildData.bCollectData = true
 			end
@@ -41,19 +41,19 @@ end
 local function getGuildBankKeepDataSetting(guildNum)
 	guildName = getGuildBankName(guildNum)
 
-	if IIfA.data.guildBanks[guildName] == nil then return false end
+	if IIfA.guildBanks[guildName] == nil then return false end
 
-	if IIfA.data.guildBanks[guildName].bCollectData == nil then
-		IIfA.data.guildBanks[guildName].bCollectData = true
+	if IIfA.guildBanks[guildName].bCollectData == nil then
+		IIfA.guildBanks[guildName].bCollectData = true
 	end
 
-	return IIfA.data.guildBanks[guildName].bCollectData
+	return IIfA.guildBanks[guildName].bCollectData
 end
 
 local function setGuildBankKeepDataSetting(guildNum, newSetting)
 	guildName = getGuildBankName(guildNum)
 	if guildName ~= nil then
-		IIfA.data.guildBanks[guildName].bCollectData = newSetting
+		IIfA.guildBanks[guildName].bCollectData = newSetting
 	end
 end
 

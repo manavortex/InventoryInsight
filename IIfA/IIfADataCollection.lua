@@ -48,9 +48,9 @@ end
 function IIfA:DeleteGuildData(name)
 	if (name) then
 		--delete selected guild
-		for guildName, guild in pairs(IIfA.data.guildBanks) do
+		for guildName, guild in pairs(IIfA.guildBanks) do
 			if guildName == name then
-				IIfA.data.guildBanks[name] = nil
+				IIfA.guildBanks[name] = nil
 			end
 		end
 		IIfA:ClearUnowned()
@@ -71,22 +71,22 @@ function IIfA:CollectGuildBank(curGuild)
 		return
 	end
 
-	if not IIfA.data.guildBanks then IIfA.data.guildBanks = {} end
+	if not IIfA.guildBanks then IIfA.guildBanks = {} end
 	curGuild = GetGuildName(curGB)
 
 	p("Collecting Guild Bank Data for " .. curGuild)
 
-	if IIfA.data.guildBanks[curGuild] ~= nil then
-		if not IIfA.data.guildBanks[curGuild].bCollectData then
+	if IIfA.guildBanks[curGuild] ~= nil then
+		if not IIfA.guildBanks[curGuild].bCollectData then
 			return
 		end
 	end
 
 	SelectGuildBank(curGB)
 
-	if(IIfA.data.guildBanks[curGuild] == nil) then
-		IIfA.data.guildBanks[curGuild] = {}
-		IIfA.data.guildBanks[curGuild].bCollectData = true		-- default to true just so it's here and ok
+	if(IIfA.guildBanks[curGuild] == nil) then
+		IIfA.guildBanks[curGuild] = {}
+		IIfA.guildBanks[curGuild].bCollectData = true		-- default to true just so it's here and ok
 	end
 
 	IIfA.BagSlotInfo[curGuild] = nil
@@ -95,7 +95,7 @@ function IIfA:CollectGuildBank(curGuild)
 		if not IIfA then return end
 		IIfA.BagSlotInfo = IIfA.BagSlotInfo or {}
 		p("Collect guild bank - <<1>>", curGuild)
-		local guildData = IIfA.data.guildBanks[curGuild]
+		local guildData = IIfA.guildBanks[curGuild]
 		local itemCount, slotIndex
 		itemCount = 0
 		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
@@ -207,7 +207,7 @@ function IIfA:CheckForAgedGuildBankData( days )
 	local days = days or 5
 	if IIfA.data.bCollectGuildBankData then
 		IIfA:UpdateGuildBankData()
-		for guildName, guildData in pairs(IIfA.data.guildBanks)do
+		for guildName, guildData in pairs(IIfA.guildBanks)do
 			local today = GetDate()
 			local lastCollected = guildData.lastCollected:match('(........)')
 			if(lastCollected and lastCollected ~= IIfA.EMPTY_STRING)then
@@ -233,16 +233,16 @@ function IIfA:UpdateGuildBankData()
 		}
 		for index=1, GetNumGuilds() do
 			local guildName = GetGuildName(index)
-			local guildBank = IIfA.data.guildBanks[guildName]
+			local guildBank = IIfA.guildBanks[guildName]
 			if(not guildBank) then
-				IIfA.data.guildBanks[guildName] = tempGuildBankBag
+				IIfA.guildBanks[guildName] = tempGuildBankBag
 			end
 		end
 	end
 
-	local emptyGuild = IIfA.data.guildBanks[IIfA.EMPTY_STRING]
+	local emptyGuild = IIfA.guildBanks[IIfA.EMPTY_STRING]
 	if(emptyGuild)then
-		IIfA.data.guildBanks[IIfA.EMPTY_STRING] = nil
+		IIfA.guildBanks[IIfA.EMPTY_STRING] = nil
 	end
 end
 
@@ -702,7 +702,7 @@ function IIfA:ClearUnowned()
 							n = n - 1
 	  					end
 					elseif ItemData.bagID == BAG_GUILDBANK then
-						if IIfA.data.guildBanks[ItemOwner] == nil then
+						if IIfA.guildBanks[ItemOwner] == nil then
 							DBItem[ItemOwner] = nil
 							n = n - 1
 						end
