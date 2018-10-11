@@ -407,15 +407,21 @@ function IIfA_onLoad(eventCode, addOnName)
 		IIfA.data.FCOISshowMarkerIcons = false
 	end
 
-	if IIfA.data.guildBanks == nil then
-		IIfA.data.guildBanks = {}
-		local i
-		for i = 1, GetNumGuilds() do
-			local id = GetGuildId(i)
-			local guildName = GetGuildName(id)
-			IIfA.data.guildBanks[guildName] = {bCollectData = true, lastCollected = GetDate() .. "@" .. GetFormattedTime(), items = 0}
-		end
+	-- manavortex, Feb. 22 2018: drop dbv2 support
+	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end
+
+	-- store EU and US items separately
+	local worldName = GetWorldName():gsub(" Megaserver", IIfA.EMPTY_STRING)
+	IIfA.data[worldName] = IIfA.data[worldName] or {}
+	if IIfA.data[worldName].DBv3 == nil then
+		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
 	end
+	IIfA.data.DBv3 = nil
+	IIfA.database = IIfA.data[worldName].DBv3
+
+	-- 2018-10-11 AM - guildBanks now tracked individually per server (NA or EU)
+	IIfA:SetupGuildBanks(worldName)
+
 
 	if ObjSettings.bInSeparateFrame == nil then
 		ObjSettings.bInSeparateFrame = true
@@ -451,17 +457,6 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:SetupBackpack()	-- setup the inventory frame
 	IIfA:CreateTooltips()	-- setup the tooltip frames
 
-	-- manavortex, Feb. 22 2018: drop dbv2 support
-	if nil ~= IIfA.data.DBv2 then IIfA.data.DBv2 = nil end
-
-	-- store EU and US items separately
-	local worldName = GetWorldName():gsub(" Megaserver", IIfA.EMPTY_STRING)
-	IIfA.data[worldName] = IIfA.data[worldName] or {}
-	if IIfA.data[worldName].DBv3 == nil then
-		 IIfA.data[worldName].DBv3 = IIfA.data.DBv3
-	end
-	IIfA.data.DBv3 = nil
-	IIfA.database = IIfA.data[worldName].DBv3
 
 --	IIfA:ActionLayerInventoryUpdate()
 
@@ -481,6 +476,36 @@ function IIfA_onLoad(eventCode, addOnName)
 end
 
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
+
+
+
+function IIfA:SetupGuildBanks(worldName)
+	local tblName = worldName .. "-guildBanks"
+	if self.data[tblName] == nil then
+		self.data[tblName] = {}
+		local i
+		for i = 1, GetNumGuilds() do
+			local id = GetGuildId(i)
+			local guildName = GetGuildName(id)
+			IIfA.data[tblName][guildName] = {bCollectData = true, lastCollected = GetDate() .. "@" .. GetFormattedTime(), items = 0}
+		end
+	end
+	self.guildBanks = IIfA.data[tblName]
+
+	local found = false
+	if self.data.guildBanks ~= nil then
+		for bankName, data in pairs(self.data.guildBanks) do
+			if self.guildBanks[bankName] ~= nil then
+				self.guildBanks[bankName] = data
+				found = true
+			end
+		end
+		-- don't delete guildBanks unless you're on the right server (it'll only have data in it for one of them)
+		if found then
+			self.data.guildBanks = nil
+		end
+	end
+end
 
 function IIfA:ScanCurrentCharacterAndBank()
 

@@ -627,11 +627,11 @@ function IIfA:GetAccountInventoryList()
 			local guildName = GetGuildName(id)
 
 			-- on the off chance that this doesn't exist already, create it
-			if IIfA.data.guildBanks == nil then
-				IIfA.data.guildBanks = {}
+			if IIfA.guildBanks == nil then
+				IIfA.guildBanks = {}
 			end
 
-			if IIfA.data.guildBanks[guildName] ~= nil then
+			if IIfA.guildBanks[guildName] ~= nil then
 				table.insert(accountInventories, guildName)
 			end
 		end
