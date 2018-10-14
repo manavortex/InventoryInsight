@@ -3,7 +3,7 @@
 ## Version: 3.20
 ## APIVersion: 100024 100025
 ## SavedVariables: IIfA_Settings IIfA_Data
-## DependsOn: LibStub LibCustomMenu LibMediaProvider-1.0 LibAsync LibAddonMenu-2.0
+## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
 
 ; pChat is optional dependency because it should be loaded BEFORE any other addon so it provides
