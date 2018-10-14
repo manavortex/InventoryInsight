@@ -12,10 +12,9 @@ DISCLAIMER
 ]]
 ------------------------------------------------------------------
 if IIfA == nil then IIfA = {} end
---local IIfA = IIfA
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.19"
+IIfA.version 			= "3.21"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -28,7 +27,6 @@ IIfA.trackedHouses		= {}
 IIfA.EMPTY_STRING		= ""
 IIfA.BagSlotInfo		= {}		-- 8-4-18 AM - make sure the table exists in case something tries to reference it before it's created.
 
-local LMP = LibStub("LibMediaProvider-1.0")
 local BACKPACK = ZO_PlayerInventoryBackpack
 local BANK = ZO_PlayerBankBackpack
 
@@ -81,8 +79,21 @@ IIfA.dropdownLocNames = {
 	"All Houses",
 }
 
+-- from sidTools, by SirInsidiator
+-- hacked up to return just the list of font names
+local function BuildFontList()
+    local fonts = {}
+    for varname, value in zo_insecurePairs(_G) do
+        if(type(value) == "userdata" and value.GetFontInfo) then
+            fonts[#fonts + 1] = varname
+        end
+    end
+    return fonts
+end
+
+
 -- 7-26-16 AM - global func, not part of IIfA class, used in IIfA_OnLoad
-function IIfA_SlashCommands(cmd)
+local function IIfA_SlashCommands(cmd)
 
 	if (cmd == IIfA.EMPTY_STRING) then
 		d("[IIfA]:Please find the majority of options in the addon settings section of the menu under Inventory Insight.")
@@ -310,6 +321,11 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
 
 	IIfA:RebuildHouseMenuDropdowns()
+
+	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
+		IIfA.data.fontList = {}
+		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
+	end
 
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
@@ -610,6 +626,7 @@ function IIfA:ConvertNameToId()
 		end
 	end
 end
+
 
 -- used for testing - wipes all craft bag data
 function IIfA:clearvbag()

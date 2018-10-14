@@ -2,7 +2,6 @@
 IIfA = IIfA
 
 local LAM = LibStub("LibAddonMenu-2.0")
-local LMP = LibStub("LibMediaProvider-1.0")
 
 local id, guildName, deleteHouse, restoreHouse, name
 
@@ -409,7 +408,9 @@ function IIfA:CreateOptionsMenu()
 					type = "dropdown",
 					name = "Tooltips Font",
 					tooltip = "The font used for location information added to both default and custom tooltips",
-					choices = LMP:List('font'),
+					choices = IIfA:GetFontList(),
+					scrollable = true,
+					sort = "name-up",
 					getFunc = function() return (IIfA:GetSettings().in2TooltipsFont or "ZoFontGame") end,
 					setFunc = function( choice )
 						IIfA:StatusAlert("[IIfA]:TooltipsFontChanged["..choice.."]")
@@ -671,4 +672,8 @@ function IIfA:CreateSettingsWindow(savedVars, defaults)
 
 	self:CreateOptionsMenu()
 
-   end
+end
+
+function IIfA:GetFontList()
+	return IIfA.data.fontList[GetAPIVersion()]
+end

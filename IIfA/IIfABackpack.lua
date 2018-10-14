@@ -1,6 +1,5 @@
 local IIfA = IIfA
 
-local LMP = LibStub("LibMediaProvider-1.0")
 local _
 
 IIfA.ScrollSortUp = true
