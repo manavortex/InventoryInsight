@@ -36,10 +36,11 @@ function IIfA:DeleteCharacterData(name)
 	if (name) then
 		--delete selected character
 		for characterName, charId in pairs(IIfA.CharNameToId) do
-			if(characterName == name) then
+			if characterName == name then
 --d("Deleting char " .. name .. ", Id=" .. charId)
 				IIfA.CharNameToId[name] = nil
 				IIfA.CharIdToName[charId] = nil
+				IIfA:ClearUnowned()
 			end
 		end
 	end
@@ -50,10 +51,11 @@ function IIfA:DeleteGuildData(name)
 		--delete selected guild
 		for guildName, guild in pairs(IIfA.guildBanks) do
 			if guildName == name then
-				IIfA.guildBanks[name] = nil
+				p("Deleting Guild Bank data for <<1>>", name)
+				IIfA.guildBanks[name] = {bCollectData = false, lastCollected = IIfA.EMPTY_STRING, items = 0}
+				IIfA:ClearLocationData(name)
 			end
 		end
-		IIfA:ClearUnowned()
 	end
 end
 
@@ -80,14 +82,12 @@ function IIfA:CollectGuildBank(curGuild)
 		if not IIfA.guildBanks[curGuild].bCollectData then
 			return
 		end
+	else
+		-- init a new guild bank
+		IIfA.guildBanks[curGuild] = {bCollectData = false, lastCollected = IIfA.EMPTY_STRING, items = 0}
 	end
 
 	SelectGuildBank(curGB)
-
-	if(IIfA.guildBanks[curGuild] == nil) then
-		IIfA.guildBanks[curGuild] = {}
-		IIfA.guildBanks[curGuild].bCollectData = true		-- default to true just so it's here and ok
-	end
 
 	IIfA.BagSlotInfo[curGuild] = nil
 	-- call with libAsync to avoid lag
@@ -97,6 +97,8 @@ function IIfA:CollectGuildBank(curGuild)
 		p("Collect guild bank - <<1>>", curGuild)
 		local guildData = IIfA.guildBanks[curGuild]
 		local itemCount, slotIndex
+--[[
+11-8-18 AM - ?old debugging code? removed to speed up the data collection process
 		itemCount = 0
 		slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, nil)
 		while slotIndex do
@@ -105,7 +107,7 @@ function IIfA:CollectGuildBank(curGuild)
 		end
 
 		p("GuildBank Item Count = " .. itemCount)
-
+]]--
 		guildData.lastCollected = GetDate() .. "@" .. GetFormattedTime();
 
 		IIfA:ClearLocationData(curGuild)
@@ -122,6 +124,7 @@ function IIfA:CollectGuildBank(curGuild)
 			IIfA.BagSlotInfo[curGuild][slotIndex] = itemKey
 			slotIndex = ZO_GetNextBagSlotIndex(BAG_GUILDBANK, slotIndex)
 		end
+		guildData.items = itemCount
 		p("IIfA - Guild Bank Collected - " .. curGuild .. ", itemCount=" .. itemCount)
 	end)
 end
@@ -210,8 +213,8 @@ function IIfA:CheckForAgedGuildBankData( days )
 		for guildName, guildData in pairs(IIfA.guildBanks)do
 			local today = GetDate()
 			local lastCollected = guildData.lastCollected:match('(........)')
-			if(lastCollected and lastCollected ~= IIfA.EMPTY_STRING)then
-				if(today - lastCollected >= days)then
+			if guildData.bCollectData and lastCollected and lastCollected ~= IIfA.EMPTY_STRING then
+				if (today - lastCollected) >= days then
 					d("[IIfA]:Warning - " .. guildName .. " Guild Bank data not collected in " .. days .. " or more days!")
 					results = true
 				end
@@ -227,21 +230,17 @@ end
 
 function IIfA:UpdateGuildBankData()
 	if IIfA.data.bCollectGuildBankData then
-		local tempGuildBankBag = {
-			items = 0;
-			lastCollected = IIfA.EMPTY_STRING;
-		}
 		for index=1, GetNumGuilds() do
 			local guildName = GetGuildName(index)
 			local guildBank = IIfA.guildBanks[guildName]
-			if(not guildBank) then
-				IIfA.guildBanks[guildName] = tempGuildBankBag
+			if not guildBank then
+				IIfA.guildBanks[guildName] = {bCollectData = false, lastCollected = IIfA.EMPTY_STRING, items = 0}
 			end
 		end
 	end
 
 	local emptyGuild = IIfA.guildBanks[IIfA.EMPTY_STRING]
-	if(emptyGuild)then
+	if emptyGuild then
 		IIfA.guildBanks[IIfA.EMPTY_STRING] = nil
 	end
 end
@@ -321,14 +320,14 @@ function IIfA:RescanHouse(houseCollectibleId)
 		local ret = {}
 		local counter = 1
 		local furnitureId = nil
-		 while(true) do
+		while(true) do
 			furnitureId = GetNextPlacedHousingFurnitureId(furnitureId)
 			if (not furnitureId or counter > 10000 ) then return ret end
 			local itemLink = GetPlacedFurnitureLink(furnitureId, LINK_STYLE_BRACKETS)
 			-- if not ret[itemLink] then
 				-- ret[itemLink] = 1
 			-- else
-			ret[itemLink] = ( ret[itemLink] or 1 ) + 1
+			ret[itemLink] = ( ret[itemLink] or 0 ) + 1
 			-- end
 			counter = counter + 1
 		end

@@ -116,9 +116,14 @@ local function DoesInventoryMatchList(locationName, location)
 	elseif (filter == "All Characters") then
 		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN)
 
-	elseif (filter == "All Account Owned") then
+	elseif (filter == "All Storage") then
 		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_VIRTUAL) or
-			(nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0)
+			GetCollectibleForHouseBankBag(bagId) > 0
+
+	elseif (filter == "Everything I own") then
+		return IIfA:IsOneOf(bagId, BAG_BACKPACK, BAG_WORN, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_VIRTUAL) or
+			GetCollectibleForHouseBankBag(bagId) > 0 or
+			IIfA.data.collectHouseData[bagId]
 
 	elseif (filter == "Bank and Characters") then
 		return IIfA:IsOneOf(bagId, BAG_BANK, BAG_SUBSCRIBER_BANK, BAG_BACKPACK, BAG_WORN)
@@ -137,16 +142,16 @@ local function DoesInventoryMatchList(locationName, location)
 	elseif(filter == "Craft Bag") then
 		return (bagId == BAG_VIRTUAL)
 
-	elseif(filter == "Housing Storage" and filterBag == nil) then
-		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0
+	elseif(filter == "Housing Storage" and filterBag == nil) then	-- all housing storage chests/coffers
+		return GetCollectibleForHouseBankBag(bagId) > 0
 
-	elseif(filter == "Housing Storage" and filterBag ~= nil) then
-		return nil ~= GetCollectibleForHouseBankBag and GetCollectibleForHouseBankBag(bagId) > 0 and bagId == filterBag
+	elseif(filter == "Housing Storage" and filterBag ~= nil) then	-- specific housing storage chest/coffer
+		return bagId == filterBag and GetCollectibleForHouseBankBag(bagId) > 0
 
 	elseif(filter == "All Houses") then
-		return IIfA.data.collectHouseData[bagId]
+		return IIfA.data.collectHouseData[bagId] or false
 
-	elseif (nil ~= IIfA:GetHouseIdFromName(filter)) then
+	elseif(nil ~= IIfA:GetHouseIdFromName(filter)) then
 		return (bagId == IIfA:GetHouseIdFromName(filter))
 
 	else --Not a preset, must be a specific guildbank or character
@@ -739,11 +744,11 @@ function IIfA:SetupBackpack()
 	local function createInventoryDropdown()
 		local comboBox, i, entry
 
-		if IIFA_GUI_Header_Dropdown.comboBox ~= nil then
-			comboBox = IIFA_GUI_Header_Dropdown.comboBox
+		if IIFA_GUI_Header_Dropdown_Main.comboBox ~= nil then
+			comboBox = IIFA_GUI_Header_Dropdown_Main.comboBox
 		else
-			comboBox = ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown)
-			IIFA_GUI_Header_Dropdown.comboBox = comboBox
+			comboBox = ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Main)
+			IIFA_GUI_Header_Dropdown_Main.comboBox = comboBox
 		end
 
 		local function OnItemSelect(_, choiceText, choice)
@@ -775,13 +780,13 @@ function IIfA:SetupBackpack()
 
 		comboBox:SetSortsItems(false)
 
-		IIFA_GUI_Header_Dropdown.m_comboBox.m_height = 500		-- normal height is 250, so just double it (will be plenty tall for most users - even Mana)
+		IIFA_GUI_Header_Dropdown_Main.m_comboBox.m_height = 500		-- normal height is 250, so just double it (will be plenty tall for most users - even Mana)
 
 		local validChoices =  IIfA:GetAccountInventoryList()
 
 		for i = 1, #validChoices do
 			entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect)
-			comboBox:AddItem(entry)
+			d(comboBox:AddItem(entry))
 			if validChoices[i] == IIfA:GetInventoryListFilter() then
 				comboBox:SetSelectedItem(validChoices[i])
 			end
@@ -801,6 +806,23 @@ function IIfA:SetupBackpack()
 				comboBox:AddItem(entry)
 			end
 		end
+
+		local function ScrollableMenuItemPrehookMouseEnter(control)
+			local cname
+			cname = control:GetName()
+			if string.find(cname, "IIFA_GUI_Header_Dropdown_Main") ~= nil then
+				local itemLabel = control:GetNamedChild("Label"):GetText()
+				if IIfA.dropdownLocNamesTT[itemLabel] then
+					IIfA:GuiShowTooltip(control, IIfA.dropdownLocNamesTT[itemLabel])
+				end
+			end
+		end
+		local function ScrollableMenuItemPrehookMouseExit(control)
+			IIfA:GuiHideTooltip(control)
+		end
+
+		ZO_PreHook("ZO_ScrollableComboBox_Entry_OnMouseEnter", ScrollableMenuItemPrehookMouseEnter)
+		ZO_PreHook("ZO_ScrollableComboBox_Entry_OnMouseExit", ScrollableMenuItemPrehookMouseExit)
 	end
 
 	local function createInventoryDropdownQuality()
@@ -841,6 +863,7 @@ function IIfA:SetupBackpack()
 	IIfA:CreateInventoryScroll()
 	createInventoryDropdown()
 	createInventoryDropdownQuality()
+
 	-- IIfA:GuiOnSort()
 end
 
@@ -945,6 +968,8 @@ function IIfA:FMC(control, WhoSeesIt)
 		[63] = 2188,	-- Dremora
 		[64] = 2285,	-- Pyandonean
 		[67] = 2319,	-- Welkynar
+		[69] = 2360,	-- Dead Water
+		[70] = 2361,	-- Elder Argonian
 		}
 
 --		local i, a

@@ -145,14 +145,14 @@ function IIfA:CreateOptionsMenu()
 					title 	= "Guild Bank To Delete",
 					text 	= "Delete Inventory Insight data for guild. \nWarning: This change will be applied immediately.",
 				},
-				{ -- dropdown begin
-					 type = "dropdown",
-					 name = 'Guild Bank To Delete',
-					 choices = getGuildBanks(),
-					 getFunc = function() return end,
-					 setFunc = function(choice) deleteGBank = nil; deleteGBank = choice end,
+				{	-- dropdown begin
+					type = "dropdown",
+					name = 'Guild Bank To Delete',
+					choices = getGuildBanks(),
+					getFunc = function() return end,
+					setFunc = function(choice) deleteGBank = nil; deleteGBank = choice end,
 
-				}, -- dropdown end
+				},	-- dropdown end
 
 				{	-- button begin
 					type = "button",
@@ -465,12 +465,12 @@ function IIfA:CreateOptionsMenu()
 			tooltip =  "The default view (in the dropdown) set when the inventory frame loads",
 			choices = IIfA.dropdownLocNames,
 			default = IIfA:GetSettings().in2DefaultInventoryFrameView,
+			scrollable = true,
 			getFunc = function() return IIfA:GetSettings().in2DefaultInventoryFrameView end,
 			setFunc = function( value )
 				IIfA:StatusAlert("[IIfA]:DefaultInventoryFrameView["..value.."]")
 				IIfA:GetSettings().in2DefaultInventoryFrameView = value
-				-- 2015-3-9 Assembler Maniac - next line changed to stop crash
-				ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown):SetSelectedItem(value)
+				ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Main):SetSelectedItem(value)
 				IIfA:SetInventoryListFilter(value)
 				return
 			end

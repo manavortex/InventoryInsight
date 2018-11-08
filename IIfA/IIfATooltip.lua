@@ -140,48 +140,12 @@ IIfA.racialTextures = {
 	[76] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(76)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Divine Prosecution
 	[77] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(77)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Huntsman
 	[78] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(78)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Silver Dawn
-	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)},		-- Dead-Water
+	[80] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(80)), styleTexture = getTex(IIfA.EMPTY_STRING)},		-- Honor Guard
+	[81] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(81)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Elder Argonian
 }
 
--- check on icons Hlaalu, Redoran and Morag Tong not loading properly
-
---[[ -- these aren't used right now. Not sure whether or not we actually want to.
-IIfA.itemEquipTypeTextures = {
-	[EQUIP_TYPE_CHEST]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_COSTUME]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_FEET]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_HAND]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_HEAD]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_INVALID]  =   IIfA.EMPTY_STRING,
-	[EQUIP_TYPE_LEGS]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_MAIN_HAND]  =   "/esoui/art/inventory/inventory_tabicon_weapons_up.dds",
-	[EQUIP_TYPE_NECK]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_OFF_HAND]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_ONE_HAND]  =   "/esoui/art/inventory/inventory_tabicon_weapons_up.dds",
-	[EQUIP_TYPE_RING]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_SHOULDERS]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds",
-	[EQUIP_TYPE_TWO_HAND]  =   "/esoui/art/inventory/inventory_tabicon_weapons_up.dds",
-	[EQUIP_TYPE_WAIST]  =   "/esoui/art/inventory/inventory_tabicon_armor_up.dds"
-}
-
-IIfA.gearslotTextures = {
-	[EQUIP_TYPE_CHEST] = "/esoui/art/characterwindow/gearslot_chest.dds",
-	[EQUIP_TYPE_COSTUME] = "/esoui/art/characterwindow/gearslot_costume.dds",
-	[EQUIP_TYPE_FEET] = "/esoui/art/characterwindow/gearslot_feet.dds",
-	[EQUIP_TYPE_HAND] = "/esoui/art/characterwindow/gearslot_hands.dds",
-	[EQUIP_TYPE_HEAD] = "/esoui/art/characterwindow/gearslot_head.dds",
-	[EQUIP_TYPE_LEGS] = "/esoui/art/characterwindow/gearslot_legs.dds",
-	[EQUIP_TYPE_MAIN_HAND] = "/esoui/art/characterwindow/gearslot_mainhand.dds",
-	[EQUIP_TYPE_NECK] = "/esoui/art/characterwindow/gearslot_neck.dds",
-	[EQUIP_TYPE_OFF_HAND] = "/esoui/art/characterwindow/gearslot_offhand.dds",
-	[EQUIP_TYPE_ONE_HAND] = "/esoui/art/characterwindow/gearslot_mainhand.dds",
-	[EQUIP_TYPE_RING] = "/esoui/art/characterwindow/gearslot_ring.dds",
-	[EQUIP_TYPE_SHOULDERS] = "/esoui/art/characterwindow/gearslot_shoulders.dds",
-	[EQUIP_TYPE_TWO_HAND] = "/esoui/art/characterwindow/gearslot_mainhand.dds",
-	[EQUIP_TYPE_WAIST] = "/esoui/art/characterwindow/gearslot_belt.dds",
-	[15] = "/esoui/art/characterwindow/gearslot_tabard.dds"
-}
---]]
+-- /script local i for i=60,90 do d(i .. " " .. GetItemStyleName(i)) end
 
 local controlTooltips = {
 	["LineShare"] 	= "Doubleclick an item to add link to chat.",
