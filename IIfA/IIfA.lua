@@ -14,7 +14,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.21"
+IIfA.version 			= "3.22"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -62,22 +62,29 @@ IIfA.trackedBags = {
 	[BAG_HOUSE_BANK_EIGHT] 	= true,
 	[BAG_HOUSE_BANK_NINE] 	= true,
 	[BAG_HOUSE_BANK_TEN] 	= true,
-}
+	}
 
 IIfA.dropdownLocNames = {
 	"All",
 	"All Banks",
 	"All Guild Banks",
 	"All Characters",
-	"All Account Owned",
+	"All Storage",
+	"Everything I own",
+	"Bank Only",
 	"Bank and Characters",
 	"Bank and Current Character",
 	"Bank and other characters",
-	"Bank Only",
 	"Craft Bag",
 	"Housing Storage",
 	"All Houses",
-}
+	}
+
+IIfA.dropdownLocNamesTT = {
+	["All Storage"] = "Bank, Characters, CraftBag, and Storage Chests/Coffers",
+	["Everything I own"] = "Bank, Characters, CraftBag, Storage Chests/Coffers, and Houses",
+	["Housing Storage"] = "Storage Chests/Coffers",
+	}
 
 -- from sidTools, by SirInsidiator
 -- hacked up to return just the list of font names
@@ -438,6 +445,9 @@ function IIfA_onLoad(eventCode, addOnName)
 	-- 2018-10-11 AM - guildBanks now tracked individually per server (NA or EU)
 	IIfA:SetupGuildBanks(worldName)
 
+	if IIfA.InventoryListFilter == "All Account Owned" then
+		IIfA.InventoryListFilter = "All Storage"
+	end
 
 	if ObjSettings.bInSeparateFrame == nil then
 		ObjSettings.bInSeparateFrame = true
@@ -494,19 +504,21 @@ end
 EVENT_MANAGER:RegisterForEvent("IIfALoaded", EVENT_ADD_ON_LOADED, IIfA_onLoad)
 
 
-
 function IIfA:SetupGuildBanks(worldName)
 	local tblName = worldName .. "-guildBanks"
 	if self.data[tblName] == nil then
 		self.data[tblName] = {}
-		local i
-		for i = 1, GetNumGuilds() do
-			local id = GetGuildId(i)
-			local guildName = GetGuildName(id)
-			IIfA.data[tblName][guildName] = {bCollectData = true, lastCollected = GetDate() .. "@" .. GetFormattedTime(), items = 0}
-		end
 	end
 	self.guildBanks = IIfA.data[tblName]
+
+	local i, id, guildName
+	for i = 1, GetNumGuilds() do
+		id = GetGuildId(i)
+		guildName = GetGuildName(id)
+		if self.guildBanks[guildName] == nil then
+			self.guildBanks[guildName] = {bCollectData = false, lastCollected = IIfA.EMPTY_STRING, items = 0}
+		end
+	end
 
 	local found = false
 	if self.data.guildBanks ~= nil then

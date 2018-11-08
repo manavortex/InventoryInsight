@@ -151,9 +151,11 @@ function IIfA:GUIButtonHideOnMouseUp()
 end
 
 -- dropdown
+--[[ no longer used
 function IIfA:GuiSetupDropdown(dropdown)
 	local selectedItem = IIfA:GetInventoryListFilter()
 	dropdown.comboBox:SetSelectedItem(selectedItem)
+	return true
 end
 
 function IIfA:GuiSetupQualityDropdown(dropdown)
@@ -167,6 +169,7 @@ function IIfA:GuiSetupQualityDropdown(dropdown)
 		end
 	end
 end
+--]]
 
 -- click functions
 function IIfA:GuiOnFilterButton(control, mouseButton, filterGroup, filterTypes, filterTypeNames)
@@ -497,7 +500,7 @@ function IIfA:RePositionFrame(settings)
 		IIFA_GUI_Header_Subfilter:SetHidden(false)
 		IIFA_GUI_Header_Subfilter:SetHeight(38)
 	end
-	IIFA_GUI_Header_Dropdown:SetHidden(bMinimize)
+	IIFA_GUI_Header_Dropdown_Main:SetHidden(bMinimize)
 	IIFA_GUI_Header_Dropdown_Quality:SetHidden(bMinimize)
 	IIFA_GUI_Search:SetHidden(bMinimize)
 	IIFA_GUI_Header_GoldButton:SetHidden(bMinimize)

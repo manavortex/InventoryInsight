@@ -129,21 +129,20 @@
  									 mouseOver="EsoUI/Art/Tooltips/icon_bag.dds" />
 						</Button>
 
-						<Control name="$(parent)_Dropdown" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH">
+						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH">
 							<Dimensions y="29" />
 							<Anchor point="TOPLEFT" relativeTo="$(parent)_BagButton" relativePoint="TOPRIGHT" offsetX="10" />
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_BagButton" relativePoint="BOTTOMRIGHT" offsetX="250" offsetY="5" />
-
-							<OnShow>IIfA:GuiSetupDropdown(self)</OnShow>
+<!-- 							<OnShow>IIfA:GuiSetupDropdown(self)</OnShow> -->
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 						</Control>
 
 						<Control name="$(parent)_Dropdown_Quality" inherits="ZO_ComboBox" mouseEnabled="true" >
 							<Dimensions y="29" />
-							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown" relativePoint="TOPRIGHT" offsetX="10" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="10" />
 							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-7" offsetY= "45"/>
-							<OnShow>IIfA:GuiSetupQualityDropdown(self)</OnShow>
+<!--							<OnShow>IIfA:GuiSetupQualityDropdown(self)</OnShow> -->
 							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
 							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 						</Control>
