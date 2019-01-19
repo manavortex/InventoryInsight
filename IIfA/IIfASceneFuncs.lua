@@ -83,7 +83,7 @@ end
 
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
 	IIfA:DebugOut("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState)
-	local dummy = IIfA:GetCurrentSceneName()
+
 	if SCENE_SHOWN == newState then
 		sceneName = IIfA:GetCurrentSceneName()
 		if sceneName == "inventory" then
