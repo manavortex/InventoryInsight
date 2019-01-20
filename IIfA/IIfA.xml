@@ -1084,12 +1084,12 @@
 
 
 			<TopLevelControl name="IIFA_CharCurrencyFrame" clampedToScreen="true" hidden="true">
-				<Dimensions x="467" />
+				<Dimensions x="475" />
 				<Controls>
 					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
 					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="467" y="26" />
+						<Dimensions x="475" y="26" />
 					</Label>
 					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
@@ -1162,7 +1162,7 @@
 					</Label>
 					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="288" y="3" />
+						<Dimensions x="274" y="3" />
 					</Texture>
 				</Controls>
 			</TopLevelControl>

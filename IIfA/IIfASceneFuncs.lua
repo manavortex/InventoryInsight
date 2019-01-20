@@ -14,6 +14,11 @@ function IIfA:GetCurrentSceneName()
 	end
 
 	if tostring(ret) == "65553" then ret = "hud" end
+	if ret == "inventory" and QUICKSLOT_FRAGMENT:IsHidden() == false then
+		ret = ret .. "_quickSlots"
+	end
+
+	IIfA:DebugOut("Get Current Scene Name: '<<1>>', '<<2>>'", SCENE_MANAGER:GetCurrentScene().name, ret)
 
 	return ret
 end
@@ -77,7 +82,8 @@ end
 
 
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
-	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState))
+	IIfA:DebugOut("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState)
+
 	if SCENE_SHOWN == newState then
 		sceneName = IIfA:GetCurrentSceneName()
 		if sceneName == "inventory" then
@@ -94,7 +100,11 @@ end
 
 
 function IIfA:ProcessInventoryTabChange(tabName, oldState, newState)
-	-- IIfA:DebugOut(zo_strformat("ProcessSceneChange <<1>>: <<2>> -> <<3>>", oldState, newState))
+	IIfA:DebugOut("ProcessInventoryTabChange <<1>>: <<2>> -> <<3>>", tabName, oldState, newState)
+
+	local sceneName = IIfA:GetCurrentSceneName()
+	if sceneName ~= "inventory" then return end
+
 	if newState == SCENE_SHOWN then
 		sceneName = "inventory" .. tabName
 		local settings = IIfA:GetSceneSettings(sceneName)

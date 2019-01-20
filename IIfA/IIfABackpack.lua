@@ -808,9 +808,7 @@ function IIfA:SetupBackpack()
 		end
 
 		local function ScrollableMenuItemPrehookMouseEnter(control)
-			local cname
-			cname = control:GetName()
-			if string.find(cname, "IIFA_GUI_Header_Dropdown_Main") ~= nil then
+			if control:GetName():find("IIFA_GUI_Header_Dropdown_Main") ~= nil then
 				local itemLabel = control:GetNamedChild("Label"):GetText()
 				if IIfA.dropdownLocNamesTT[itemLabel] then
 					IIfA:GuiShowTooltip(control, IIfA.dropdownLocNamesTT[itemLabel])
@@ -967,6 +965,8 @@ function IIfA:FMC(control, WhoSeesIt)
 		[62] = 2187,	-- Sapiarch
 		[63] = 2188,	-- Dremora
 		[64] = 2285,	-- Pyandonean
+		[65] = 2317,	-- Huntsman
+		[66] = 2318,	-- Silver Dawn
 		[67] = 2319,	-- Welkynar
 		[69] = 2360,	-- Dead Water
 		[70] = 2361,	-- Elder Argonian
