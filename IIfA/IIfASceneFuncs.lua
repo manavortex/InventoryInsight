@@ -15,7 +15,7 @@ function IIfA:GetCurrentSceneName()
 
 	if tostring(ret) == "65553" then ret = "hud" end
 	if ret == "inventory" and QUICKSLOT_FRAGMENT:IsHidden() == false then
-		ret = ret .. "_quickSlots"
+		ret = ret .. "_quickslots"
 	end
 
 	IIfA:DebugOut("Get Current Scene Name: '<<1>>', '<<2>>'", SCENE_MANAGER:GetCurrentScene().name, ret)
@@ -53,7 +53,7 @@ function IIfA:RegisterForSceneChanges()
 	   	IIfA:ProcessInventoryTabChange("", ...)
 	end)
 	QUICKSLOT_FRAGMENT:RegisterCallback("StateChange", function(...)
-	   	IIfA:ProcessInventoryTabChange("_quickSlots", ...)
+	   	IIfA:ProcessInventoryTabChange("_quickslots", ...)
 	end)
 end
 
@@ -75,6 +75,8 @@ function IIfA:GetSceneSettings(sceneName)
 		settings[sceneName].hidden = true
 		settings[sceneName].docked = false
 	end
+
+	IIfA:DebugOut("GetSceneSettings: name=<<1>>, hidden=<<2>>", sceneName, tostring(settings[sceneName].hidden))
 
 	return settings[sceneName]
 
@@ -103,7 +105,7 @@ function IIfA:ProcessInventoryTabChange(tabName, oldState, newState)
 	IIfA:DebugOut("ProcessInventoryTabChange <<1>>: <<2>> -> <<3>>", tabName, oldState, newState)
 
 	local sceneName = IIfA:GetCurrentSceneName()
-	if sceneName ~= "inventory" then return end
+	if sceneName:find("inventory") == nil then return end
 
 	if newState == SCENE_SHOWN then
 		sceneName = "inventory" .. tabName
@@ -117,16 +119,18 @@ end
 
 
 function IIfA:SaveFrameInfo(calledFrom)
+	IIfA:DebugOut("SaveFrameInfo: <<1>>", calledFrom)
 	if (calledFrom == "onHide") then return end
 
 	local sceneName = IIfA:GetCurrentSceneName()
-	if not QUICKSLOT_FRAGMENT:IsHidden() then
-		sceneName = sceneName .. "_quickslots"
-	end
+--	if not QUICKSLOT_FRAGMENT:IsHidden() then
+--		sceneName = sceneName .. "_quickslots"
+--	end
 
 	local settings = IIfA:GetSceneSettings(sceneName)
 
 	settings.hidden = IIFA_GUI:IsControlHidden()
+	IIfA:DebugOut("SaveFrameInfo scene: <<1>>, hidden=<<2>>", sceneName, tostring(settings.hidden))
 
 	if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
 		settings.lastX	= IIFA_GUI:GetLeft()
