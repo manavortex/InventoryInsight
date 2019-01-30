@@ -1,0 +1,1189 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="IIFA_GUI" clampedToScreen="true" mouseEnabled="true" moveable="true" hidden="true" resizeHandleSize="10">
+			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
+			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-25" offsetY="40" />
+
+			<OnMoveStop>IIfA:SaveFrameInfo("onMoveStop")</OnMoveStop>
+			<OnResizeStart> IIfA:onResizeStart() </OnResizeStart>
+			<OnResizeStop>IIfA:onResizeStop()</OnResizeStop>
+
+			<Controls>
+				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
+
+				<Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
+					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="10" offsetX="10"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
+
+					<Controls>
+<!-- Lock/Unlock buttons -->
+						<Button name="$(parent)_Locked" hidden="true">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="5"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Allow window movement")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GUILock(false)</OnMouseUp>
+							<Dimensions x="24" y="24" />
+							<Textures normal="EsoUI/art/miscellaneous/locked_up.dds"
+										pressed="EsoUI/art/miscellaneous/locked_down.dds"
+									 mouseOver="EsoUI/art/miscellaneous/locked_over.dds"
+							/>
+						</Button>
+
+						<Button name="$(parent)_Unlocked" >
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Locked" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Lock window in place")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GUILock(true)</OnMouseUp>
+							<Dimensions x="24" y="24" />
+							<Textures normal="EsoUI/art/miscellaneous/unlocked_up.dds"
+										pressed="EsoUI/art/miscellaneous/unlocked_down.dds"
+									 mouseOver="EsoUI/art/miscellaneous/unlocked_over.dds"
+							/>
+						</Button>
+<!-- end of Lock/Unlock buttons -->
+
+<!-- Dock/Undock buttons -->
+						<Button name="$(parent)_Docked" hidden="true">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="35"  offsetY="5"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Un-dock window")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GuiDock(false)</OnMouseUp>
+							<Dimensions x="24" y="24" />
+							<Textures normal="IIfA/assets/icons/docked_up.dds"
+										pressed="IIfA/assets/icons/docked_down.dds"
+									 mouseOver="IIfA/assets/icons/docked_over.dds"
+							/>
+						</Button>
+
+						<Button name="$(parent)_Undocked" >
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Docked" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Dock window")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GuiDock(true)</OnMouseUp>
+							<Dimensions x="24" y="24" />
+							<Textures normal="IIfA/assets/icons/undocked_up.dds"
+										pressed="IIfA/assets/icons/undocked_down.dds"
+									 mouseOver="IIfA/assets/icons/undocked_over.dds"
+							/>
+						</Button>
+<!-- end of Dock/Undock buttons -->
+
+						<Label name="$(parent)_Label" mouseEnabled="false" font="ZoFontBookPaper" text="-Inventory Insight-" >
+							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0"/>
+						</Label>
+
+						<Button name="$(parent)_Hide">
+							<Anchor point="TOPRIGHT" relativeTo="IIFA_GUI" relativePoint="TOPRIGHT" offsetX="-10" offsetY="13"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Hide window")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GUIButtonHideOnMouseUp()</OnMouseUp>
+							<Dimensions x="25" y="25" />
+							<Textures normal="EsoUI/art/buttons/decline_up.dds"
+										pressed="EsoUI/art/buttons/decline_down.dds"
+									 mouseOver="EsoUI/art/buttons/decline_over.dds"
+							/>
+						</Button>
+
+						<Button name="$(parent)_Minimize" >
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Hide" relativePoint="TOPLEFT" offsetX="-5" offsetY="2"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Minimize window")	</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)	</OnMouseExit>
+							<Dimensions x="20" y="20" />
+							<OnMouseUp>IIfA:GUIMinimize(true)</OnMouseUp>
+							<Textures normal="EsoUI/art/buttons/minimize_normal.dds"
+										pressed="EsoUI/art/buttons/minimize_mousedown.dds"
+									 mouseOver="EsoUI/art/buttons/minimize_mousedown.dds"
+							/>
+						</Button>
+
+						<Button name="$(parent)_Maximize" hidden="true">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Minimize" relativePoint="TOPLEFT" />
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Restore window")	</OnMouseEnter>
+							<OnMouseExit> IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<Dimensions x="20" y="20" />
+							<OnMouseUp>IIfA:GUIMinimize(false)</OnMouseUp>
+							<Textures normal="EsoUI/art/buttons/maximize_normal.dds"
+										pressed="EsoUI/art/buttons/maximize_down.dds"
+									 mouseOver="EsoUI/art/buttons/maximize_down.dds"
+							/>
+						</Button>
+
+
+						<Button name="$(parent)_GoldButton" mouseOverBlendMode="ADD" inherits="ZO_RadioButton">
+							<Dimensions x="32" y="32" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="45"/>
+							<OnMouseEnter>IIfA.CharCurrencyFrame:Show(self)</OnMouseEnter>
+							<OnMouseExit>IIfA.CharCurrencyFrame:Hide(self)</OnMouseExit>
+							<Textures normal="EsoUI/Art/Bank/bank_tabIcon_gold_up.dds"
+										pressed="EsoUI/Art/Bank/bank_tabIcon_gold_up.dds"
+									 mouseOver="EsoUI/Art/Bank/bank_tabIcon_gold_up.dds" />
+						</Button>
+
+						<Button name="$(parent)_BagButton" mouseOverBlendMode="ADD" inherits="ZO_RadioButton">
+							<Dimensions x="24" y="24" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_GoldButton" relativePoint="TOPRIGHT" offsetX="4" offsetY="0"/>
+							<OnMouseEnter>IIfA.CharBagFrame:Show(self)</OnMouseEnter>
+							<OnMouseExit>IIfA.CharBagFrame:Hide(self)</OnMouseExit>
+							<Textures normal="EsoUI/Art/Tooltips/icon_bag.dds"
+										pressed="EsoUI/Art/Tooltips/icon_bag.dds"
+ 									 mouseOver="EsoUI/Art/Tooltips/icon_bag.dds" />
+						</Button>
+
+						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH">
+							<Dimensions y="29" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_BagButton" relativePoint="TOPRIGHT" offsetX="10" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)_BagButton" relativePoint="BOTTOMRIGHT" offsetX="250" offsetY="5" />
+<!-- 							<OnShow>IIfA:GuiSetupDropdown(self)</OnShow> -->
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+						</Control>
+
+						<Control name="$(parent)_Dropdown_Quality" inherits="ZO_ComboBox" mouseEnabled="true" >
+							<Dimensions y="29" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="10" />
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-7" offsetY= "45"/>
+<!--							<OnShow>IIfA:GuiSetupQualityDropdown(self)</OnShow> -->
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select quality")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+						</Control>
+<!-- Filter Group -->
+						<Control name="$(parent)_Filter" mouseEnabled="true">
+							<Dimensions x="300" y="30" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="30" offsetY="80"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="110"/>
+							<Controls>
+								<Button name="$(parent)_Button0">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Items")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "All", nil)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+
+								</Button>
+								<Button name="$(parent)_Button1">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Weapons")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", nil)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_weapons_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_weapons_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_weapons_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button2">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Armor")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", nil)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_armor_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_armor_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_armor_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button3">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Jewelry")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_RING, EQUIP_TYPE_NECK})</OnMouseUp>
+									<Textures	normal="EsoUI/Art/Crafting/jewelry_tabIcon_icon_up.dds"
+													pressed="EsoUI/Art/Crafting/jewelry_tabIcon_down.dds"
+													mouseOver="EsoUI/Art/Crafting/jewelry_tabIcon_icon_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button4">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Consumables")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY, ITEMTYPE_CROWN_ITEM})</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_consumables_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_consumables_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_consumables_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button5">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Crafting Materials")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER, ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_RUNE_POTENCY, ITEMTYPE_FISH, ITEMTYPE_FLAVORING, ITEMTYPE_INGREDIENT, ITEMTYPE_POISON_BASE, ITEMTYPE_POTION_BASE, ITEMTYPE_REAGENT, ITEMTYPE_RAW_MATERIAL, ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_SPICE, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER, ITEMTYPE_STYLE_MATERIAL})</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_crafting_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_crafting_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_crafting_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button6">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Furniture")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_CRAFTING_STATION, SPECIALIZED_ITEMTYPE_FURNISHING_LIGHT, SPECIALIZED_ITEMTYPE_FURNISHING_ORNAMENTAL, SPECIALIZED_ITEMTYPE_FURNISHING_SEATING, SPECIALIZED_ITEMTYPE_FURNISHING_TARGET_DUMMY})</OnMouseUp>
+									<Textures	normal="EsoUI/art/treeicons/collection_indexicon_furnishings_up.dds"
+													pressed="esoui/art/treeicons/collection_indexicon_furnishings_down.dds"
+													mouseOver="EsoUI/art/treeicons/collection_indexicon_furnishings_over.dds"
+									/>
+
+
+								</Button>
+								<Button name="$(parent)_Button7">
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="40" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Miscellaneous")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_GLYPH_ARMOR, ITEMTYPE_GLYPH_JEWELRY, ITEMTYPE_GLYPH_WEAPON, ITEMTYPE_SOUL_GEM, ITEMTYPE_SIEGE, ITEMTYPE_LURE, ITEMTYPE_TOOL, ITEMTYPE_REPAIR, ITEMTYPE_TRASH, ITEMTYPE_TROPHY, ITEMTYPE_COLLECTIBLE, ITEMTYPE_FISH, ITEMTYPE_TREASURE})</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_misc_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_misc_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_misc_over.dds"
+									/>
+								</Button>
+							</Controls>
+						</Control>
+
+<!-- SubFilter Groups -->
+						<Control name="$(parent)_Subfilter" mouseEnabled="true" hidden="true">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="4"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Filter" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="4"/>
+							<DimensionConstraints minY="10"/>
+							<Controls>
+<!-- SubFilter Group 1 - Weapons -->
+								<Control name="$(parent)_1" mouseEnabled="true" hidden="true">
+									<Dimensions y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Weapons")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", nil)</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "One Handed")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_AXE, WEAPONTYPE_HAMMER, WEAPONTYPE_SWORD, WEAPONTYPE_DAGGER}, {"Axe", "Hammer", "Sword", "Dagger"})</OnMouseUp>
+											<Textures	normal="esoui/art/icons/progression_tabicon_dualwield_up.dds"
+															pressed="esoui/art/icons/progression_tabicon_dualwield_down.dds"
+															mouseOver="esoui/art/icons/progression_tabicon_dualwield_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Two Handed")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_TWO_HANDED_AXE, WEAPONTYPE_TWO_HANDED_HAMMER, WEAPONTYPE_TWO_HANDED_SWORD}, {"Axe 2H", "Hammer 2H", "Sword 2H"})</OnMouseUp>
+											<Textures	normal="esoui/art/icons/progression_tabicon_2handed_up.dds"
+															pressed="esoui/art/icons/progression_tabicon_2handed_down.dds"
+															mouseOver="esoui/art/icons/progression_tabicon_2handed_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Bows")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_BOW})</OnMouseUp>
+											<Textures	normal="esoui/art/icons/progression_tabicon_bow_inactive.dds"
+															pressed="esoui/art/icons/progression_tabicon_bow_down.dds"
+															mouseOver="esoui/art/icons/progression_tabicon_bow_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Destruction Staves")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_FIRE_STAFF, WEAPONTYPE_FROST_STAFF, WEAPONTYPE_LIGHTNING_STAFF}, {"Flame", "Frost", "Lightning"})</OnMouseUp>
+											<Textures	normal="esoui/art/icons/progression_tabicon_damagestaff_up.dds"
+															pressed="esoui/art/icons/progression_tabicon_damagestaff_down.dds"
+															mouseOver="esoui/art/icons/progression_tabicon_damagestaff_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Healing Staves")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_HEALING_STAFF})</OnMouseUp>
+											<Textures	normal="esoui/art/icons/progression_tabicon_healstaff_up.dds"
+															pressed="esoui/art/icons/progression_tabicon_healstaff_down.dds"
+															mouseOver="esoui/art/icons/progression_tabicon_healstaff_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 1 - Weapons -->
+
+<!-- SubFilter Group 2 - Armor/Clothing -->
+								<Control name="$(parent)_2" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Armor")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", nil)</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Heavy")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_HEAVY, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<Textures	normal="EsoUI/art/icons/progression_tabicon_armorheavy_up.dds"
+															pressed="EsoUI/art/icons/progression_tabicon_armorheavy_down.dds"
+															mouseOver="EsoUI/art/icons/progression_tabicon_armorheavy_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Medium")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_MEDIUM, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<Textures	normal="EsoUI/art/icons/progression_tabicon_armormedium_up.dds"
+															pressed="EsoUI/art/icons/progression_tabicon_armormedium_down.dds"
+															mouseOver="EsoUI/art/icons/progression_tabicon_armormedium_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Light")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_LIGHT, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<Textures	normal="EsoUI/art/icons/progression_tabicon_armorlight_up.dds"
+															pressed="EsoUI/art/icons/progression_tabicon_armorlight_down.dds"
+															mouseOver="EsoUI/art/icons/progression_tabicon_armorlight_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Clothing")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_HEAD, EQUIP_TYPE_SHOULDERS, EQUIP_TYPE_CHEST, EQUIP_TYPE_HAND, EQUIP_TYPE_LEGS, EQUIP_TYPE_FEET, EQUIP_TYPE_WAIST}, {"Placeholder", "Head", "Shoulders", "Chest", "Hands", "Legs", "Feet", "Waist"})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/clothing_up.dds"
+															pressed="IIfA/assets/apparel/clothing_down.dds"
+															mouseOver="IIfA/assets/apparel/clothing_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Shields")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Weapons", {WEAPONTYPE_SHIELD}, nil)</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/shield_up.dds"
+															pressed="IIfA/assets/apparel/shield_down.dds"
+															mouseOver="IIfA/assets/apparel/shield_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Jewelry")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_RING, EQUIP_TYPE_NECK}, {"Placeholder", "Ring", "Necklace"})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/jewelry_up.dds"
+															pressed="IIfA/assets/apparel/jewelry_down.dds"
+															mouseOver="IIfA/assets/apparel/jewelry_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Vanity")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_DISGUISE, EQUIP_TYPE_COSTUME}, {"Placeholder", "Disguise", "Costume"})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/vanity_up.dds"
+															pressed="IIfA/assets/apparel/vanity_down.dds"
+															mouseOver="IIfA/assets/apparel/vanity_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 2 - Armor/Clothing -->
+
+<!-- SubFilter Group 3 - Jewelry -->
+								<Control name="$(parent)_3" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Jewelry")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_RING, EQUIP_TYPE_NECK})</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Ring")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_RING})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/ring_up.dds"
+															pressed="IIfA/assets/apparel/ring_down.dds"
+															mouseOver="IIfA/assets/apparel/ring_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Necklace")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Body", {ARMORTYPE_NONE, EQUIP_TYPE_NECK})</OnMouseUp>
+											<Textures	normal="IIfA/assets/apparel/neck_up.dds"
+															pressed="IIfA/assets/apparel/neck_down.dds"
+															mouseOver="IIfA/assets/apparel/neck_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+
+<!-- SubFilter Group 4 - Consumables -->
+								<Control name="$(parent)_4" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-25" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Consumables")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER, ITEMTYPE_FOOD, ITEMTYPE_DRINK, ITEMTYPE_POTION, ITEMTYPE_POISON, ITEMTYPE_RECIPE, ITEMTYPE_RACIAL_STYLE_MOTIF, ITEMTYPE_MASTER_WRIT, ITEMTYPE_AVA_REPAIR, ITEMTYPE_TOOL, ITEMTYPE_CROWN_REPAIR, ITEMTYPE_TROPHY, ITEMTYPE_CROWN_ITEM })</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Food")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_FOOD})</OnMouseUp>
+											<Textures	normal="IIfA/assets/consumables/food/food_up.dds"
+															pressed="IIfA/assets/consumables/food/food_down.dds"
+															mouseOver="IIfA/assets/consumables/food/food_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Drink")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_DRINK})</OnMouseUp>
+											<Textures	normal="IIfA/assets/consumables/drinks/drink_up.dds"
+															pressed="IIfA/assets/consumables/drinks/drink_down.dds"
+															mouseOver="IIfA/assets/consumables/drinks/drink_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Recipes")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_RECIPE, SPECIALIZED_ITEMTYPE_RECIPE_BLACKSMITHING_DIAGRAM_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_CLOTHIER_PATTERN_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_WOODWORKING_BLUEPRINT_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_ENCHANTING_SCHEMATIC_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_ALCHEMY_FORMULA_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_PROVISIONING_DESIGN_FURNISHING, SPECIALIZED_ITEMTYPE_RECIPE_PROVISIONING_STANDARD_FOOD, SPECIALIZED_ITEMTYPE_RECIPE_PROVISIONING_STANDARD_DRINK}, {"Placeholder", "Diagrams", "Patterns", "Blueprints", "Schematics", "Formulae", "Faux Food/Candles", "Food", "Drink"})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/recipes/recipe_up.dds"
+															pressed="IIfA/assets/consumables/recipes/recipe_down.dds"
+															mouseOver="IIfA/assets/consumables/recipes/recipe_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Potions")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_POTION})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/potion/potion_up.dds"
+															pressed="IIfA/assets/consumables/potion/potion_down.dds"
+															mouseOver="IIfA/assets/consumables/potion/potion_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Poisons")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_POISON})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/poison/poison_up.dds"
+															pressed="IIfA/assets/consumables/poison/poison_down.dds"
+															mouseOver="IIfA/assets/consumables/poison/poison_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Motifs")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_RACIAL_STYLE_MOTIF})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/motifs/motif_up.dds"
+															pressed="IIfA/assets/consumables/motifs/motif_down.dds"
+															mouseOver="IIfA/assets/consumables/motifs/motif_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Master Writs")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_MASTER_WRIT})</OnMouseUp>
+											<Textures	normal="esoui/art/crafting/formulae_tabicon_up.dds"
+															pressed="esoui/art/crafting/formulae_tabicon_down.dds"
+															mouseOver="esoui/art/crafting/formulae_tabicon_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button8">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Containers")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CONTAINER})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/containers/container_up.dds"
+															pressed="IIfA/assets/consumables/containers/container_down.dds"
+															mouseOver="IIfA/assets/consumables/containers/container_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button9">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Repair")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_TOOL, ITEMTYPE_AVA_REPAIR, ITEMTYPE_CROWN_REPAIR})</OnMouseUp>
+											<Textures   normal="IIfA/assets/consumables/repair/repair_up.dds"
+															pressed="IIfA/assets/consumables/repair/repair_down.dds"
+															mouseOver="IIfA/assets/consumables/repair/repair_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button10">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button9" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Trophy")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_TROPHY})</OnMouseUp>
+											<Textures   normal="esoui/art/campaign/campaign_tabicon_leaderboard_up.dds"
+															pressed="esoui/art/campaign/campaign_tabicon_leaderboard_down.dds"
+															mouseOver="esoui/art/campaign/campaign_tabicon_leaderboard_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button11">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button10" relativePoint="TOPRIGHT" offsetX="-1" offsetY="0"/>
+											<Dimensions x="34" y="34"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Crown")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Consumable", {ITEMTYPE_CROWN_ITEM})</OnMouseUp>
+											<Textures   normal="esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_up.dds"
+															pressed="esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_down.dds"
+															mouseOver="esoui/art/housing/keyboard/furniture_tabicon_crownfurnishings_over.dds"
+											 />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 4 - Consumables -->
+
+<!-- SubFilter Group 5 - Crafting Materials -->
+								<Control name="$(parent)_5" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="-25" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Materials")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER, ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_RUNE_POTENCY, ITEMTYPE_FISH, ITEMTYPE_FLAVORING, ITEMTYPE_INGREDIENT, ITEMTYPE_POISON_BASE, ITEMTYPE_POTION_BASE, ITEMTYPE_REAGENT, ITEMTYPE_RAW_MATERIAL, ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_SPICE, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER, ITEMTYPE_STYLE_MATERIAL, ITEMTYPE_FURNISHING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_RAW_BOOSTER, ITEMTYPE_JEWELRYCRAFTING_BOOSTER, ITEMTYPE_JEWELRY_TRAIT, ITEMTYPE_JEWELRY_RAW_TRAIT})</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Smithing")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER}, {"Raw Material", "Material", "Temper"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_blacksmithing_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_blacksmithing_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_blacksmithing_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Clothier")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER}, {"Raw Material", "Material", "Tannin"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_clothing_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_clothing_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_clothing_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Woodworking")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER}, {"Raw Material", "Material", "Resin"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_woodworking_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_woodworking_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_woodworking_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Jewlery Crafting")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_JEWELRYCRAFTING_RAW_MATERIAL, ITEMTYPE_JEWELRY_RAW_TRAIT, ITEMTYPE_JEWELRYCRAFTING_RAW_BOOSTER, ITEMTYPE_JEWELRYCRAFTING_MATERIAL, ITEMTYPE_JEWELRYCRAFTING_BOOSTER},
+																																			{"Raw Material", "Raw Trait Material", "Raw Plating", "Material", "Plating"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_jewelrycrafting_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Alchemy")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_REAGENT, ITEMTYPE_POTION_BASE, ITEMTYPE_POISON_BASE}, {"Reagent", "Potion Base", "Poison Base"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_alchemy_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_alchemy_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_alchemy_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Enchanting")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_ENCHANTING_RUNE_ASPECT, ITEMTYPE_ENCHANTING_RUNE_ESSENCE, ITEMTYPE_ENCHANTING_RUNE_POTENCY}, {"Aspect", "Essence", "Potency"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_enchanting_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_enchanting_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_enchanting_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Provisioning")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_INGREDIENT})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_provisioning_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_provisioning_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_provisioning_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button8">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Styles")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_STYLE_MATERIAL})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_styleMaterial_up.dds"
+															pressed="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_styleMaterial_down.dds"
+															mouseOver="EsoUI/Art/Inventory/inventory_tabIcon_Craftbag_styleMaterial_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button9">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button8" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Traits")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_WEAPON_TRAIT, ITEMTYPE_ARMOR_TRAIT, ITEMTYPE_JEWELRY_TRAIT}, {"Weapon", "Armor", "Jewelry"})</OnMouseUp>
+											<Textures   normal="EsoUI/Art/Crafting/smithing_tabicon_weaponSet_up.dds"
+															pressed="EsoUI/Art/Crafting/smithing_tabIcon_weaponSet_down.dds"
+															mouseOver="EsoUI/Art/Crafting/smithing_tabIcon_weaponSet_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button10">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button9" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="36" y="36"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Furnishing")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Materials", {ITEMTYPE_FURNISHING_MATERIAL})</OnMouseUp>
+											<Textures   normal="esoui/art/treeicons/collection_indexicon_furnishings_up.dds"
+															pressed="esoui/art/treeicons/collection_indexicon_furnishings_down.dds"
+															mouseOver="EsoUI/art/treeicons/collection_indexicon_furnishings_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 5 - Crafting Materials -->
+
+<!-- SubFilter Group 6 - Furniture -->
+								<Control name="$(parent)_6" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Furniture")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_CRAFTING_STATION, SPECIALIZED_ITEMTYPE_FURNISHING_LIGHT, SPECIALIZED_ITEMTYPE_FURNISHING_ORNAMENTAL, SPECIALIZED_ITEMTYPE_FURNISHING_SEATING, SPECIALIZED_ITEMTYPE_FURNISHING_TARGET_DUMMY})</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Crafting Stations")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_CRAFTING_STATION})</OnMouseUp>
+											<Textures	normal="EsoUI/art/treeicons/housing_indexicon_workshop_up.dds"
+															pressed="EsoUI/art/treeicons/housing_indexicon_workshop_down.dds"
+															mouseOver="EsoUI/art/treeicons/housing_indexicon_workshop_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Lights")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_LIGHT})</OnMouseUp>
+											<Textures	normal="EsoUI/art/treeicons/housing_indexicon_shrine_up.dds"
+															pressed="EsoUI/art/treeicons/housing_indexicon_shrine_down.dds"
+															mouseOver="EsoUI/art/treeicons/housing_indexicon_shrine_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Ornamental")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_ORNAMENTAL})</OnMouseUp>
+											<Textures	normal="EsoUI/art/treeicons/housing_indexicon_gallery_up.dds"
+															pressed="EsoUI/art/treeicons/housing_indexicon_gallery_down.dds"
+															mouseOver="EsoUI/art/treeicons/housing_indexicon_gallery_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Seating")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_SEATING})</OnMouseUp>
+											<Textures	normal="EsoUI/art/treeicons/collection_indexicon_furnishings_up.dds"
+															pressed="EsoUI/art/treeicons/collection_indexicon_furnishings_down.dds"
+															mouseOver="EsoUI/art/treeicons/collection_indexicon_furnishings_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Target Dummies")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Specialized", {ITEMTYPE_FURNISHING, SPECIALIZED_ITEMTYPE_FURNISHING_TARGET_DUMMY})</OnMouseUp>
+											<Textures	normal="EsoUI/art/treeicons/collection_indexicon_weapons+armor_up.dds"
+															pressed="EsoUI/art/treeicons/collection_indexicon_weapons+armor_down.dds"
+															mouseOver="EsoUI/art/treeicons/collection_indexicon_weapons+armor_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 6 - Furniture -->
+
+<!-- SubFilter Group 7 - Miscellaneous -->
+								<Control name="$(parent)_7" mouseEnabled="true" hidden="true">
+									<Dimensions x="300" y="0" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Controls>
+										<Button name="$(parent)_Button0">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "All Misc.")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_GLYPH_ARMOR, ITEMTYPE_GLYPH_JEWELRY, ITEMTYPE_GLYPH_WEAPON, ITEMTYPE_SOUL_GEM, ITEMTYPE_SIEGE, ITEMTYPE_LURE, ITEMTYPE_TOOL, ITEMTYPE_REPAIR, ITEMTYPE_TRASH, ITEMTYPE_TROPHY, ITEMTYPE_COLLECTIBLE, ITEMTYPE_FISH, ITEMTYPE_TREASURE})</OnMouseUp>
+											<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+															pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+															mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button1">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Glyphs")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_GLYPH_ARMOR, ITEMTYPE_GLYPH_JEWELRY, ITEMTYPE_GLYPH_WEAPON}, {"Glyph - Armor", "Glyph - Jewelry", "Glyph - Weapon"})</OnMouseUp>
+											<Textures	normal="IIfA/assets/miscellaneous/glyphs/glyphs_up.dds"
+															pressed="IIfA/assets/miscellaneous/glyphs/glyphs_down.dds"
+															mouseOver="IIfA/assets/miscellaneous/glyphs/glyphs_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button2">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Soul Gems")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_SOUL_GEM})</OnMouseUp>
+											<Textures   normal="IIfA/assets/miscellaneous/soulgem/soulgem_up.dds"
+															pressed="IIfA/assets/miscellaneous/soulgem/soulgem_down.dds"
+															mouseOver="IIfA/assets/miscellaneous/soulgem/soulgem_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button3">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Siege")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_SIEGE})</OnMouseUp>
+											<Textures	normal="IIfA/assets/miscellaneous/avaweapon/avaweapon_up.dds"
+															pressed="IIfA/assets/miscellaneous/avaweapon/avaweapon_down.dds"
+															mouseOver="IIfA/assets/miscellaneous/avaweapon/avaweapon_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button4">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button3" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Bait")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_LURE})</OnMouseUp>
+											<Textures   normal="IIfA/assets/miscellaneous/bait/bait_up.dds"
+															pressed="IIfA/assets/miscellaneous/bait/bait_down.dds"
+															mouseOver="IIfA/assets/miscellaneous/bait/bait_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button5">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button4" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Tools")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_TOOL})</OnMouseUp>
+											<Textures   normal="esoui/art/tutorial/vendor_tabicon_repair_up.dds"
+															pressed="esoui/art/tutorial/vendor_tabicon_repair_down.dds"
+															mouseOver="esoui/art/tutorial/vendor_tabicon_repair_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Trophy")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_TROPHY, ITEMTYPE_COLLECTIBLE, ITEMTYPE_FISH, ITEMTYPE_TREASURE}, {"Trophy", "Collectible", "Fish", "Treasure"})</OnMouseUp>
+											<Textures   normal="esoui/art/campaign/campaign_tabicon_leaderboard_up.dds"
+															pressed="esoui/art/campaign/campaign_tabicon_leaderboard_down.dds"
+															mouseOver="esoui/art/campaign/campaign_tabicon_leaderboard_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button7">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Stolen")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Stolen", nil)</OnMouseUp>
+											<Textures   normal="EsoUI/art/vendor/vendor_tabicon_fence_up.dds"
+															pressed="EsoUI/art/vendor/vendor_tabicon_fence_down.dds"
+															mouseOver="EsoUI/art/vendor/vendor_tabicon_fence_over.dds" />
+										</Button>
+										<Button name="$(parent)_Button8">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button7" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+											<Dimensions x="38" y="38"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Trash")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnFilterButton(self, button, "Misc", {ITEMTYPE_TRASH})</OnMouseUp>
+											<Textures	normal="IIfA/assets/miscellaneous/trash/trash_up.dds"
+															pressed="IIfA/assets/miscellaneous/trash/trash_down.dds"
+															mouseOver="IIfA/assets/miscellaneous/trash/trash_over.dds" />
+										</Button>
+									</Controls>
+								</Control>
+<!-- End SubFilter Group 7 - Miscellaneous -->
+
+							</Controls>
+						</Control>
+<!-- End SubFilter Groups -->
+
+						<Control name="$(parent)_SortBar" mouseEnabled="true">
+							<Dimensions y="30"/>
+
+							<Anchor point="TOPLEFT"  relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMLEFT" offsetX="-10"  offsetY="2" />
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Subfilter" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="2" />
+
+							<Controls>
+								<Control name="$(parent)_Sort" verticalAlignment="LEFT">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" />
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" />
+									<Controls>
+										<Texture name="$(parent)_Icon" textureFile="/esoui/art/miscellaneous/list_sortheader_icon_sortdown.dds">
+											<Dimensions x="30" y="30"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" />
+										</Texture>
+										<Button name="$(parent)_SortName" text="Name" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+											<Dimensions x="100" y="30"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Icon" relativePoint="TOPRIGHT" offsetX="20"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort By Name")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnSort(false)</OnMouseUp>
+										</Button>
+										<Button name="$(parent)_SortQuality" text="Quality" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+											<Dimensions x="100" y="30"/>
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_SortName" relativePoint="TOPRIGHT"/>
+											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort by Quality")</OnMouseEnter>
+											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>IIfA:GuiOnSort(true)</OnMouseUp>
+										</Button>
+
+									</Controls>
+								</Control>
+
+								<Control name="$(parent)_Subfilter_Dropdown" inherits="ZO_ComboBox" mouseEnabled="true" hidden="true">
+									<Dimensions x="118" />
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_SortQuality" relativePoint="TOPRIGHT" offsetX="0" offsetY="-2"/>
+									<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Item Type Filter")</OnMouseEnter>
+									<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+								</Control>
+
+							</Controls>
+
+						</Control>
+
+					</Controls>
+				</Control>
+
+				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
+					<DimensionConstraints  minY="52"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
+					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
+
+					<Controls>
+						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="23" offsetY="-14"/>
+
+							<OnMouseDown>self.locked=false</OnMouseDown>
+							<OnMouseUp>self.locked=true</OnMouseUp>
+							<OnValueChanged>IIfA:GuiOnSliderUpdate(self, value)</OnValueChanged>
+						</Slider>
+
+						<Control name="$(parent)_Counts" verticalAlignment="LEFT">
+							<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetY="6" />
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetY="6" />
+							<Dimensions y="26" />
+							<Controls>
+								<Label name="$(parent)_Items" mouseEnabled="false" font="ZoFontGameSmall" text="Items" >
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
+								</Label>
+								<Label name="$(parent)_Slots" mouseEnabled="false" font="ZoFontGameSmall" text="Slots" >
+									<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+									<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
+								</Label>
+							</Controls>
+						</Control>
+
+					</Controls>
+
+				</Control>
+
+				<Control name="$(parent)_Search" mouseEnabled="true" resizeToFitDescendents="false">
+
+					<Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="22" offsetY="-20"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-60" offsetY="-20"/>
+					<Dimensions y="36" />
+					<Controls>
+						<EditBox name="$(parent)Box"  inherits="ZO_InventorySearchBox" >
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="5"/>
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="5"/>
+
+							<OnTextChanged>IIfA:GuiOnSearchboxText(self)</OnTextChanged>
+							<Controls>
+								<Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" >
+								</Backdrop>
+							</Controls>
+						</EditBox>
+
+						<Button name="$(parent)_Clear">
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-1" offsetY="7"/>
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Clear Search Text")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:GuiOnSearchBoxClear()</OnMouseUp>
+							<Dimensions x="23" y="23" />
+							<Textures normal="EsoUI/art/buttons/decline_up.dds"
+										pressed="EsoUI/art/buttons/decline_down.dds"
+									 mouseOver="EsoUI/art/buttons/decline_over.dds"
+							/>
+						</Button>
+
+						<Button name="$(parent)_SetNameOnly">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="5" offsetY="-5"/>
+							<Dimensions x="40" y="48" />
+							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Filter on set name only")</OnMouseEnter>
+							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>IIfA:SetNameFilterToggle()</OnMouseUp>
+							<Textures
+								normal="esoui/art/dye/dyes_tabicon_costumedye_up.dds"
+								pressed="esoui/art/dye/dyes_tabicon_costumedye_down.dds"
+								mouseOver="esoui/art/dye/dyes_tabicon_costumedye_over.dds"
+							 />
+						</Button>
+
+					</Controls>
+				</Control>
+
+
+			</Controls>
+
+		</TopLevelControl>
+
+
+		<Control name="IIFA_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true" mouseEnabled="true">
+			<Dimensions x="300" y="52" />
+			<Controls>
+				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Miscellaneous/listItem_backdrop.dds" alpha="0.4">
+					<AnchorFill />
+					<TextureCoords left="0" right="1" top="0" bottom=".8125" />
+				</Texture>
+
+				<Button name="$(parent)Button" inherits="ZO_InventorySlotNoMouseover">
+					<Dimensions x="40" y="40" />
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" offsetX="0" offsetY="3" />
+				</Button>
+
+				<Label name="$(parent)Qty" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
+					<Dimensions x="44" y="50"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Button" relativePoint="TOPRIGHT" offsetX="8" offsetY="-3" />
+				</Label>
+
+				<Label name="$(parent)Name" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER">
+					<Dimensions y="50" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="18" offsetY="0"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+				</Label>
+
+				<Texture name="$(parent)IconWorn" textureFile="esoui/art/campaign/overview_indexicon_bonus_disabled.dds" alpha="0.8" hidden="true">
+					<Dimensions x="20" y="20"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)Button" relativePoint="TOPLEFT" />
+				</Texture>
+
+				<Texture name="$(parent)IconStolen" textureFile="esoui/art/inventory/inventory_stolenitem_icon.dds" alpha="0.4" >
+					<Dimensions x="20" y="20"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)Button" relativePoint="BOTTOMLEFT" />
+				</Texture>
+			</Controls>
+		</Control>
+
+
+			<!-- tooltips -->
+			<Tooltip name="IIFA_POPUP_TOOLTIP" hidden="true" mouseEnabled="false" movable="false" clampedToScreen="true" virtual="true" inherits="ItemTooltipBase">
+				<Dimensions  x="416" y="200" />
+				<Anchor point="TOP" relativeTo="PopupTooltip" relativePoint="BOTTOM" offsetX="0" offsetY="0" />
+				<Controls>
+					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="" hidden="true">
+						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
+					</Label>
+					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
+						<Dimensions x="50" y="50" />
+					</Texture>
+				</Controls>
+			</Tooltip>
+
+			<Tooltip name="IIFA_ITEM_TOOLTIP" hidden="true" mouseEnabled="false" movable="false" clampedToScreen="true" virtual="true" inherits="ItemTooltipBase">
+				<Dimensions  x="200" y="200" />
+				<Anchor point="TOP" relativeTo="ItemTooltip" relativePoint="BOTTOM" offsetX="0" offsetY="0" />
+				<Controls>
+					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="" hidden="true">
+						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
+					</Label>
+					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
+						<Dimensions x="50" y="50" />
+					</Texture>
+				</Controls>
+			</Tooltip>
+
+			<Control name="IIFA_TT_Template" hidden="true" virtual="true">
+				<Controls>
+					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="">
+						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
+					</Label>
+					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
+						<Dimensions x="64" y="64" />
+					</Texture>
+				</Controls>
+			</Control>
+
+
+			<TopLevelControl name="IIFA_CharCurrencyFrame" clampedToScreen="true" hidden="true">
+				<Dimensions x="475" />
+				<Controls>
+					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
+					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="475" y="26" />
+					</Label>
+					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="165" y="24" />
+					</Label>
+					<Texture name="$(parent)CURT_MONEY">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="54" offsetY="4" />
+					</Texture>
+					<Texture name="$(parent)CURT_TELVAR_STONES">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_MONEY" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)CURT_ALLIANCE_POINTS">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_TELVAR_STONES" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)CURT_WRIT_VOUCHERS">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_ALLIANCE_POINTS" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					</Texture>
+					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="490" y="3" />
+					</Texture>
+				</Controls>
+			</TopLevelControl>
+
+			<Control name="IIFA_CharCurrencyRow" virtual="true">
+				<Dimensions x="463" y="24" />
+				<Controls>
+					<Label name="$(parent)charName" font="ZoFontGameShadow" text="">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="165" y="24" />
+					</Label>
+					<Label name="$(parent)qtyGold" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)charName" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="72" y="24" />
+					</Label>
+					<Label name="$(parent)qtyTV" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyGold" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="72" y="24" />
+					</Label>
+					<Label name="$(parent)qtyAP" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyTV" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="72" y="24" />
+					</Label>
+					<Label name="$(parent)qtyWV" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyAP" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="68" y="24" />
+					</Label>
+				</Controls>
+			</Control>
+
+			<TopLevelControl name="IIFA_CharBagFrame" clampedToScreen="true" hidden="true">
+				<Dimensions x="274" />
+				<Controls>
+					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
+					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="274" y="26" />
+					</Label>
+					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="165" y="24" />
+					</Label>
+					<Label name="$(parent)_TitleUsed" font="ZoFontGameShadow" text="Used" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="0" offsetY="0" />
+						<Dimensions x="50" y="24" />
+					</Label>
+					<Label name="$(parent)_TitleMax" font="ZoFontGameShadow" text="Size" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleUsed" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
+						<Dimensions x="55" y="24" />
+					</Label>
+					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="274" y="3" />
+					</Texture>
+				</Controls>
+			</TopLevelControl>
+
+			<Control name="IIFA_CharBagRow" virtual="true">
+				<Dimensions x="262" y="24" />
+				<Controls>
+					<Label name="$(parent)charName" font="ZoFontGameShadow" text="">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
+						<Dimensions x="165" y="24" />
+					</Label>
+					<Label name="$(parent)spaceUsed" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)charName" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="42" y="24" />
+					</Label>
+					<Label name="$(parent)spaceMax" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)spaceUsed" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+						<Dimensions x="55" y="24" />
+					</Label>
+				</Controls>
+			</Control>
+
+		</Controls>
+</GuiXml>
