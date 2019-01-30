@@ -463,6 +463,14 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIFA_GUI_Header_Filter_Button0:SetState(BSTATE_PRESSED)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0
 
+	if GetAPIVersion() == 100026 then
+		IIfA.GUI_SearchBox = IIFA_GUI_SearchBackdropBox
+		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBackdropBoxText
+	else
+		IIfA.GUI_SearchBox = IIFA_GUI_SearchBox
+		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBoxText
+	end
+
 	-- save off anchors for the ListHolder
 	--local _, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(0)
 	--IIFA_GUI_ListHolder.savedAnchor1 = {point, relTo, relPoint, offsX, offsY, constrains}

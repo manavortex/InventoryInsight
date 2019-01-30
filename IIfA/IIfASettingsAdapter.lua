@@ -83,7 +83,7 @@ function IIfA:SetInventoryListFilter(value, bagId)
 	IIfA.InventoryListFilter = value
 	IIfA.InventoryListFilterBagId = bagId
 
-	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
+	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
 
 	IIfA:RefreshInventoryScroll()
 end
@@ -97,7 +97,7 @@ end
 function IIfA:SetInventoryListFilterQuality(value)
 	IIfA.InventoryListFilterQuality = value
 
-	IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
+	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
 
 	IIfA:RefreshInventoryScroll()
 end
