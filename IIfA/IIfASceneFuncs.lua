@@ -18,7 +18,7 @@ function IIfA:GetCurrentSceneName()
 		ret = ret .. "_quickslots"
 	end
 
-	IIfA:DebugOut("Get Current Scene Name: '<<1>>', '<<2>>'", SCENE_MANAGER:GetCurrentScene().name, ret)
+	--IIfA:DebugOut("Get Current Scene Name: '<<1>>', '<<2>>'", SCENE_MANAGER:GetCurrentScene().name, ret)
 
 	return ret
 end
@@ -123,10 +123,6 @@ function IIfA:SaveFrameInfo(calledFrom)
 	if (calledFrom == "onHide") then return end
 
 	local sceneName = IIfA:GetCurrentSceneName()
---	if not QUICKSLOT_FRAGMENT:IsHidden() then
---		sceneName = sceneName .. "_quickslots"
---	end
-
 	local settings = IIfA:GetSceneSettings(sceneName)
 
 	settings.hidden = IIFA_GUI:IsControlHidden()
@@ -153,7 +149,7 @@ function IIfA:ToggleInventoryFrame()
 		IIfA:RefreshInventoryScroll()
 	end
 	if not IIfA.data.dontFocusSearch then
-		IIFA_GUI_SearchBox:TakeFocus()
+		IIfA.GUI_SearchBox:TakeFocus()
 	end
 	IIfA:SaveFrameInfo("ToggleInventoryFrame")
 end

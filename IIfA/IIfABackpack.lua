@@ -367,7 +367,7 @@ end
 function IIfA:UpdateScrollDataLinesData()
 
 	if (not IIfA.searchFilter) or IIfA.searchFilter == "Click to search..." then
-		IIfA.searchFilter = IIFA_GUI_SearchBox:GetText()
+		IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
 	end
 
 	local index = 0
@@ -1052,8 +1052,8 @@ function IIfA:FilterByItemName(control)
 	itemName = GetItemLinkName(control.itemLink)
 
 	IIfA.searchFilter = itemName
-	IIFA_GUI_SearchBox:SetText(itemName)
-	IIFA_GUI_SearchBoxText:SetHidden(true)
+	IIfA.GUI_SearchBox:SetText(itemName)
+	IIfA.GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
 	IIfA:RefreshInventoryScroll()
 
@@ -1077,8 +1077,8 @@ function IIfA:FilterByItemSet(control)
 	end
 
 	IIfA.searchFilter = setName
-	IIFA_GUI_SearchBox:SetText(setName)
-	IIFA_GUI_SearchBoxText:SetHidden(true)
+	IIfA.GUI_SearchBox:SetText(setName)
+	IIfA.GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = true
 	IIfA:RefreshInventoryScroll()
 
