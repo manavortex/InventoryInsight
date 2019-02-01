@@ -89,7 +89,7 @@ IIfA.dropdownLocNamesTT = {
 -- from sidTools, by SirInsidiator
 -- hacked up to return just the list of font names
 local function BuildFontList()
-    local fonts = {}
+    local fonts = { "Tooltip Default" }
     for varname, value in zo_insecurePairs(_G) do
         if(type(value) == "userdata" and value.GetFontInfo) then
             fonts[#fonts + 1] = varname

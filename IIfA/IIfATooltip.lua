@@ -540,9 +540,15 @@ function IIfA:UpdateTooltip(tooltip)
 					elseif location.bagLoc == BAG_VIRTUAL then
 						textOut = IIfA.colorHandlerCraftBag:Colorize(textOut)
 					end
-					tooltip:AddLine(textOut)
+					local face = IIfA:GetSettings().in2TooltipsFont
+					if face == "Tooltip Default" then
+						tooltip:AddLine(textOut)
+					else
+						tooltip:AddLine(textOut, face)
+					end
 				end
 			end
 		end
 	end
 end
+
