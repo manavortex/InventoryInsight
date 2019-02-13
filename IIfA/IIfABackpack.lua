@@ -367,7 +367,7 @@ end
 function IIfA:UpdateScrollDataLinesData()
 
 	if (not IIfA.searchFilter) or IIfA.searchFilter == "Click to search..." then
-		IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
+		IIfA.searchFilter = zo_strlower(IIfA.GUI_SearchBox:GetText())
 	end
 
 	local index = 0
@@ -1051,12 +1051,11 @@ function IIfA:FilterByItemName(control)
 	local itemName
 	itemName = GetItemLinkName(control.itemLink)
 
-	IIfA.searchFilter = itemName
+	IIfA.searchFilter = zo_strlower(itemName)
 	IIfA.GUI_SearchBox:SetText(itemName)
 	IIfA.GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
 	IIfA:RefreshInventoryScroll()
-
 end
 
 function IIfA:FilterByItemSet(control)
@@ -1069,19 +1068,15 @@ function IIfA:FilterByItemSet(control)
 	local hasSetInfo, setName
 	hasSetInfo, setName = GetItemLinkSetInfo(itemLink, false)
 	if hasSetInfo then
-		IIfA.searchFilter = setName
+		IIfA.searchFilter = zo_strlower(setName)
 		-- fill in the GUI portion here
+		IIfA.GUI_SearchBox:SetText(setName)
+		IIfA.GUI_SearchBoxText:SetHidden(true)
+		IIfA.bFilterOnSetName = true
+		IIfA:RefreshInventoryScroll()
 	else
 		d("Item is not part of a set. Filter not changed.")
-		return
 	end
-
-	IIfA.searchFilter = setName
-	IIfA.GUI_SearchBox:SetText(setName)
-	IIfA.GUI_SearchBoxText:SetHidden(true)
-	IIfA.bFilterOnSetName = true
-	IIfA:RefreshInventoryScroll()
-
 end
 
 
