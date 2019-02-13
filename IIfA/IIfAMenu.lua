@@ -417,7 +417,7 @@ function IIfA:CreateOptionsMenu()
 						IIfA:SetTooltipFont(choice)
 					end
 				},
-
+--[[
 				{
 					type = "slider",
 					name = "Tooltip Font Size",
@@ -430,7 +430,7 @@ function IIfA:CreateOptionsMenu()
 						IIfA:GetSettings().in2TooltipsFontSize = value
 					end,
 				},
-
+]]
 			}, -- controls end
 
 		}, -- tooltipOptionsSubWindow end

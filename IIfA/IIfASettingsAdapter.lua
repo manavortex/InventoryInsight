@@ -82,9 +82,7 @@ function IIfA:SetInventoryListFilter(value, bagId)
 	if not value or value == IIfA.EMPTY_STRING then value = "All" end
 	IIfA.InventoryListFilter = value
 	IIfA.InventoryListFilterBagId = bagId
-
-	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
-
+--	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
 	IIfA:RefreshInventoryScroll()
 end
 
@@ -96,9 +94,7 @@ end
 -- this is for the dropdown menu
 function IIfA:SetInventoryListFilterQuality(value)
 	IIfA.InventoryListFilterQuality = value
-
-	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
-
+--	IIfA.searchFilter = IIfA.GUI_SearchBox:GetText()
 	IIfA:RefreshInventoryScroll()
 end
 function IIfA:GetCollectingHouseData()

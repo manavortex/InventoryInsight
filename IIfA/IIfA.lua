@@ -14,7 +14,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.22"
+IIfA.version 			= "3.23"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -89,7 +89,7 @@ IIfA.dropdownLocNamesTT = {
 -- from sidTools, by SirInsidiator
 -- hacked up to return just the list of font names
 local function BuildFontList()
-    local fonts = {}
+    local fonts = { "Tooltip Default" }
     for varname, value in zo_insecurePairs(_G) do
         if(type(value) == "userdata" and value.GetFontInfo) then
             fonts[#fonts + 1] = varname
