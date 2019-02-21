@@ -103,6 +103,32 @@ local function IIfA_HouseEntered(eventCode)
 	end
 end
 
+-- request from Baertram - add right click context menu "Search thru Inventory Insight" to item links
+
+local function IIfA_linkContextRightClick(link, button, _, _, linkType, ...)
+	if button == MOUSE_BUTTON_INDEX_RIGHT and linkType == ITEM_LINK_TYPE then
+--		d(debug.traceback())
+		zo_callLater(function()
+			AddCustomMenuItem("Search Inventory" , function()
+				--Get the item's name from the link
+				local itemNameClean = ZO_CachedStrFormat("<<C:1>>", GetItemLinkName(link))
+				--Change the dropdown box of IIfA to "All"
+				--Put the name to the IIfA search box
+				IIfA.GUI_SearchBox:SetText(itemNameClean)
+				IIfA:ApplySearchText(itemNameClean)
+				--Open the IIfA UI if not already shown
+				if IIFA_GUI:IsControlHidden() then
+					IIfA:ToggleInventoryFrame()
+				end
+				end)
+				--Show the context menu entries
+			ShowMenu()
+		end
+		, MENU_ADD_OPTION_LABEL) --to add the contextmenu entry after the exisitng ones
+	end
+end
+
+
 local function IIfA_EventDump(...)
 	--d(...)
 	local l = {...}
@@ -206,6 +232,9 @@ function IIfA:RegisterForEvents()
 
 	--    ZO_QuickSlot:RegisterForEvent(EVENT_ABILITY_COOLDOWN_UPDATED, IIfA_EventDump)
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA:ProcessRightClick(rowControl) end)
+
+	-- handle right clicks on links
+    LINK_HANDLER:RegisterCallback(LINK_HANDLER.LINK_MOUSE_UP_EVENT, IIfA_linkContextRightClick)
 
 end
 

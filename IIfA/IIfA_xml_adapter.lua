@@ -283,6 +283,10 @@ end
 -- IIfA.GUI_SearchBoxText is the "Filter by text search" text msg
 function IIfA:GuiOnSearchboxText(control)
 	local text = control:GetText()
+	IIfA:ApplySearchText(text)
+end
+
+function IIfA:ApplySearchText(text)
 	IIfA.GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
 	IIfA.searchFilter = zo_strlower(text)
 	IIfA:RefreshInventoryScroll()
