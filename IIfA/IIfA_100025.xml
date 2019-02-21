@@ -1028,9 +1028,11 @@
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 				</Label>
 
-				<Texture name="$(parent)IconWorn" textureFile="esoui/art/campaign/overview_indexicon_bonus_disabled.dds" alpha="0.8" hidden="true">
+				<Texture name="$(parent)IconWorn" textureFile="esoui/art/campaign/overview_indexicon_bonus_disabled.dds" alpha="0.8" hidden="true" mouseEnabled="true">
 					<Dimensions x="20" y="20"/>
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)Button" relativePoint="TOPLEFT" />
+					<OnMouseEnter>IIfA:GuiShowTooltip(self, "Worn")</OnMouseEnter>
+					<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
 				</Texture>
 
 				<Texture name="$(parent)IconStolen" textureFile="esoui/art/inventory/inventory_stolenitem_icon.dds" alpha="0.4" >
