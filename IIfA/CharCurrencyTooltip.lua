@@ -118,6 +118,8 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 	local prevControl = self.frame
 	local currId = GetCurrentCharacterId()
 	local i
+	local charNameMaxWidth = 0
+	local charNameWidth
 
 	local iconSize = 18
 	prevControl:GetNamedChild("icon_qtyGold"):SetTexture(GetCurrencyKeyboardIcon(CURT_MONEY))
@@ -177,6 +179,7 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 		end
 		tControl:GetNamedChild("charName"):SetWrapMode(TEXT_WRAP_MODE_ELLIPSIS)
 		tControl:GetNamedChild("charName"):SetText(GetAllianceColor(alliance):Colorize(charName))
+		tControl:GetNamedChild("charName").rawCharName = charName
 		if GetCurrentCharacterId() == charId then
 			self.charControl = tControl
 		else
@@ -220,6 +223,7 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Bank", self.frame, "IIFA_CharCurrencyRow")
 	table.insert(self.controls, tControl)
 	tControl:GetNamedChild("charName"):SetText(GetString(SI_CURRENCYLOCATION1))
+	tControl:GetNamedChild("charName").rawCharName = GetString(SI_CURRENCYLOCATION1)
 	tControl:SetAnchor(TOPLEFT, self.divider1, BOTTOMLEFT, 0, 0)
 	self.bankControl = tControl
 
@@ -233,8 +237,25 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Tots", self.frame, "IIFA_CharCurrencyRow")
 	table.insert(self.controls, tControl)
 	tControl:GetNamedChild("charName"):SetText("Totals")
+	tControl:GetNamedChild("charName").rawCharName = "Totals"
 	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 0, 0)
 	self.totControl = tControl
+
+	local ctr, tControl, ctl
+	ctl = self.frame:GetNamedChild("_TitleCharName")
+	charNameMaxWidth = ctl:GetStringWidth(ctl:GetText())
+	for ctr, tControl in pairs(self.controls) do
+		ctl = tControl:GetNamedChild("charName")
+		charNameWidth = ctl:GetStringWidth(ctl.rawCharName) / GetUIGlobalScale()
+		if charNameWidth > charNameMaxWidth then
+			charNameMaxWidth = charNameWidth
+		end
+	end
+
+	self.frame:GetNamedChild("_TitleCharName"):SetWidth(charNameMaxWidth + 6)
+	for ctr, tControl in pairs(self.controls) do
+		tControl:GetNamedChild("charName"):SetWidth(charNameMaxWidth + 6)
+	end
 
 	self.frame:SetHeight((GetNumCharacters() + 4) * 26)	-- numchars + 4 represents # chars + bank + total + title and col titles
 
