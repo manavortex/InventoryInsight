@@ -90,9 +90,12 @@
 							<OnMouseExit>IIfA:GuiHideTooltip(self)	</OnMouseExit>
 							<Dimensions x="20" y="20" />
 							<OnMouseUp>IIfA:GUIMinimize(true)</OnMouseUp>
-							<Textures normal="EsoUI/art/buttons/minimize_normal.dds"
+<!--							<Textures normal="EsoUI/art/buttons/minimize_normal.dds"
 										pressed="EsoUI/art/buttons/minimize_mousedown.dds"
-									 mouseOver="EsoUI/art/buttons/minimize_mousedown.dds"
+									 mouseOver="EsoUI/art/buttons/minimize_mousedown.dds" -->
+							<Textures normal="IIfA/assets/icons/minimize_up.dds"
+										pressed="IIfA/assets/icons/minimize_down.dds"
+									 mouseOver="IIfA/assets/icons/minimize_over.dds"
 							/>
 						</Button>
 
@@ -102,9 +105,12 @@
 							<OnMouseExit> IIfA:GuiHideTooltip(self)</OnMouseExit>
 							<Dimensions x="20" y="20" />
 							<OnMouseUp>IIfA:GUIMinimize(false)</OnMouseUp>
-							<Textures normal="EsoUI/art/buttons/maximize_normal.dds"
+<!--							<Textures normal="EsoUI/art/buttons/maximize_normal.dds"
 										pressed="EsoUI/art/buttons/maximize_down.dds"
-									 mouseOver="EsoUI/art/buttons/maximize_down.dds"
+									 mouseOver="EsoUI/art/buttons/maximize_down.dds" -->
+							<Textures normal="IIfA/assets/icons/maximize_up.dds"
+										pressed="IIfA/assets/icons/maximize_down.dds"
+									 mouseOver="IIfA/assets/icons/maximize_over.dds"
 							/>
 						</Button>
 
@@ -1089,38 +1095,37 @@
 
 
 			<TopLevelControl name="IIFA_CharCurrencyFrame" clampedToScreen="true" hidden="true">
-				<Dimensions x="475" />
 				<Controls>
-					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
+					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" />
 					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="475" y="26" />
+						<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0" />
+						<Dimensions y="26" />
 					</Label>
 					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
+						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="26" />
 						<Dimensions x="165" y="24" />
 					</Label>
-					<Texture name="$(parent)CURT_MONEY">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="54" offsetY="4" />
+					<Texture name="$(parent)icon_qtyGold">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="77" offsetY="4" />
 					</Texture>
-					<Texture name="$(parent)CURT_TELVAR_STONES">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_MONEY" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					<Texture name="$(parent)icon_qtyTV">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyGold" relativePoint="TOPRIGHT" offsetX="77" offsetY="0" />
 					</Texture>
-					<Texture name="$(parent)CURT_ALLIANCE_POINTS">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_TELVAR_STONES" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					<Texture name="$(parent)icon_qtyAP">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyTV" relativePoint="TOPRIGHT" offsetX="77" offsetY="0" />
 					</Texture>
-					<Texture name="$(parent)CURT_WRIT_VOUCHERS">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_ALLIANCE_POINTS" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
+					<Texture name="$(parent)icon_qtyWV">
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyAP" relativePoint="TOPRIGHT" offsetX="77" offsetY="0" />
 					</Texture>
 					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="490" y="3" />
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="3" />
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyWV" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="3" />
+						<Dimensions y="3" />
 					</Texture>
 				</Controls>
 			</TopLevelControl>
 
-			<Control name="IIFA_CharCurrencyRow" virtual="true">
-				<Dimensions x="463" y="24" />
+			<Control name="IIFA_CharCurrencyRow" virtual="true" resizeToFitDescendents="true">
 				<Controls>
 					<Label name="$(parent)charName" font="ZoFontGameShadow" text="">
 						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
