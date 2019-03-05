@@ -1,8 +1,8 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.24
-## AddOnVersion: 30024
-## APIVersion: 100025 100026
+## Version: 3.25
+## AddOnVersion: 30025
+## APIVersion: 100026 100027
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
@@ -14,7 +14,7 @@ libs\LibCustomTitles\LibCustomTitles.lua
 
 IIfA_Preload.lua
 
-IIfA_$(APIVersion).xml
+IIfA.xml
 Bindings.xml
 CharCurrencyTooltip.lua
 CharBagSpaceTooltip.lua

@@ -97,7 +97,7 @@ IIfA.racialTextures = {
 	[33] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(33)), styleTexture = getTex("akaviri")},  			-- Akaviri
 	[34] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(34)), styleTexture = getTex("imperial")}, 			-- Imperial
 	[35] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(35)), styleTexture = getTex("akaviri")}, 			-- Yokudan
-	[36] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(36)), styleTexture = getTex("imperial")}, 			-- "Universal" what the hell
+	[36] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(36)), styleTexture = getTex("imperial")}, 			-- "Universal" ???
 	[37] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(37)), styleTexture = getTex("reach")}, 				-- Reach Winter
 	[38] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(38)), styleTexture = getTex("tsaesci")}, 			-- Tsaesci
 	[39] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(39)), styleTexture = getTex("minotaur")}, 			-- Minotaur
