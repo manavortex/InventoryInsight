@@ -215,30 +215,43 @@ function CharCurrencyFrame:Initialize(objectForAssets)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider1", self.frame, "ZO_Options_Divider")
 	tControl:SetHeight(3)
-	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, -2, 0)
 	tControl:SetAnchor(TOPRIGHT, prevControl, BOTTOMRIGHT, 0, 0)
 	tControl:SetAlpha(1)
 	self.divider1 = tControl
+	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider1Flipped", self.frame, "ZO_Options_Divider")
+	tControl:SetHeight(3)
+	tControl:SetAnchor(TOPLEFT, prevControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPRIGHT, prevControl, BOTTOMRIGHT, 3, 0)
+	tControl:SetAlpha(1)
+	tControl:SetTextureCoordsRotation(-1)
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Bank", self.frame, "IIFA_CharCurrencyRow")
 	table.insert(self.controls, tControl)
 	tControl:GetNamedChild("charName"):SetText(GetString(SI_CURRENCYLOCATION1))
 	tControl:GetNamedChild("charName").rawCharName = GetString(SI_CURRENCYLOCATION1)
-	tControl:SetAnchor(TOPLEFT, self.divider1, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, self.divider1, BOTTOMLEFT, 2, 0)
 	self.bankControl = tControl
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider2", self.frame, "ZO_Options_Divider")
 	tControl:SetHeight(3)
-	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, -2, 0)
 	tControl:SetAnchor(TOPRIGHT, self.bankControl, BOTTOMRIGHT, 0, 0)
 	tControl:SetAlpha(1)
 	self.divider2 = tControl
+	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Divider2Flipped", self.frame, "ZO_Options_Divider")
+	tControl:SetHeight(3)
+	tControl:SetAnchor(TOPLEFT, self.bankControl, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPRIGHT, self.bankControl, BOTTOMRIGHT, 3, 0)
+	tControl:SetAlpha(1)
+	tControl:SetTextureCoordsRotation(-1)
+
 
 	tControl = CreateControlFromVirtual("IIFA_GUI_AssetsGrid_Row_Tots", self.frame, "IIFA_CharCurrencyRow")
 	table.insert(self.controls, tControl)
 	tControl:GetNamedChild("charName"):SetText("Totals")
 	tControl:GetNamedChild("charName").rawCharName = "Totals"
-	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 0, 0)
+	tControl:SetAnchor(TOPLEFT, self.divider2, BOTTOMLEFT, 2, 0)	-- offset has to account for offset of the divider
 	self.totControl = tControl
 
 	local ctr, tControl, ctl

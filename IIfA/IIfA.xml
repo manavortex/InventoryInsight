@@ -1118,9 +1118,15 @@
 						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyAP" relativePoint="TOPRIGHT" offsetX="77" offsetY="0" />
 					</Texture>
 					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="3" />
-						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyWV" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="3" />
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="5" />
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyWV" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="5" />
 						<Dimensions y="3" />
+					</Texture>
+					<Texture name="$(parent)_DividerFlip" inherits="ZO_Options_Divider">
+						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="5" />
+						<Anchor point="TOPRIGHT" relativeTo="$(parent)icon_qtyWV" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="5" />
+						<Dimensions y="3" />
+						<OnInitialized>self:SetTextureCoordsRotation(-1)</OnInitialized>
 					</Texture>
 				</Controls>
 			</TopLevelControl>
