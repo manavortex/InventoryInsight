@@ -378,7 +378,8 @@ function IIfA:GetItemKey(itemLink)
 		local itemType, subType = GetItemLinkItemType(itemLink)
 		if	(itemType == ITEMTYPE_TOOL and subType == SPECIALIZED_ITEMTYPE_TOOL) or
 			itemType == ITEMTYPE_RACIAL_STYLE_MOTIF or		-- 9-12-16 AM - added because motifs now appear to have level info in them
-			itemType == ITEMTYPE_RECIPE then
+			itemType == ITEMTYPE_RECIPE or
+			(itemType == ITEMTYPE_CONTAINER and subType == SPECIALIZED_ITEMTYPE_CONTAINER) then		-- 4-6-19 AM - runeboxes appear to have level info in them, ignored now and used item id instead
 			return IIfA_GetItemID(itemLink)
 		end
 	end
@@ -594,7 +595,7 @@ function IIfA:ValidateItemCounts(bagID, slotId, dbItem, itemKey, itemLinkOverrid
 			data.bagID == BAG_VIRTUAL or
 			data.bagID == BAG_BANK or
 			data.bagID == BAG_SUBSCRIBER_BANK or
-			nil ~= GetCollectibleForHouseBankBag and nil ~= GetCollectibleForHouseBankBag(data.bagID) or -- is housing bank, manaeeee
+			nil ~= GetCollectibleForHouseBankBag and nil ~= GetCollectibleForHouseBankBag(data.bagID) or -- is housing bank, mana
 		   ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locName == GetCurrentCharacterId()) then
 
 			itemLinkCheck = GetItemLink(data.bagID, data.bagSlot, LINK_STYLE_BRACKETS)

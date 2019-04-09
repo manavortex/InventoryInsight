@@ -552,6 +552,14 @@ function IIfA:CreateOptionsMenu()
 
 		 {
 			type = "checkbox",
+			name = "Alchemy scene",
+			tooltip = "Makes the Inventory Frame visible while crafting potions/poisons",
+			getFunc = function() return IIfA:GetSceneVisible("alchemy") end,
+			setFunc = function(value) IIfA:SetSceneVisible("alchemy", value) end,
+		},
+
+		 {
+			type = "checkbox",
 			name = "Vendor scene",
 			tooltip = "Makes the Inventory Frame visible while buying/selling",
 			getFunc = function() return IIfA:GetSceneVisible("store") end,

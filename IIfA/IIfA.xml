@@ -392,7 +392,7 @@
 															pressed="IIfA/assets/apparel/shield_down.dds"
 															mouseOver="IIfA/assets/apparel/shield_over.dds" />
 										</Button>
-										<Button name="$(parent)_Button6">
+<!--										<Button name="$(parent)_Button6">
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="38" y="38"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Jewelry")</OnMouseEnter>
@@ -401,9 +401,9 @@
 											<Textures	normal="IIfA/assets/apparel/jewelry_up.dds"
 															pressed="IIfA/assets/apparel/jewelry_down.dds"
 															mouseOver="IIfA/assets/apparel/jewelry_over.dds" />
-										</Button>
-										<Button name="$(parent)_Button7">
-											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button6" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+										</Button> -->
+										<Button name="$(parent)_Button6">
+											<Anchor point="TOPLEFT" relativeTo="$(parent)_Button5" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 											<Dimensions x="38" y="38"/>
 											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Vanity")</OnMouseEnter>
 											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>

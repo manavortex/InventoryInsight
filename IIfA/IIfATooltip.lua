@@ -344,13 +344,15 @@ function IIfA:getMouseoverLink()
 	elseif name:sub(1, 13) == "IIFA_ListItem" then
 		return mouseOverControl.itemLink
 
-	elseif name:sub(1, 44) == "ZO_TradingHouseItemPaneSearchResultsContents" then
+	elseif name:sub(1, 44) == "ZO_TradingHouseItemPaneSearchResultsContents" or
+		name:sub(1, 48) == "ZO_TradingHouseBrowseItemsRightPaneSearchResults" then
 		data = mouseOverControl.dataEntry
 		if data then data = data.data end
 		-- The only thing with 0 time remaining should be guild tabards, no
 		-- stats on those!
 		if not data or data.timeRemaining == 0 then return nil end
-		return GetTradingHouseSearchResultItemLink(data.slotIndex)
+		return data.itemLink
+--		return GetTradingHouseSearchResultItemLink(data.slotIndex)
 
 	elseif name == "ZO_TradingHousePostedItemsListContents" then
 		return GetTradingHouseListingItemLink(mouseOverControl.dataEntry.data.slotIndex)
