@@ -7,25 +7,25 @@
 	Collects inventory data for all characters on a single account including the shared bank and makes this information available
 	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder ScrollsÂ® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
 ------------------------------------------------------------------
 if IIfA == nil then IIfA = {} end
 
-IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.25"
-IIfA.author 			= "AssemblerManiac & manavortex"
+IIfA.name				= "Inventory Insight"
+IIfA.version			= "3.27"
+IIfA.author				= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
-IIfA.colorHandler 		= nil
+IIfA.colorHandler		= nil
 IIfA.isGuildBankReady 	= false
-IIfA.TooltipLink 		= nil
-IIfA.CurrSceneName 		= "hud"
-IIfA.bFilterOnSetName 	= false
-IIfA.searchFilter 		= ""
+IIfA.TooltipLink		= nil
+IIfA.CurrSceneName		= "hud"
+IIfA.bFilterOnSetName	= false
+IIfA.searchFilter		= ""
 IIfA.trackedHouses		= {}
 IIfA.EMPTY_STRING		= ""
-IIfA.BagSlotInfo		= {}		-- 8-4-18 AM - make sure the table exists in case something tries to reference it before it's created.
+IIfA.BagSlotInfo		= {}	-- 8-4-18 AM - make sure the table exists in case something tries to reference it before it's created.
 
 local BACKPACK = ZO_PlayerInventoryBackpack
 local BANK = ZO_PlayerBankBackpack
@@ -35,8 +35,8 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
-local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
-IIfA.task			= task
+local task = IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task = task
 
 -- --------------------------------------------------------------
 --	Global Variables and external functions
@@ -144,32 +144,9 @@ local function IIfA_SlashCommands(cmd)
 	end
 end
 
-function IIfA:DebugOut(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
-	if not IIfA.data.bDebug then return end
-	if a10 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10))
-	elseif a9 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9))
-	elseif a8 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8))
-	elseif a7 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7))
-	elseif a6 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6))
-	elseif a5 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5))
-	elseif a4 then
-		d(zo_strformat(output, a1, a2, a3, a4))
-	elseif a3 then
-		d(zo_strformat(output, a1, a2, a3))
-	elseif a2 then
-		d(zo_strformat(output, a1, a2))
-	elseif a1 then
-		d(zo_strformat(output, a1))
-	elseif output then
-		d(output)
-	else
-		d("\n")
+function IIfA:DebugOut(output, ...)
+	if IIfA.data.bDebug then
+		d(zo_strformat(output, ...))
 	end
 end
 
@@ -463,20 +440,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIFA_GUI_Header_Filter_Button0:SetState(BSTATE_PRESSED)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0
 
---	if GetAPIVersion() == 100026 then
-		IIfA.GUI_SearchBox = IIFA_GUI_SearchBackdropBox
-		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBackdropBoxText
---	else
---		IIfA.GUI_SearchBox = IIFA_GUI_SearchBox
---		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBoxText
---	end
-
-	-- save off anchors for the ListHolder
-	--local _, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(0)
-	--IIFA_GUI_ListHolder.savedAnchor1 = {point, relTo, relPoint, offsX, offsY, constrains}
-
-	--_, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(1)
-	--IIFA_GUI_ListHolder.savedAnchor2 = {point, relTo, relPoint, offsX, offsY, constrains}
+	IIfA.GUI_SearchBox = IIFA_GUI_SearchBackdropBox
+	IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBackdropBoxText
 
 	IIfA:TextColorFixup(IIfA:GetSettings())
 
@@ -491,12 +456,12 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:SetupBackpack()	-- setup the inventory frame
 	IIfA:CreateTooltips()	-- setup the tooltip frames
 
-
---	IIfA:ActionLayerInventoryUpdate()
-
 	if not ObjSettings.frameSettings.hud.hidden then
 		IIfA:ProcessSceneChange("hud", "showing", "shown")
 	end
+
+	IIFA_GUI_Header_Hide:SetHidden(ObjSettings.hideCloseButton or false)
+
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults
