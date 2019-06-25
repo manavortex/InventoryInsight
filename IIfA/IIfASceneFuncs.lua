@@ -55,6 +55,7 @@ function IIfA:RegisterForSceneChanges()
 	QUICKSLOT_FRAGMENT:RegisterCallback("StateChange", function(...)
 	   	IIfA:ProcessInventoryTabChange("_quickslots", ...)
 	end)
+
 end
 
 function IIfA:GetSceneSettings(sceneName)
@@ -85,6 +86,7 @@ end
 
 function IIfA:ProcessSceneChange(sceneName, oldState, newState)
 	IIfA:DebugOut("ProcessSceneChange <<1>>: <<2>> -> <<3>>", sceneName, oldState, newState)
+--	IIfA:DebugOut("scene.disallowEvaluateTransitionCompleteCount = <<1>>", SCENE_MANAGER:GetCurrentScene().disallowEvaluateTransitionCompleteCount)
 
 	if SCENE_SHOWN == newState then
 		sceneName = IIfA:GetCurrentSceneName()

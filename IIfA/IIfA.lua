@@ -14,7 +14,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.25"
+IIfA.version 			= "3.27"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -41,9 +41,6 @@ IIfA.task			= task
 -- --------------------------------------------------------------
 --	Global Variables and external functions
 -- --------------------------------------------------------------
-
--- BAG_SUBSCRIBER_BANK handled special in the CollectAll function - do NOT add to this list
--- has to be in this list because it's checked for in more than a few places as "do I track"
 
 IIfA.trackedBags = {
 	[BAG_WORN] 				= true,
@@ -85,6 +82,19 @@ IIfA.dropdownLocNamesTT = {
 	["Everything I own"] = "Bank, Characters, CraftBag, Storage Chests/Coffers, and Houses",
 	["Housing Storage"] = "Storage Chests/Coffers",
 	}
+
+-- create some
+
+local strings = {
+	IIFA_BAG_BAGPACK 	= "Inventory",
+	IIFA_BAG_BANK 		= "Bank",
+	IIFA_BAG_CRAFTBAG 	= "CraftBag",
+}
+
+for stringId, stringValue in pairs(strings) do
+	ZO_CreateStringId(stringId, stringValue)
+	SafeAddVersion(stringId, 1)
+end
 
 -- from sidTools, by SirInsidiator
 -- hacked up to return just the list of font names
@@ -144,32 +154,17 @@ local function IIfA_SlashCommands(cmd)
 	end
 end
 
-function IIfA:DebugOut(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
+function IIfA:DebugOut(output, ...)
 	if not IIfA.data.bDebug then return end
-	if a10 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10))
-	elseif a9 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8, a9))
-	elseif a8 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7, a8))
-	elseif a7 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6, a7))
-	elseif a6 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5, a6))
-	elseif a5 then
-		d(zo_strformat(output, a1, a2, a3, a4, a5))
-	elseif a4 then
-		d(zo_strformat(output, a1, a2, a3, a4))
-	elseif a3 then
-		d(zo_strformat(output, a1, a2, a3))
-	elseif a2 then
-		d(zo_strformat(output, a1, a2))
-	elseif a1 then
-		d(zo_strformat(output, a1))
-	elseif output then
-		d(output)
-	else
+
+	local otype = type(output)
+
+	if output == nil then
 		d("\n")
+	elseif otype ~= "string" then
+		d(output, ...)
+	else
+		d(zo_strformat(output, ...))
 	end
 end
 
@@ -463,20 +458,8 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIFA_GUI_Header_Filter_Button0:SetState(BSTATE_PRESSED)
 	IIfA.LastFilterControl = IIFA_GUI_Header_Filter_Button0
 
---	if GetAPIVersion() == 100026 then
-		IIfA.GUI_SearchBox = IIFA_GUI_SearchBackdropBox
-		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBackdropBoxText
---	else
---		IIfA.GUI_SearchBox = IIFA_GUI_SearchBox
---		IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBoxText
---	end
-
-	-- save off anchors for the ListHolder
-	--local _, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(0)
-	--IIFA_GUI_ListHolder.savedAnchor1 = {point, relTo, relPoint, offsX, offsY, constrains}
-
-	--_, point, relTo, relPoint, offsX, offsY, constrains = IIFA_GUI_ListHolder:GetAnchor(1)
-	--IIFA_GUI_ListHolder.savedAnchor2 = {point, relTo, relPoint, offsX, offsY, constrains}
+	IIfA.GUI_SearchBox = IIFA_GUI_SearchBackdropBox
+	IIfA.GUI_SearchBoxText = IIFA_GUI_SearchBackdropBoxText
 
 	IIfA:TextColorFixup(IIfA:GetSettings())
 
@@ -491,12 +474,12 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA:SetupBackpack()	-- setup the inventory frame
 	IIfA:CreateTooltips()	-- setup the tooltip frames
 
-
---	IIfA:ActionLayerInventoryUpdate()
-
 	if not ObjSettings.frameSettings.hud.hidden then
 		IIfA:ProcessSceneChange("hud", "showing", "shown")
 	end
+
+	IIFA_GUI_Header_Hide:SetHidden(ObjSettings.hideCloseButton or false)
+
 
 	IIfA:RegisterForEvents()
 	IIfA:RegisterForSceneChanges() -- register for callbacks on scene statechanges using user preferences or defaults

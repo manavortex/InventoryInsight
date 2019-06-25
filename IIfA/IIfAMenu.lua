@@ -92,6 +92,7 @@ function IIfA:CreateOptionsMenu()
 					func = function()
 						IIfA.database = {}
 						IIfA:ScanCurrentCharacterAndBank()
+						IIfA:RefreshInventoryScroll()
 					end,
 				}, -- button end
 
@@ -503,6 +504,18 @@ function IIfA:CreateOptionsMenu()
 				IIfA.bFilterOnSetName = value
 			end,
 		}, -- checkbox end
+
+		{	-- checkbox: show close button
+			type = "checkbox",
+			tooltip = "Hide Close Button",
+			name = "Hide Close Button",
+			getFunc = function() return IIfA:GetSettings().hideCloseButton or false end,
+			setFunc = function(value)
+					IIfA:StatusAlert("[IIfA]:hideCloseButton[" .. tostring(value) .. "]")
+					IIfA:GetSettings().hideCloseButton = value
+					IIFA_GUI_Header_Hide:SetHidden(value)
+			end,
+		},
 
 		{
 			type = "header",

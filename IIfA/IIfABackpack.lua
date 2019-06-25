@@ -968,8 +968,14 @@ function IIfA:FMC(control, WhoSeesIt)
 		[65] = 2317,	-- Huntsman
 		[66] = 2318,	-- Silver Dawn
 		[67] = 2319,	-- Welkynar
+		[68] = 2359,	-- Honor Guard
 		[69] = 2360,	-- Dead Water
 		[70] = 2361,	-- Elder Argonian
+		[71] = 2503,	-- Coldsnap
+		[72] = 2504,	-- Meridian
+		[73] = 2505,	-- Annequina
+		[74] = 2506,	-- Pellitine
+
 		}
 
 --		local i, a

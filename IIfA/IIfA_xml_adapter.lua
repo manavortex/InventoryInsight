@@ -485,8 +485,8 @@ function IIfA:RePositionFrame(settings)
 		settings = IIfA:GetSceneSettings()
 	end
 
-	IIfA:DebugOut("Reposition Frame")
-	IIfA:DebugOut(settings)
+--	IIfA:DebugOut("Reposition Frame")
+--	IIfA:DebugOut(settings)
 
 -- revisit - also look at toggleinventoryframe (it *should* be doing more than just show when it's not vis, like re-applying everything)
 --	if settings.hidden == true and IIFA_GUI:IsHidden() then

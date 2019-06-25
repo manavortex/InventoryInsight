@@ -1,8 +1,8 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.25
-## AddOnVersion: 30026
-## APIVersion: 100026 100027
+## Version: 3.27
+## AddOnVersion: 30027
+## APIVersion: 100027 100028
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
@@ -11,8 +11,6 @@
 ; load time debugging
 
 libs\LibCustomTitles\LibCustomTitles.lua
-
-IIfA_Preload.lua
 
 IIfA.xml
 Bindings.xml

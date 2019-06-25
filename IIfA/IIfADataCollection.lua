@@ -390,6 +390,7 @@ local function getItemCount(bagId, slotId, itemLink)
 	if bagId > BAG_MAX_VALUE then return 1 end		-- it's furniture because of the out of range id, always count of 1
 
 	local _, itemCount =  GetItemInfo(bagId, slotId)
+	p("getItemCount: bag/slot <<1>> / <<2>>, count=<<3>>", bagId, slotId, itemCount)
 	if itemCount > 0 then return itemCount end
 
 	-- return 0 if no item count was found, possibly an out of date index to a house container that no longer exists
@@ -471,10 +472,10 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 	--Item instance/unique id  (needed for other addons like FCOItemSaver to (un)mark items via that id)
 	local itemInstanceOrUniqueId, isBagToBuildItemInstanceOrUniqueId = getItemInstanceOrUniqueId(bagId, slotId, itemLink)
 	if isBagToBuildItemInstanceOrUniqueId then
-		p("[EvalBagItem]Item instance or unique ID: <<1>>", itemInstanceOrUniqueId)
+--		p("[EvalBagItem]Item instance or unique ID: <<1>>", itemInstanceOrUniqueId)
 	end
 
-	--p("trying to save <<1>> x<<2>>", itemLink, itemCount)
+	p("[EvalBagItem] - trying to save <<1>> x<<2>>", itemLink, itemCount)
 
 	local itemQuality = GetItemLinkQuality(itemLink)
 
@@ -672,14 +673,15 @@ function IIfA:CollectAll(b_useAsync)
 	if b_useAsync then
 		-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
 		-- 4-4-18 AM - need to call AFTER collectbag is called
-		task:Call(function() IIfA:ClearUnowned() end)
-		zo_callLater(function()
+		task:Call(function()
+			IIfA:ClearUnowned()
 			IIfA:MakeBSI()
 		end, 1000)
 	else
 		-- 6-3-17 AM - need to clear unowned items when deleting char/guildbank too
 		-- 4-4-18 AM - call immediately after collectbag calls above
 		IIfA:ClearUnowned()
+		IIfA:MakeBSI()	-- 5-11-19 AM - added missing call (if this is on player unload, it's not necessary, but might be used some other time)
 	end
 end
 
@@ -698,12 +700,12 @@ function IIfA:ClearUnowned()
 				if ItemOwner ~= "Bank" and ItemOwner ~= "CraftBag" then
 					if ItemData.bagID == BAG_BACKPACK or ItemData.bagID == BAG_WORN then
 						if IIfA.CharIdToName[ItemOwner] == nil then
-							DBItem[ItemOwner] = nil
+							DBItem.locations[ItemOwner] = nil
 							n = n - 1
 	  					end
 					elseif ItemData.bagID == BAG_GUILDBANK then
-						if IIfA.guildBanks[ItemOwner] == nil then
-							DBItem[ItemOwner] = nil
+						if IIfA.guildBanks[ItemOwner] == nil or IIfA.guildBanks[ItemOwner].bCollectData == false then
+							DBItem.locations[ItemOwner] = nil
 							n = n - 1
 						end
 					end

@@ -143,9 +143,18 @@ IIfA.racialTextures = {
 	[79] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(79)), styleTexture = getTex(IIfA.EMPTY_STRING)},		-- Dead-Water
 	[80] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(80)), styleTexture = getTex(IIfA.EMPTY_STRING)},		-- Honor Guard
 	[81] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(81)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Elder Argonian
+	[82] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(82)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Coldsnap
+	[83] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(83)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Meridian
+	[84] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(84)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Anequina
+	[85] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(85)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Pellitine
+	[86] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(86)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Sunspire
+	[87] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(87)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragon Bone
+	[88] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(88)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Necro Dragon
+	[89] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(89)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Undaunted v2
+	[90] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(90)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Witches Festival 2019
 }
 
--- /script local i for i=60,90 do d(i .. " " .. GetItemStyleName(i)) end
+-- /script local i for i=80,100 do d(i .. " " .. GetItemStyleName(i)) end
 
 local controlTooltips = {
 	["LineShare"] 	= "Doubleclick an item to add link to chat.",
@@ -406,6 +415,12 @@ function IIfA:getLastLink(tooltip)
 end
 
 function IIfA:UpdateTooltip(tooltip)
+	-- do we show IIfA info?
+	if IIfA:GetSettings().showToolTipWhen == "Never" or
+		(IIfA:GetSettings().showToolTipWhen == "IIfA" and moc():GetParent():GetName() ~= "IIFA_GUI_ListHolder") then
+		return
+	end
+
 	local itemLink, itemData
 	itemLink = self:getLastLink(tooltip)
 
