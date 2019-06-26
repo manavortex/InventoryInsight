@@ -700,11 +700,11 @@ function IIfA:QueryAccountInventory(itemLink)
 						elseif location.bagID == BAG_GUILDBANK then
 							newLocation.bagLoc = BAG_GUILDBANK
 						elseif location.bagID >= BAG_HOUSE_BANK_ONE and location.bagID <= BAG_HOUSE_BANK_TEN then -- location is a housing chest
-							newLocation.name = GetCollectibleNickname(locationName)
+							newLocation.name = GetCollectibleNickname(locationName * 1)
 							if newLocation.name == IIfA.EMPTY_STRING then newLocation.name = GetCollectibleName(locationName) end
 							newLocation.bagLoc = BAG_HOUSE_BANK_ONE
 						elseif location.bagID == locationName then	-- location is a house
-							newLocation.name = GetCollectibleName(locationName)
+							newLocation.name = GetCollectibleName(locationName * 1)
 							newLocation.bagLoc = 99
 						end
 
@@ -968,8 +968,14 @@ function IIfA:FMC(control, WhoSeesIt)
 		[65] = 2317,	-- Huntsman
 		[66] = 2318,	-- Silver Dawn
 		[67] = 2319,	-- Welkynar
+		[68] = 2359,	-- Honor Guard
 		[69] = 2360,	-- Dead Water
 		[70] = 2361,	-- Elder Argonian
+		[71] = 2503,	-- Coldsnap
+		[72] = 2504,	-- Meridian
+		[73] = 2505,	-- Annequina
+		[74] = 2506,	-- Pellitine
+
 		}
 
 --		local i, a

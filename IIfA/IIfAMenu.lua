@@ -92,6 +92,7 @@ function IIfA:CreateOptionsMenu()
 					func = function()
 						IIfA.database = {}
 						IIfA:ScanCurrentCharacterAndBank()
+						IIfA:RefreshInventoryScroll()
 					end,
 				}, -- button end
 
@@ -504,6 +505,18 @@ function IIfA:CreateOptionsMenu()
 			end,
 		}, -- checkbox end
 
+		{	-- checkbox: show close button
+			type = "checkbox",
+			tooltip = "Hide Close Button",
+			name = "Hide Close Button",
+			getFunc = function() return IIfA:GetSettings().hideCloseButton or false end,
+			setFunc = function(value)
+					IIfA:StatusAlert("[IIfA]:hideCloseButton[" .. tostring(value) .. "]")
+					IIfA:GetSettings().hideCloseButton = value
+					IIFA_GUI_Header_Hide:SetHidden(value)
+			end,
+		},
+
 		{
 			type = "header",
 			name = "Major Scene Toggles",
@@ -548,6 +561,14 @@ function IIfA:CreateOptionsMenu()
 			tooltip = "Makes the Inventory Frame visible while Crafting",
 			getFunc = function() return IIfA:GetSceneVisible("smithing") end,
 			setFunc = function(value) IIfA:SetSceneVisible("smithing", value) end,
+		},
+
+		 {
+			type = "checkbox",
+			name = "Alchemy scene",
+			tooltip = "Makes the Inventory Frame visible while crafting potions/poisons",
+			getFunc = function() return IIfA:GetSceneVisible("alchemy") end,
+			setFunc = function(value) IIfA:SetSceneVisible("alchemy", value) end,
 		},
 
 		 {

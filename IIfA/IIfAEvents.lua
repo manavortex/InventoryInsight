@@ -27,7 +27,7 @@ function IIfA:InventorySlotUpdate(eventCode, bagId, slotId, bNewItem, itemSoundC
 	if not itemLink then itemLink = IIfA.EMPTY_STRING end
 	local itemKey = IIfA:GetItemKey(itemLink, nil)		-- yes, the nil can be left off, but this way we know it's supposed to take a 2nd arg)
 	if not itemKey then itemKey = IIfA.EMPTY_STRING end
-IIfA:DebugOut("InventorySlotUpdate raw bagId/slotNum=<<1>>/<<2>>, Item='<<3>>', itemId=<<4>>, qty=<<5>>", bagId, slotId, itemLink, itemKey, qty)
+IIfA:DebugOut("[InventorySlotUpdate] - raw bag/slot=<<1>> / <<2>>, Item='<<3>>', itemId=<<4>>, qty=<<5>>", bagId, slotId, itemLink, itemKey, qty)
 	if #itemLink == 0 and IIfA.BagSlotInfo[bagId] ~= nil and IIfA.BagSlotInfo[bagId][slotId] then
 		itemKey = IIfA.BagSlotInfo[bagId][slotId]
 		if #itemKey < 10 and IIfA.database[itemKey] then
@@ -44,6 +44,7 @@ IIfA:DebugOut("InventorySlotUpdate raw bagId/slotNum=<<1>>/<<2>>, Item='<<3>>', 
 		IIfA.BagSlotInfo[bagId][slotId] = itemKey
 --IIfA:DebugOut("Existing bag, new slot=<<1>>, key=<<2>>, link=<<3>>", slotId, itemKey, itemLink)
 	elseif #itemLink > 0 then		-- item is still in it's slot, force EvalBagItem to pick up the proper qty from the slot
+		IIfA:DebugOut("[InventorySlotUpdate] - nilling out qty")
 		qty = nil
 	end
 
@@ -184,6 +185,14 @@ local function fgb5(...)
 	IIfA_EventDump(...)
 end
 
+local function pre1(obj, ...)
+	d("tradinghouse:DetermineIfTransitionIsComplete")
+	d("self.disallowEvaluateTransitionCompleteCount = " .. obj.disallowEvaluateTransitionCompleteCount)
+	d("state = " .. obj.state)
+--	IIfA_EventDump(...)
+end
+
+
 function IIfA:RegisterForEvents()
 	-- 2016-6-24 AM - commented this out, doing nothing at the moment, revisit later
 	-- em:RegisterForEvent("IIFA_PLAYER_LOADED_EVENTS", EVENT_PLAYER_ACTIVATED, IIfA_EventOnPlayerloaded)
@@ -235,6 +244,8 @@ function IIfA:RegisterForEvents()
 
 	-- handle right clicks on links
     LINK_HANDLER:RegisterCallback(LINK_HANDLER.LINK_MOUSE_UP_EVENT, IIfA_linkContextRightClick)
+
+--	ZO_PreHook(TRADING_HOUSE_SCENE, "DetermineIfTransitionIsComplete", pre1)
 
 end
 
