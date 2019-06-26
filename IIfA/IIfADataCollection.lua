@@ -11,12 +11,7 @@ end
 local function IIfA_GetItemID(itemLink)
 	local ret = nil
 	if itemLink then
---		if GetItemLinkItemId then
-	   		ret = tostring(GetItemLinkItemId(itemLink))
---		else
---			local data = itemLink:match("|H.:item:(.-)|h.-|h")
---			ret = zo_strsplit(':', data)		-- just get the number
---		end
+   		ret = tostring(GetItemLinkItemId(itemLink))
 	end
 	return ret
 end
