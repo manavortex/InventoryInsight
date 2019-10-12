@@ -10,6 +10,9 @@ end
 
 -- 2018-3-22 AM - duplicate ZO_Tooltip_AddDivider so we can set the color of our divider to match whatever is popped up (stolen or not)
 function IIfA:Tooltip_AddDivider(tooltipControl)
+	ZO_Tooltip_AddDivider(tooltipControl)
+
+--[[
 	if not tooltipControl.dividerPool then
 		tooltipControl.dividerPool = ZO_ControlPool:New("ZO_BaseTooltipDivider", tooltipControl, "Divider")
 	end
@@ -28,6 +31,7 @@ function IIfA:Tooltip_AddDivider(tooltipControl)
 		tooltipControl:AddControl(divider)
 		divider:SetAnchor(CENTER)
 	end
+ ]]
 end
 
 
@@ -48,12 +52,60 @@ function IIfA:CreateTooltips()
 	IIfA:SetTooltipFont(IIfA:GetSettings().in2TooltipsFont)
 end
 
-function IIfA:SetTooltipFont(font)
+function IIfA:makeFont(face, size, effect)
+	local fontStr
+
+	self.TooltipFont = face .. "|" .. size
+	if effect ~= nil and effect ~= "none" and effect ~= "" then
+		self.TooltipFont = self.TooltipFont .. "|" .. effect
+	end
+
+	if self.fontRef[self.TooltipFont] ~= nil then
+		self.TooltipFont = self.fontRef[self.TolltipFont]
+	end
+end
+
+function IIfA:SetTooltipFont(fontFull, fontFace, fontSize, fontEffect)
 	if not font or font == IIfA.EMPTY_STRING then font = "ZoFontGameMedium" end
 --	d("SetTooltipFont called with " .. tostring(font))
-	IIfA:GetSettings().in2TooltipsFont = font
---	IIFA_ITEM_TOOLTIP:GetNamedChild("_Label"):SetFont(font)
---	IIFA_POPUP_TOOLTIP:GetNamedChild("_Label"):SetFont(font)
+	local face, size, effect
+	local settings = IIfA:GetSettings()
+	local rebuild = false
+	if fontFull ~= nil then
+		if settings.in2TooltipsFont ~= fontFull then
+			settings.in2TooltipsFont = fontFull
+			if fontFull ~= "Custom" and fontFull ~= "Tooltip Default" then
+				face, size, effect = _G[fontFull]:GetFontInfo()
+				if effect == nil or effect == "" then effect = "none" end
+				settings.TooltipFontFace = face:lower()
+				settings.TooltipFontSize = size
+				settings.TooltipFontEffect = effect:lower()
+				self.TooltipFont = fontFull
+			elseif fontFull == "Custom" then
+				rebuild = true
+			end
+		end
+	elseif fontFace ~= nil then
+		settings.TooltipFontFace = fontFace:lower()
+		rebuild = true
+	elseif fontSize ~= nil then
+		settings.TooltipFontSize = fontSize
+		rebuild = true
+	elseif fontFace ~= nil then
+		effect = fontEffect:lower()
+		if effect == nil or effect == "" then effect = "none" end
+		settings.TooltipFontEffect = effect
+		rebuild = true
+	end
+	if rebuild then
+		if settings.in2TooltipsFont ~= "Custom" then
+			settings.in2TooltipsFont = "Custom"
+		end
+		face = settings.TooltipFontFace:lower()
+		size = settings.TooltipFontSize
+		effect = settings.TooltipFontEffect:lower()
+		IIfA:makeFont(face, size, effect)
+	end
 end
 
 local function getTex(name)
@@ -561,7 +613,11 @@ function IIfA:UpdateTooltip(tooltip)
 					if face == "Tooltip Default" then
 						tooltip:AddLine(textOut)
 					else
-						tooltip:AddLine(textOut, face)
+						if face ~= "Custom" then
+							tooltip:AddLine(textOut, face)
+						else
+							tooltip:AddLine(textOut, IIfA.TooltipFont)
+						end
 					end
 				end
 			end

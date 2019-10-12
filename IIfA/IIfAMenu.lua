@@ -1,12 +1,59 @@
 --this creates a menu for the addon.
-IIfA = IIfA
+--IIfA = IIfA		-- necessary for initial load of the lua script, so it know
 
 local LAM = LibStub("LibAddonMenu-2.0")
 
 local id, guildName, deleteHouse, restoreHouse, name
 
+IIfA.fontFaces = {}
+IIfA.fontFaces["ProseAntique"]			= "EsoUI/Common/Fonts/ProseAntiquePSMT.otf"
+IIfA.fontFaces["Consolas"]				= "EsoUI/Common/Fonts/consola.ttf"
+IIfA.fontFaces["Futura Condensed"]		= "EsoUI/Common/Fonts/FTN57.otf"
+IIfA.fontFaces["Futura Condensed Bold"]	= "EsoUI/Common/Fonts/FTN87.otf"
+IIfA.fontFaces["Futura Condensed Light"]	= "EsoUI/Common/Fonts/FTN47.otf"
+IIfA.fontFaces["Futura STD Condensed"]		= "EsoUI/Common/Fonts/FuturaSTD-Condensed.otf"
+IIfA.fontFaces["Futura STD Condensed Bold"]	= "EsoUI/Common/Fonts/FuturaSTD-CondensedBold.otf"
+IIfA.fontFaces["Futura STD Condensed Light"]	= "EsoUI/Common/Fonts/FuturaSTD-CondensedLight.otf"
+IIfA.fontFaces["Skyrim Handwritten"]		= "EsoUI/Common/Fonts/Handwritten_Bold.otf"
+IIfA.fontFaces["Trajan Pro"]				= "EsoUI/Common/Fonts/trajanpro-regular.otf"
+IIfA.fontFaces["Univers 55"]				= "EsoUI/Common/Fonts/univers55.otf"
+--IIfA.fontFaces["Univers LT Std 55"]	= "EsoUI/Common/Fonts/univers55.otf"
+IIfA.fontFaces["Univers 57"]				= "EsoUI/Common/Fonts/univers57.otf"
+--IIfA.fontFaces["Univers LT Std 57 Cn"]	= "EsoUI/Common/Fonts/univers57.otf"
+IIfA.fontFaces["Univers 67"]				= "EsoUI/Common/Fonts/univers67.otf"
+--IIfA.fontFaces["Univers LT Std 57 Cn Lt"]	= "EsoUI/Common/Fonts/univers67.otf"
+
+local effectList = {"none", "outline", "thin-outline", "thick-outline", "shadow", "soft-shadow-thin", "soft-shadow-thick"}
+--local effectValues = {"", "outline", "thin-outline", "thick-outline", "shadow", "soft-shadow-thin", "soft-shadow-thick"}
+
+IIfA.fontRef = {}
+local faceList = {}
+local faceValues = {}
+
+local function buildFontRef()
+	local varName, Data
+	for varName, Data in pairs(IIfA.data.fontList[GetAPIVersion()]) do
+		if Data ~= 'Tooltip Default' and Data ~= "Custom" then
+			local fName, fSize, fEffect = _G[Data]:GetFontInfo()
+			if fEffect == nil or fEffect == "" then
+				fEffect = "none"
+			end
+			IIfA.fontRef[fName:lower() .. "|" .. fSize .. "|" .. fEffect:lower()] = Data
+		end
+	end
+
+	local idx
+	local data
+	for idx, data in pairs(IIfA.fontFaces) do
+		faceList[#faceList + 1] = idx
+		faceValues[#faceValues + 1] = data:lower()
+	end
+end
+
+
 local function getGuildBanks()
 	local guildBanks = {}
+	local guildName, guildData
 	if IIfA.guildBanks then
 		for guildName, guildData in pairs(IIfA.guildBanks) do
 			if guildData.bCollectData == nil then
@@ -57,7 +104,9 @@ local function setGuildBankKeepDataSetting(guildNum, newSetting)
 end
 
 function IIfA:CreateOptionsMenu()
-	local deleteChar, deleteGBank, undeleteChar
+	local deleteChar, deleteGBank
+
+	buildFontRef()
 
 	local optionsData = {
 		{	type = "header",
@@ -407,18 +456,32 @@ function IIfA:CreateOptionsMenu()
 
 				{
 					type = "dropdown",
-					name = "Tooltips Font",
+					name = "Tooltip Font",
 					tooltip = "The font used for location information added to both default and custom tooltips",
 					choices = IIfA:GetFontList(),
 					scrollable = true,
-					sort = "name-up",
+					--sort = "name-up",
 					getFunc = function() return (IIfA:GetSettings().in2TooltipsFont or "ZoFontGame") end,
 					setFunc = function( choice )
 						IIfA:StatusAlert("[IIfA]:TooltipsFontChanged["..choice.."]")
 						IIfA:SetTooltipFont(choice)
 					end
 				},
---[[
+				{
+					type = "dropdown",
+					name = "Tooltip Font Face",
+					tooltip = "The font face used for location information added to tooltips",
+					choices = faceList,
+					choicesValues = faceValues,
+					scrollable = true,
+					reference = "IIfA_FontFace",
+					sort = "name-up",
+					getFunc = function() return (IIfA:GetSettings().TooltipFontFace or "Univers 55") end,
+					setFunc = function( choice )
+						IIfA:StatusAlert("[IIfA]:TooltipFontFaceChanged["..choice.."]")
+						IIfA:SetTooltipFont(nil, choice, nil, nil)
+					end
+				},
 				{
 					type = "slider",
 					name = "Tooltip Font Size",
@@ -426,12 +489,28 @@ function IIfA:CreateOptionsMenu()
 					min = 5,
 					max = 40,
 					step = 1,
-					getFunc = function() return IIfA:GetSettings().in2TooltipsFontSize end,
+					reference = "IIfA_FontSize",
+					getFunc = function() return IIfA:GetSettings().TooltipFontSize or 12 end,
 					setFunc = function(value)
-						IIfA:GetSettings().in2TooltipsFontSize = value
-					end,
+						IIfA:StatusAlert("[IIfA]:TooltipFontSizeChanged[" .. value .. "]")
+							IIfA:SetTooltipFont(nil, nil, value, nil)
+						end,
 				},
-]]
+				{
+					type = "dropdown",
+					name = "Tooltip Font Effect",
+					tooltip = "The font effect used for location information added to tooltips",
+					choices = effectList,
+--					choicesValues = effectValues,
+					scrollable = true,
+					reference = "IIfA_FontEffect",
+					getFunc = function() return (IIfA:GetSettings().TooltipFontEffect or "none") end,
+					setFunc = function( choice )
+						IIfA:StatusAlert("[IIfA]:TooltipFontEffectChanged["..choice.."]")
+						IIfA:SetTooltipFont(nil, nil, nil, choice)
+					end
+				},
+
 			}, -- controls end
 
 		}, -- tooltipOptionsSubWindow end
@@ -503,6 +582,19 @@ function IIfA:CreateOptionsMenu()
 				IIfA:GetSettings().bFilterOnSetName = value
 				IIfA.bFilterOnSetName = value
 			end,
+		}, -- checkbox end
+
+		{
+			type = "checkbox",
+			name = "Add \'Search in IIfA\' context menu entry",
+			tooltip = "Add a context menu entry to items which will open and search in the IIfA frame for this item.\nThis setting needs the library \'LibCustomMenu\' installed and enabled!",
+			getFunc = function() return IIfA:GetSettings().bAddContextMenuEntrySearchInIIfA end,
+			setFunc = function(value)
+				IIfA:GetSettings().bAddContextMenuEntrySearchInIIfA = value
+				IIfA.bAddContextMenuEntrySearchInIIfA = value
+			end,
+			disabled = function() return LibCustomMenu == nil or false end,
+			requiresReload 	= true,
 		}, -- checkbox end
 
 		{	-- checkbox: show close button
@@ -695,6 +787,43 @@ function IIfA:CreateSettingsWindow(savedVars, defaults)
 
 end
 
-function IIfA:GetFontList()
-	return IIfA.data.fontList[GetAPIVersion()]
+-- from sidTools, by SirInsidiator
+-- hacked up to return just the list of font names
+local function BuildFontList()
+    local fonts = { "Tooltip Default" }
+    for varname, value in zo_insecurePairs(_G) do
+        if(type(value) == "userdata" and value.GetFontInfo) then
+            fonts[#fonts + 1] = varname
+        end
+    end
+    return fonts
 end
+
+function IIfA:GetFontList()
+	local apiVer = GetAPIVersion()
+	if self.data.fontList == nil or IIfA.data.fontList[apiVer] == nil then
+		self.data.fontList = {}
+		self.data.fontList[apiVer] = {}
+
+		local fonts = {}
+		local varname, value
+		for varname, value in zo_insecurePairs(_G) do
+    	    if(type(value) == "userdata" and value.GetFontInfo) then
+    	        fonts[#fonts + 1] = varname
+    	    end
+    	end
+		table.sort(fonts)
+		local newList = { "Tooltip Default", "Custom" }
+		for varname, value in pairs(fonts) do
+			newList[#newList + 1] = value
+		end
+		self.data.fontList[apiVer] = newList
+	end
+
+	return self.data.fontList[apiVer]
+end
+
+
+--get LAM DDLB control, then use this to update contents
+-- control:UpdateChoices(dropdownData.choices, dropdownData.choicesValues)
+

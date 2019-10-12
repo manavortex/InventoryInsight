@@ -436,6 +436,7 @@ function IIfA:UpdateScrollDataLinesData()
 	IIFA_GUI_ListHolder.dataLines = dataLines
 	sort(IIFA_GUI_ListHolder.dataLines)
 	IIFA_GUI_ListHolder.dataOffset = 0
+	IIFA_GUI_ListHolder_Slider:SetValue(0)
 
 	-- even if the counts aren't visible, update them so they show properly if user turns them on
 	IIFA_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)

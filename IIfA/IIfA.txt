@@ -2,7 +2,7 @@
 ## Author: manavortex, AssemblerManiac
 ## Version: 3.27
 ## AddOnVersion: 30027
-## APIVersion: 100027 100028
+## APIVersion: 100028 100029
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
@@ -10,7 +10,7 @@
 ; pChat is optional dependency because it should be loaded BEFORE any other addon so it provides
 ; load time debugging
 
-libs\LibCustomTitles\LibCustomTitles.lua
+libs/LibCustomTitles/LibCustomTitles.lua
 
 IIfA.xml
 Bindings.xml

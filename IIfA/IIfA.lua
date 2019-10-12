@@ -96,18 +96,6 @@ for stringId, stringValue in pairs(strings) do
 	SafeAddVersion(stringId, 1)
 end
 
--- from sidTools, by SirInsidiator
--- hacked up to return just the list of font names
-local function BuildFontList()
-    local fonts = { "Tooltip Default" }
-    for varname, value in zo_insecurePairs(_G) do
-        if(type(value) == "userdata" and value.GetFontInfo) then
-            fonts[#fonts + 1] = varname
-        end
-    end
-    return fonts
-end
-
 
 -- 7-26-16 AM - global func, not part of IIfA class, used in IIfA_OnLoad
 local function IIfA_SlashCommands(cmd)
@@ -258,6 +246,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		ShowToolTipWhen 				= "Always",
 		DBv3 							= {},
 		dontFocusSearch					= false,
+		bAddContextMenuEntrySearchInIIfA = true,
 	}
 
 	-- initializing default values
@@ -284,6 +273,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2AgedGuildBankDataWarning = true,
 		in2TooltipsFont = "ZoFontGame",
 		in2TooltipsFontSize = 16,
+		bAddContextMenuEntrySearchInIIfA = true,
 	}
 
 	IIfA.minWidth = 410
@@ -324,10 +314,10 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:RebuildHouseMenuDropdowns()
 
-	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
-		IIfA.data.fontList = {}
-		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
-	end
+--	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
+--		IIfA.data.fontList = {}
+--		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
+--	end
 
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
