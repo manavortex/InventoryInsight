@@ -1,4 +1,4 @@
-------------------------------------------------------------------
+----------------------------------------------------------------------
 --IIfA.lua
 --v0.8 - Original Author: Vicster0
 -- v1.x and 2.x - rewrites by ManaVortex & AssemblerManiac
@@ -10,7 +10,8 @@ DISCLAIMER
 	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
-------------------------------------------------------------------
+-- text searches in non-EN languages improved by Baertram 2019-10-13
+----------------------------------------------------------------------
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
@@ -200,6 +201,19 @@ function IIfA:TextColorFixup(settings)
 	end
 end
 
+--Check if the clientLanguage is using gender specific string suffix like ^mx or ^f which need to be replaced
+--by zo_strformat functions
+function IIfA:CheckIfClientLanguageUsesGenderStrings(clientLanguage)
+	clientLanguage = clientLanguage or GetCVar("language.2")
+	if not clientLanguage then return false end
+	local clientLanguagesWithGenderSpecificStringsSuffix = {
+		["de"] = true,
+		["fr"] = true,
+	}
+	local retVar = clientLanguagesWithGenderSpecificStringsSuffix[clientLanguage] or false
+	IIfA.clientLanguageUsesGenderString = retVar
+	return retVar
+end
 
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
@@ -213,6 +227,10 @@ function IIfA_onLoad(eventCode, addOnName)
 	local valLastY = 300
 	local valHeight = 798
 	local valWidth = 380
+
+	local lang = GetCVar("language.2")
+	IIfA.clientLanguage = lang
+	IIfA:CheckIfClientLanguageUsesGenderStrings(lang)
 
 	-- initializing default values
 	local defaultGlobal = {
@@ -384,7 +402,6 @@ function IIfA_onLoad(eventCode, addOnName)
 
 
 	-- 2-9-17 AM - convert saved data names into proper language for this session
-	local lang = GetCVar("language.2")
 	if IIfA.data.lastLang == nil or IIfA.data.lastLang ~= lang then
 		IIfA:RenameItems()
 		IIfA.data.lastLang = lang

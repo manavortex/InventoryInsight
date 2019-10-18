@@ -207,38 +207,42 @@ end
 
 local function matchFilter(itemName, itemLink)
 	local ret = true
+	local retSet = false
 	local itemMatch = false
 	local hasSetInfo, setName
+	local name
 
 	local searchFilter = IIfA.searchFilter
 	-- 17-7-30 AM - moved lowercasing to when it's created, one less call to lowercase for every item
 
-	local name = string.lower(itemName) or IIfA.EMPTY_STRING
-
-	-- text filter takes precedence
-	-- 3-6-17 AM - you're either filtering on a set name, or not - much less confusing (hopefully)
-	if IIfA.bFilterOnSetName then
-		hasSetInfo, setName = GetItemLinkSetInfo(itemLink, false)
-		if hasSetInfo then
-			ret = zo_plainstrfind(setName:lower(), searchFilter)
-		else
-			-- no point in going any further, this item doesn't have set info at all, so return a fail and keep truckin
-			return false
+	--Empty search string? Then skip all searches with names
+	if searchFilter and searchFilter > IIfA.EMPTY_STRING then
+		if itemName > IIfA.EMPTY_STRING then
+			name = tostring(ZO_CachedStrFormat("<<C:1>>", itemName))
+			name = name:lower()
 		end
-	else
-		ret = zo_plainstrfind(name, searchFilter)
-		if IIfA:GetSettings().bFilterOnSetNameToo then
-			hasSetInfo, setName = GetItemLinkSetInfo(itemLink, false)
+--d(">IIfa:matchFilter - name: " ..tostring(name) .. ", searchFilter: " ..tostring(searchFilter))
+		-- text filter takes precedence
+		-- 3-6-17 AM - you're either filtering on a set name, or not - much less confusing (hopefully)
+		local bFilterOnSetNameToo = IIfA:GetSettings().bFilterOnSetNameToo
+		if IIfA.bFilterOnSetName or bFilterOnSetNameToo then
+			hasSetInfo, setName = IIfA:IsItemSet(itemLink)
 			if hasSetInfo then
-				ret = zo_plainstrfind(setName:lower(), searchFilter) or ret
+				retSet = zo_plainstrfind(setName:lower(), searchFilter)
 			end
+		end
+		-- Only compare set: No point in going any further, this item doesn't have set info at all, so return a fail and keep truckin
+		if IIfA.bFilterOnSetName and (not hasSetInfo or not retSet) then return false end
+		--Name comparison (without sets)
+		if not IIfA.bFilterOnSetName and name and name > IIfA.EMPTY_STRING then
+			ret = retSet or zo_plainstrfind(name, searchFilter)
 		end
 	end
 
 	local bWorn = false
 	local equipType = 0
 	local itemType = 0
-	local itemQuality = ITEM_QUALITY_NORMAL
+--	local itemQuality = ITEM_QUALITY_NORMAL
 	local subType
 
 	if IIfA.filterGroup ~= "All" and ret then		-- it's not everything, and text search matches, filter by some more stuff
@@ -363,14 +367,25 @@ local function itemSum(location)
 	return totQty
 end
 
+local function checkSearchFilter(searchFilterNew)
+	local searchFilterCurrent = IIfA.searchFilter
+	if ((searchFilterNew and searchFilterCurrent and searchFilterNew ~= searchFilterCurrent) or
+		(not searchFilterNew and not searchFilterCurrent) or
+		(searchFilterCurrent and searchFilterCurrent == "Click to search..."))
+	then
+		searchFilterNew = searchFilterNew or IIfA.GUI_SearchBox:GetText()
+		searchFilterNew = ZO_CachedStrFormat("<<C:1>>", searchFilterNew)
+		return zo_strlower(searchFilterNew)
+	else
+		return searchFilterCurrent
+	end
+end
+
 -- fill the shown item list with items that match current filter(s)
 function IIfA:UpdateScrollDataLinesData()
-
-	if (not IIfA.searchFilter) or IIfA.searchFilter == "Click to search..." then
-		IIfA.searchFilter = zo_strlower(IIfA.GUI_SearchBox:GetText())
-	end
-
-	local index = 0
+	IIfA.searchFilter = checkSearchFilter()
+--d("IIfA:UpdateScrollDataLinesData - IIfA.searchFilter: " ..tostring(IIfA.searchFilter))
+	--local index = 0
 	local dataLines = {}
 	local DBv3 = IIfA.database
 	local itemLink, itemKey, iconFile, itemQuality, tempDataLine = nil
@@ -409,22 +424,24 @@ function IIfA:UpdateScrollDataLinesData()
 					end
 					bWorn = bWorn or (locData.bagID == BAG_WORN)
 				end
-				if not dbItem.itemName or #dbItem.itemName == 0 then
+				local itemName = dbItem.itemName
+				if not itemName or #itemName == 0 then
 					p("Filling in missing itemName/Quality")
-					dbItem.itemName = GetItemLinkName(itemLink)
+					itemName = GetItemLinkName(itemLink)
+					dbItem.itemName = itemName
 					dbItem.itemQuality = GetItemLinkQuality(itemLink)
 				end
 				tempDataLine = {
 					link = itemLink,
 					qty = itemCount,
 					icon = itemIcon,
-					name = dbItem.itemName,
+					name = itemName,
 					quality = dbItem.itemQuality,
 					filter = itemTypeFilter,
 					worn = bWorn
 				}
 
-				if(itemCount > 0) and matchFilter(dbItem.itemName, itemLink) and matchQuality(dbItem.itemQuality) and match then
+				if(itemCount > 0) and matchFilter(itemName, itemLink) and matchQuality(dbItem.itemQuality) and match then
 					table.insert(dataLines, tempDataLine)
 					totItems = totItems + (itemCount or 0)
 				end
@@ -439,8 +456,8 @@ function IIfA:UpdateScrollDataLinesData()
 	IIFA_GUI_ListHolder_Slider:SetValue(0)
 
 	-- even if the counts aren't visible, update them so they show properly if user turns them on
-	IIFA_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
-	IIFA_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
+	IIFA_GUI_ListHolder_Counts_Items:SetText("Item count: " .. totItems)
+	IIFA_GUI_ListHolder_Counts_Slots:SetText("Appx. slots used: " .. #dataLines)
 
 end
 
@@ -873,45 +890,47 @@ function IIfA:ProcessRightClick(control)
 	if control:GetName():match("IIFA_ListItem") == nil or control.itemLink == nil then return end
 
 	-- it's an IIFA list item, lets see if it has data, and allow menu if it does
-
-	if control.itemLink ~= IIfA.EMPTY_STRING then
+	local itemLink = control.itemLink
+	if itemLink and itemLink ~= IIfA.EMPTY_STRING then
 		zo_callLater(function()
 			AddCustomMenuItem(GetString(SI_ITEM_ACTION_LINK_TO_CHAT), function() IIfA:GUIDoubleClick(control, MOUSE_BUTTON_INDEX_LEFT) end, MENU_ADD_OPTION_LABEL)
-			AddCustomMenuItem("Missing Motifs to text", function() IIfA:FMC(control, "Private") end, MENU_ADD_OPTION_LABEL)
-			AddCustomMenuItem("Missing Motifs to Chat", function() IIfA:FMC(control, "Public") end, MENU_ADD_OPTION_LABEL)
+			--Check if the item is a motif
+			local isMotif, motifNum = IIfA:IsItemMotif(itemLink)
+			if isMotif and motifNum then
+				AddCustomMenuItem("Missing motifs (#"..tostring(motifNum) ..") to text", function() IIfA:FMC(control, "Private") end, MENU_ADD_OPTION_LABEL)
+				AddCustomMenuItem("Missing motifs (#"..tostring(motifNum) ..") to chat", function() IIfA:FMC(control, "Public") end, MENU_ADD_OPTION_LABEL)
+			end
 			AddCustomMenuItem("Filter by Item Name", function() IIfA:FilterByItemName(control) end, MENU_ADD_OPTION_LABEL)
-			AddCustomMenuItem("Filter by Item Set Name", function() IIfA:FilterByItemSet(control) end, MENU_ADD_OPTION_LABEL)
+			--Check if the item is as set
+			local isSet, setName = IIfA:IsItemSet(itemLink)
+			if isSet then
+				AddCustomMenuItem("Filter by Item Set Name", function() IIfA:FilterByItemSet(control, setName) end, MENU_ADD_OPTION_LABEL)
+			end
 			ShowMenu(control)
-			end, 50
-			)
+		end, 0)
 	end
 end
 
 
--- paste missing motif chapters to chat based on currently displayed list of items
-function IIfA:FMC(control, WhoSeesIt)
---[[
--- next block taken from AI Research Grid
--- not helpful in that it gives back singular versions of everything, and breastplate instead of chest
--- Display Order in tooltip
-	local styleChaptersLookup =
-		{
-		[1] = ITEM_STYLE_CHAPTER_AXES,
-		[2] = ITEM_STYLE_CHAPTER_BELTS,
-		[3] = ITEM_STYLE_CHAPTER_BOOTS,
-		[4] = ITEM_STYLE_CHAPTER_BOWS,
-		[5] = ITEM_STYLE_CHAPTER_CHESTS,
-		[6] = ITEM_STYLE_CHAPTER_DAGGERS,
-		[7] = ITEM_STYLE_CHAPTER_GLOVES,
-		[8] = ITEM_STYLE_CHAPTER_HELMETS,
-		[9] = ITEM_STYLE_CHAPTER_LEGS,
-		[10] = ITEM_STYLE_CHAPTER_MACES,
-		[11] = ITEM_STYLE_CHAPTER_SHIELDS,
-		[12] = ITEM_STYLE_CHAPTER_SHOULDERS,
-		[13] = ITEM_STYLE_CHAPTER_STAVES,
-		[14] = ITEM_STYLE_CHAPTER_SWORDS,
-		}
---]]
+function IIfA:IsItemSet(itemLink)
+	if itemLink == nil then return false, nil end
+	local hasSetInfo, setName = GetItemLinkSetInfo(itemLink, false)
+	hasSetInfo = hasSetInfo or false
+	if setName and setName > IIfA.EMPTY_STRING then
+		setName = ZO_CachedStrFormat("<<C:1>>", setName)
+	end
+	return hasSetInfo, setName
+end
+
+function IIfA:IsItemMotif(itemLink)
+	local motifNum = GetItemLinkName(itemLink):match("%d+")
+	motifNum = tonumber(motifNum)
+	local motifAchieves = IIfA:GetMotifAchieves()
+	if motifAchieves[motifNum] ~= nil then return true, motifNum end
+	return false, nil
+end
+
+function IIfA:GetMotifAchieves()
 -- following lookup turns a motif number "Crafting Motif 33: Thieves Guild Axes" into an achieve lookup
 -- |H1:achievement:1318:16383:1431113493|h|h
 -- the index is the # from the motif text, NOT any internal value
@@ -974,31 +993,40 @@ function IIfA:FMC(control, WhoSeesIt)
 		[70] = 2361,	-- Elder Argonian
 		[71] = 2503,	-- Coldsnap
 		[72] = 2504,	-- Meridian
-		[73] = 2505,	-- Annequina
-		[74] = 2506,	-- Pellitine
-
+		[73] = 2505,	-- Annequina            *
+		[74] = 2506,	-- Pellitine            *
+		[75] = 2507, 	-- Sunspire
+		[76] = 2630,	-- Dragonguard
+		[77] = 2629,	-- Stags of Z'en        *
+		[78] = 2628,	-- Moongrave Fane
 		}
+	return motifAchieves
+end
 
+
+-- paste missing motif chapters to chat based on currently displayed list of items
+function IIfA:FMC(control, WhoSeesIt)
 --		local i, a
 --		for i,a in pairs(motifAchieves) do
 --			d(i .. " = |H1:achievement:" .. a .. ":16383:1431113493|h|h")
 --		end
+	local itemLink = control.itemLink
+	local motifAchieves = IIfA:GetMotifAchieves()
+	if not motifAchieves then return end
 
 	local langChapNames = {}
 	langChapNames["EN"] = {"Axes", "Belts", "Boots", "Bows", "Chests", "Daggers", "Gloves", "Helmets", "Legs", "Maces", "Shields", "Shoulders", "Staves", "Swords" }
 	langChapNames["DE"] = {"Äxte", "Gürtel", "Stiefel", "Bogen", "Torsi", "Dolche", "Handschuhe", "Helme", "Beine", "Keulen", "Schilde", "Schultern", "Stäbe", "Schwerter" }
-	local chapnames = langChapNames[GetCVar("language.2")] or langChapNames["EN"]
+	local chapnames = langChapNames[IIfA.clientLanguage] or langChapNames["EN"]
 
-	if control.itemLink == nil or control.itemLink == IIfA.EMPTY_STRING then
+	if itemLink == nil or itemLink == IIfA.EMPTY_STRING then
 		d("Invalid item. Right-Click ignored.")
 		return
 	end
 
-	local motifNum
-	motifNum = GetItemLinkName(control.itemLink):match("%d+")
-	motifNum = tonumber(motifNum)
-	if motifAchieves[motifNum] == nil then
-		d(control.itemLink .. " is not a valid motif chapter")
+	local isMotif, motifNum = IIfA:IsMotif(itemLink)
+	if not isMotif then
+		d(itemLink .. " is not a valid motif chapter")
 		return
 	end
 
@@ -1058,31 +1086,28 @@ function IIfA:FilterByItemName(control)
 	local itemName
 	itemName = GetItemLinkName(control.itemLink)
 
-	IIfA.searchFilter = zo_strlower(itemName)
-	IIfA.GUI_SearchBox:SetText(itemName)
+	IIfA.searchFilter = checkSearchFilter(itemName)
+	IIfA.GUI_SearchBox:SetText(IIfA.searchFilter)
 	IIfA.GUI_SearchBoxText:SetHidden(true)
 	IIfA.bFilterOnSetName = false
 	IIfA:RefreshInventoryScroll()
 end
 
-function IIfA:FilterByItemSet(control)
-
-	local itemLink
-	itemLink = control.itemLink
-	if itemLink == nil then
-		return
+function IIfA:FilterByItemSet(control, setName)
+	if not setName and not control then return end
+	if not setName and control then
+		local isSet, setNameLoc = IIfA:IsItemSet(control.itemLink)
+		if isSet then
+			setName = setNameLoc
+		end
 	end
-	local hasSetInfo, setName
-	hasSetInfo, setName = GetItemLinkSetInfo(itemLink, false)
-	if hasSetInfo then
-		IIfA.searchFilter = zo_strlower(setName)
+	if setName and setName > IIfA.EMPTY_STRING then
+		IIfA.searchFilter = checkSearchFilter(setName)
 		-- fill in the GUI portion here
-		IIfA.GUI_SearchBox:SetText(setName)
+		IIfA.GUI_SearchBox:SetText(IIfA.searchFilter)
 		IIfA.GUI_SearchBoxText:SetHidden(true)
 		IIfA.bFilterOnSetName = true
 		IIfA:RefreshInventoryScroll()
-	else
-		d("Item is not part of a set. Filter not changed.")
 	end
 end
 

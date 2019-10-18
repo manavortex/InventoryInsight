@@ -118,7 +118,9 @@ local function addItemLinkSearchContextMenuEntry(itemLink, rowControl)
 	end
 	if not itemLink or itemLink == "" then return end
 	--Get the item's name from the link
-	local itemNameClean = ZO_CachedStrFormat("<<C:1>>", GetItemLinkName(itemLink))
+	local itemName = GetItemLinkName(itemLink)
+	local itemNameClean = ZO_CachedStrFormat("<<C:1>>", itemName)
+	if not itemNameClean or itemNameClean == "" then return end
 	--Change the dropdown box of IIfA to "All"
 	if IIFA_GUI_Header_Dropdown_Main then
 		local comboBox = IIFA_GUI_Header_Dropdown_Main.m_comboBox
@@ -126,7 +128,7 @@ local function addItemLinkSearchContextMenuEntry(itemLink, rowControl)
 	end
 	--Put the name in the IIfA search box
 	IIfA.GUI_SearchBox:SetText(itemNameClean)
-	IIfA:ApplySearchText(itemNameClean)
+	IIfA:ApplySearchText(itemName)
 	--Open the IIfA UI if not already shown
 	if IIFA_GUI:IsControlHidden() then
 		IIfA:ToggleInventoryFrame()
@@ -136,11 +138,13 @@ end
 local function IIfA_linkContextRightClick(link, button, _, _, linkType, ...)
 	if button == MOUSE_BUTTON_INDEX_RIGHT and linkType == ITEM_LINK_TYPE then
 --		d(debug.traceback())
-		AddCustomMenuItem("IIfA: Search inventories" , function()
-			addItemLinkSearchContextMenuEntry(link)
-		end, MENU_ADD_OPTION_LABEL)
-		--Show the context menu entries at the itemlink handler now
-		ShowMenu()
+		zo_callLater(function()
+			AddCustomMenuItem("IIfA: Search inventories" , function()
+				addItemLinkSearchContextMenuEntry(link, nil)
+			end, MENU_ADD_OPTION_LABEL)
+			--Show the context menu entries at the itemlink handler now
+			ShowMenu()
+		end, 50)
 	end
 end
 

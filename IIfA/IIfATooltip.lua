@@ -201,9 +201,14 @@ IIfA.racialTextures = {
 	[85] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(85)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Pellitine
 	[86] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(86)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Sunspire
 	[87] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(87)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragon Bone
-	[88] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(88)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Necro Dragon
-	[89] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(89)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Undaunted v2
-	[90] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(90)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Witches Festival 2019
+	[88] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(88)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Moongrave
+	[89] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(89)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Stags of Z'en
+	[90] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(90)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Witches Festival 2019 ???
+	[91] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(91)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[92] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(92)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragonguard
+	[93] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(93)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Moongrave Fane
+	[94] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(94)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- New Moon
+	[95] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(95)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Shields of Senchal
 }
 
 -- /script local i for i=80,100 do d(i .. " " .. GetItemStyleName(i)) end
