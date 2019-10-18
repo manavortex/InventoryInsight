@@ -1,7 +1,10 @@
 --this creates a menu for the addon.
 --IIfA = IIfA		-- necessary for initial load of the lua script, so it know
 
-local LAM = LibStub("LibAddonMenu-2.0")
+local LAM = LibAddonMenu2
+if not LAM and LibStub then
+	LAM = LibStub("LibAddonMenu-2.0")
+end
 
 local id, guildName, deleteHouse, restoreHouse, name
 
@@ -34,11 +37,14 @@ local function buildFontRef()
 	local varName, Data
 	for varName, Data in pairs(IIfA.data.fontList[GetAPIVersion()]) do
 		if Data ~= 'Tooltip Default' and Data ~= "Custom" then
-			local fName, fSize, fEffect = _G[Data]:GetFontInfo()
-			if fEffect == nil or fEffect == "" then
-				fEffect = "none"
+			local gData = _G[Data]
+			if gData and gData.GetFontInfo then
+				local fName, fSize, fEffect = gData:GetFontInfo()
+				if fEffect == nil or fEffect == "" then
+					fEffect = "none"
+				end
+				IIfA.fontRef[fName:lower() .. "|" .. fSize .. "|" .. fEffect:lower()] = Data
 			end
-			IIfA.fontRef[fName:lower() .. "|" .. fSize .. "|" .. fEffect:lower()] = Data
 		end
 	end
 
