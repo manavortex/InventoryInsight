@@ -7,7 +7,7 @@
 	Collects inventory data for all characters on a single account including the shared bank and makes this information available
 	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder ScrollsÂ® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
 -- text searches in non-EN languages improved by Baertram 2019-10-13
@@ -15,7 +15,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.27"
+IIfA.version 			= "3.28"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
