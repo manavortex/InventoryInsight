@@ -1,7 +1,7 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.27
-## AddOnVersion: 30027
+## Version: 3.28
+## AddOnVersion: 30028
 ## APIVersion: 100028 100029
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
@@ -31,7 +31,7 @@ plugins/FCOIS/IIfA_FCOIS.lua
 
 ; DISCLOSURE:
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax
-; Media Inc. or its affiliates. The Elder Scrolls® and related logos are
+; Media Inc. or its affiliates. The Elder ScrollsÂ® and related logos are
 ; registered trademarks or trademarks of ZeniMax Media Inc. in the United
 ; States and/or other countries. All rights reserved.
 ; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms
