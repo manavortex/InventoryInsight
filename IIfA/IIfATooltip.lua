@@ -10,6 +10,9 @@ end
 
 -- 2018-3-22 AM - duplicate ZO_Tooltip_AddDivider so we can set the color of our divider to match whatever is popped up (stolen or not)
 function IIfA:Tooltip_AddDivider(tooltipControl)
+	ZO_Tooltip_AddDivider(tooltipControl)
+
+--[[
 	if not tooltipControl.dividerPool then
 		tooltipControl.dividerPool = ZO_ControlPool:New("ZO_BaseTooltipDivider", tooltipControl, "Divider")
 	end
@@ -28,6 +31,7 @@ function IIfA:Tooltip_AddDivider(tooltipControl)
 		tooltipControl:AddControl(divider)
 		divider:SetAnchor(CENTER)
 	end
+ ]]
 end
 
 
@@ -48,12 +52,60 @@ function IIfA:CreateTooltips()
 	IIfA:SetTooltipFont(IIfA:GetSettings().in2TooltipsFont)
 end
 
-function IIfA:SetTooltipFont(font)
+function IIfA:makeFont(face, size, effect)
+	local fontStr
+
+	self.TooltipFont = face .. "|" .. size
+	if effect ~= nil and effect ~= "none" and effect ~= "" then
+		self.TooltipFont = self.TooltipFont .. "|" .. effect
+	end
+
+	if self.fontRef[self.TooltipFont] ~= nil then
+		self.TooltipFont = self.fontRef[self.TolltipFont]
+	end
+end
+
+function IIfA:SetTooltipFont(fontFull, fontFace, fontSize, fontEffect)
 	if not font or font == IIfA.EMPTY_STRING then font = "ZoFontGameMedium" end
 --	d("SetTooltipFont called with " .. tostring(font))
-	IIfA:GetSettings().in2TooltipsFont = font
---	IIFA_ITEM_TOOLTIP:GetNamedChild("_Label"):SetFont(font)
---	IIFA_POPUP_TOOLTIP:GetNamedChild("_Label"):SetFont(font)
+	local face, size, effect
+	local settings = IIfA:GetSettings()
+	local rebuild = false
+	if fontFull ~= nil then
+		if settings.in2TooltipsFont ~= fontFull then
+			settings.in2TooltipsFont = fontFull
+			if fontFull ~= "Custom" and fontFull ~= "Tooltip Default" then
+				face, size, effect = _G[fontFull]:GetFontInfo()
+				if effect == nil or effect == "" then effect = "none" end
+				settings.TooltipFontFace = face:lower()
+				settings.TooltipFontSize = size
+				settings.TooltipFontEffect = effect:lower()
+				self.TooltipFont = fontFull
+			elseif fontFull == "Custom" then
+				rebuild = true
+			end
+		end
+	elseif fontFace ~= nil then
+		settings.TooltipFontFace = fontFace:lower()
+		rebuild = true
+	elseif fontSize ~= nil then
+		settings.TooltipFontSize = fontSize
+		rebuild = true
+	elseif fontFace ~= nil then
+		effect = fontEffect:lower()
+		if effect == nil or effect == "" then effect = "none" end
+		settings.TooltipFontEffect = effect
+		rebuild = true
+	end
+	if rebuild then
+		if settings.in2TooltipsFont ~= "Custom" then
+			settings.in2TooltipsFont = "Custom"
+		end
+		face = settings.TooltipFontFace:lower()
+		size = settings.TooltipFontSize
+		effect = settings.TooltipFontEffect:lower()
+		IIfA:makeFont(face, size, effect)
+	end
 end
 
 local function getTex(name)
@@ -149,9 +201,14 @@ IIfA.racialTextures = {
 	[85] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(85)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Pellitine
 	[86] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(86)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Sunspire
 	[87] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(87)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragon Bone
-	[88] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(88)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Necro Dragon
-	[89] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(89)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Undaunted v2
-	[90] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(90)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Witches Festival 2019
+	[88] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(88)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Moongrave
+	[89] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(89)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Stags of Z'en
+	[90] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(90)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Witches Festival 2019 ???
+	[91] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(91)), styleTexture = getTex(IIfA.EMPTY_STRING)}, -- Unused
+	[92] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(92)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Dragonguard
+	[93] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(93)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Moongrave Fane
+	[94] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(94)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- New Moon
+	[95] 	= { styleName = zo_strformat("<<1>>", GetItemStyleName(95)), styleTexture = getTex(IIfA.EMPTY_STRING)}, 	-- Shields of Senchal
 }
 
 -- /script local i for i=80,100 do d(i .. " " .. GetItemStyleName(i)) end
@@ -561,7 +618,11 @@ function IIfA:UpdateTooltip(tooltip)
 					if face == "Tooltip Default" then
 						tooltip:AddLine(textOut)
 					else
-						tooltip:AddLine(textOut, face)
+						if face ~= "Custom" then
+							tooltip:AddLine(textOut, face)
+						else
+							tooltip:AddLine(textOut, IIfA.TooltipFont)
+						end
 					end
 				end
 			end

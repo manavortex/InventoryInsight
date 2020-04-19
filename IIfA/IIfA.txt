@@ -1,16 +1,14 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.27
-## AddOnVersion: 30027
-## APIVersion: 100027 100028
+## Version: 3.40
+## AddOnVersion: 30040
+## APIVersion: 100029 100030
 ## SavedVariables: IIfA_Settings IIfA_Data
-## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
+## DependsOn: LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
 
 ; pChat is optional dependency because it should be loaded BEFORE any other addon so it provides
 ; load time debugging
-
-libs\LibCustomTitles\LibCustomTitles.lua
 
 IIfA.xml
 Bindings.xml
@@ -31,7 +29,7 @@ plugins/FCOIS/IIfA_FCOIS.lua
 
 ; DISCLOSURE:
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax
-; Media Inc. or its affiliates. The Elder Scrolls® and related logos are
+; Media Inc. or its affiliates. The Elder ScrollsÂ® and related logos are
 ; registered trademarks or trademarks of ZeniMax Media Inc. in the United
 ; States and/or other countries. All rights reserved.
 ; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms

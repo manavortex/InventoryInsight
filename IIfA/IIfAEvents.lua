@@ -105,28 +105,58 @@ local function IIfA_HouseEntered(eventCode)
 end
 
 -- request from Baertram - add right click context menu "Search thru Inventory Insight" to item links
-
+local function addItemLinkSearchContextMenuEntry(itemLink, rowControl)
+	if itemLink == nil and rowControl ~= nil then
+		local bagId, slotIndex
+		local data = (rowControl.dataEntry and rowControl.dataEntry.data) or rowControl.data
+		if not data or (data and (not data.bagId or not data.slotIndex)) then
+			bagId, slotIndex = rowControl.bagId, rowControl.slotIndex
+		else
+			bagId, slotIndex = data.bagId, data.slotIndex
+		end
+		itemLink = GetItemLink(bagId, slotIndex)
+	end
+	if not itemLink or itemLink == "" then return end
+	--Get the item's name from the link
+	local itemName = GetItemLinkName(itemLink)
+	local itemNameClean = ZO_CachedStrFormat("<<C:1>>", itemName)
+	if not itemNameClean or itemNameClean == "" then return end
+	--Change the dropdown box of IIfA to "All"
+	if IIFA_GUI_Header_Dropdown_Main then
+		local comboBox = IIFA_GUI_Header_Dropdown_Main.m_comboBox
+		comboBox:SetSelectedItem(comboBox.m_sortedItems[1].name)
+	end
+	--Put the name in the IIfA search box
+	IIfA.GUI_SearchBox:SetText(itemNameClean)
+	IIfA:ApplySearchText(itemName)
+	--Open the IIfA UI if not already shown
+	if IIFA_GUI:IsControlHidden() then
+		IIfA:ToggleInventoryFrame()
+	end
+end
+--Contextmenu from chat/link handler
 local function IIfA_linkContextRightClick(link, button, _, _, linkType, ...)
 	if button == MOUSE_BUTTON_INDEX_RIGHT and linkType == ITEM_LINK_TYPE then
 --		d(debug.traceback())
 		zo_callLater(function()
-			AddCustomMenuItem("Search Inventory" , function()
-				--Get the item's name from the link
-				local itemNameClean = ZO_CachedStrFormat("<<C:1>>", GetItemLinkName(link))
-				--Change the dropdown box of IIfA to "All"
-				--Put the name to the IIfA search box
-				IIfA.GUI_SearchBox:SetText(itemNameClean)
-				IIfA:ApplySearchText(itemNameClean)
-				--Open the IIfA UI if not already shown
-				if IIFA_GUI:IsControlHidden() then
-					IIfA:ToggleInventoryFrame()
-				end
-				end)
-				--Show the context menu entries
+			AddCustomMenuItem("IIfA: Search inventories" , function()
+				addItemLinkSearchContextMenuEntry(link, nil)
+			end, MENU_ADD_OPTION_LABEL)
+			--Show the context menu entries at the itemlink handler now
 			ShowMenu()
-		end
-		, MENU_ADD_OPTION_LABEL) --to add the contextmenu entry after the exisitng ones
+		end, 50)
 	end
+end
+
+--Contextmenu from inventory row
+local function ZO_InventorySlot_ShowContextMenu_For_IIfA(rowControl, slotActions)
+	--Do not show if IIfA row is the parent
+	if not rowControl or (rowControl.GetOwningWindow and rowControl:GetOwningWindow() == IIFA_GUI) then return end
+	AddCustomMenuItem("IIfA: Search inventories" , function()
+		addItemLinkSearchContextMenuEntry(nil, rowControl)
+	end, MENU_ADD_OPTION_LABEL)
+	--Show the context menu entries at the inventory row now
+	ShowMenu(rowControl)
 end
 
 
@@ -243,7 +273,14 @@ function IIfA:RegisterForEvents()
 	ZO_PreHook('ZO_InventorySlot_ShowContextMenu', function(rowControl) IIfA:ProcessRightClick(rowControl) end)
 
 	-- handle right clicks on links
-    LINK_HANDLER:RegisterCallback(LINK_HANDLER.LINK_MOUSE_UP_EVENT, IIfA_linkContextRightClick)
+	--Add contextmenu entry to items to search for the item in the IIfA UI
+	if LibCustomMenu and IIfA:GetSettings().bAddContextMenuEntrySearchInIIfA == true then
+		--The link handler context menu
+		LINK_HANDLER:RegisterCallback(LINK_HANDLER.LINK_MOUSE_UP_EVENT, IIfA_linkContextRightClick)
+		--The inventory row context menu
+		LibCustomMenu:RegisterContextMenu(ZO_InventorySlot_ShowContextMenu_For_IIfA)
+	end
+
 
 --	ZO_PreHook(TRADING_HOUSE_SCENE, "DetermineIfTransitionIsComplete", pre1)
 

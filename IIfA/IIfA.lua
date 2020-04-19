@@ -1,4 +1,4 @@
-------------------------------------------------------------------
+----------------------------------------------------------------------
 --IIfA.lua
 --v0.8 - Original Author: Vicster0
 -- v1.x and 2.x - rewrites by ManaVortex & AssemblerManiac
@@ -7,14 +7,15 @@
 	Collects inventory data for all characters on a single account including the shared bank and makes this information available
 	on tooltips across the entire account providing the playerwith useful insight into their account wide inventory.
 DISCLAIMER
-	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder Scrolls® and related
+	This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. The Elder ScrollsÂ® and related
 	logos are registered trademarks or trademarks of ZeniMax Media Inc. in the United States and/or other countries. All rights reserved."
 ]]
-------------------------------------------------------------------
+-- text searches in non-EN languages improved by Baertram 2019-10-13
+----------------------------------------------------------------------
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.27"
+IIfA.version 			= "3.40"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -35,8 +36,9 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
-local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
-IIfA.task			= task
+LA = LibAsync
+local task = IIfA.task or LA:Create("IIfA_DataCollection")
+IIfA.task = task
 
 -- --------------------------------------------------------------
 --	Global Variables and external functions
@@ -94,18 +96,6 @@ local strings = {
 for stringId, stringValue in pairs(strings) do
 	ZO_CreateStringId(stringId, stringValue)
 	SafeAddVersion(stringId, 1)
-end
-
--- from sidTools, by SirInsidiator
--- hacked up to return just the list of font names
-local function BuildFontList()
-    local fonts = { "Tooltip Default" }
-    for varname, value in zo_insecurePairs(_G) do
-        if(type(value) == "userdata" and value.GetFontInfo) then
-            fonts[#fonts + 1] = varname
-        end
-    end
-    return fonts
 end
 
 
@@ -212,6 +202,19 @@ function IIfA:TextColorFixup(settings)
 	end
 end
 
+--Check if the clientLanguage is using gender specific string suffix like ^mx or ^f which need to be replaced
+--by zo_strformat functions
+function IIfA:CheckIfClientLanguageUsesGenderStrings(clientLanguage)
+	clientLanguage = clientLanguage or GetCVar("language.2")
+	if not clientLanguage then return false end
+	local clientLanguagesWithGenderSpecificStringsSuffix = {
+		["de"] = true,
+		["fr"] = true,
+	}
+	local retVar = clientLanguagesWithGenderSpecificStringsSuffix[clientLanguage] or false
+	IIfA.clientLanguageUsesGenderString = retVar
+	return retVar
+end
 
 function IIfA_onLoad(eventCode, addOnName)
 	if (addOnName ~= "IIfA") then
@@ -225,6 +228,10 @@ function IIfA_onLoad(eventCode, addOnName)
 	local valLastY = 300
 	local valHeight = 798
 	local valWidth = 380
+
+	local lang = GetCVar("language.2")
+	IIfA.clientLanguage = lang
+	IIfA:CheckIfClientLanguageUsesGenderStrings(lang)
 
 	-- initializing default values
 	local defaultGlobal = {
@@ -258,6 +265,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		ShowToolTipWhen 				= "Always",
 		DBv3 							= {},
 		dontFocusSearch					= false,
+		bAddContextMenuEntrySearchInIIfA = true,
 	}
 
 	-- initializing default values
@@ -284,6 +292,7 @@ function IIfA_onLoad(eventCode, addOnName)
 		in2AgedGuildBankDataWarning = true,
 		in2TooltipsFont = "ZoFontGame",
 		in2TooltipsFontSize = 16,
+		bAddContextMenuEntrySearchInIIfA = true,
 	}
 
 	IIfA.minWidth = 410
@@ -324,10 +333,10 @@ function IIfA_onLoad(eventCode, addOnName)
 
 	IIfA:RebuildHouseMenuDropdowns()
 
-	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
-		IIfA.data.fontList = {}
-		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
-	end
+--	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
+--		IIfA.data.fontList = {}
+--		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
+--	end
 
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
@@ -394,7 +403,6 @@ function IIfA_onLoad(eventCode, addOnName)
 
 
 	-- 2-9-17 AM - convert saved data names into proper language for this session
-	local lang = GetCVar("language.2")
 	if IIfA.data.lastLang == nil or IIfA.data.lastLang ~= lang then
 		IIfA:RenameItems()
 		IIfA.data.lastLang = lang

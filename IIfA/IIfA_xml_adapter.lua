@@ -287,9 +287,69 @@ function IIfA:GuiOnSearchboxText(control)
 end
 
 function IIfA:ApplySearchText(text)
-	IIfA.GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
-	IIfA.searchFilter = zo_strlower(text)
-	IIfA:RefreshInventoryScroll()
+--d("IIfA:ApplySearchText - text: " .. tostring(text))
+    --Search and update the list
+    local function updateSearchTextFilterAndDoSearch(p_searchText)
+		local countFound = 0
+        if p_searchText then
+            IIfA.searchFilter = p_searchText
+            -->This function refreshes AND filters the dataLines of the list IIFA_GUI_ListHolder, within UpdateScrollDataLinesData()
+			IIfA:RefreshInventoryScroll()
+			if IIFA_GUI_ListHolder.dataLines then
+				countFound = #IIFA_GUI_ListHolder.dataLines
+			end
+        end
+		return countFound
+    end
+	--Function to strip the article of a text in some client languages, e.g. de (der, die, das) or french (le, la, les)
+	local function stripArticlePrefix(textToStripFrom)
+		if not textToStripFrom then return false, nil end
+		local articelStripped = false
+		local articlesOfLanguage = {
+			["de"] = {["der"] = true, ["die"] = true, ["das"] = true},
+			["fr"] = {["le"] = true, ["la"] = true, ["les"] = true},
+		}
+		local lang = IIfA.clientLanguage or GetCVar("language.2")
+		if not articlesOfLanguage[lang] then return false, nil end
+		local textWithoutArticle
+		--Any whitespaces in the text?
+		local firstWhiteSpaceIndex = string.find(textToStripFrom, "%s")
+--d(">firstWhiteSpaceIndex: " ..tostring(firstWhiteSpaceIndex))
+		if firstWhiteSpaceIndex ~= nil then
+			--Get the text before the first whitespace
+			local possibleArticleText = string.sub(textToStripFrom, 1, firstWhiteSpaceIndex)
+--d(">possibleArticleText: " ..tostring(possibleArticleText))
+			if articlesOfLanguage[lang][possibleArticleText] then
+				articelStripped = true
+				textWithoutArticle = string.sub(textToStripFrom, firstWhiteSpaceIndex+1)
+			end
+		end
+		return articelStripped, textWithoutArticle
+	end
+
+    IIfA.GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
+
+	local searchTextLower = zo_strlower(text)
+    local foundCount = updateSearchTextFilterAndDoSearch(searchTextLower)
+--d(">text 1st searched: " ..tostring(searchTextLower) .. ", found: " ..tostring(foundCount))
+
+    --Nothing was found but we called the search from our own inventory (there must be at least 1hit then!):
+    --Try to search with the article removed, if the client language uses gender specific string suffix on the nams like ^mx or ^fs
+    if IIfA.clientLanguageUsesGenderString == true then
+		if foundCount == 0 then
+			local textClean = ZO_CachedStrFormat("<<C:1>>", searchTextLower)
+			if textClean and textClean > IIfA.EMPTY_STRING then
+				--Is the search text starting with an article of the current client language
+				local articleStripped, textCleanWithouArticle = stripArticlePrefix(textClean)
+--d(">articleStripped: " ..tostring(articleStripped) .. ", textCleanWithouArticle: " ..tostring(textCleanWithouArticle))
+				if not articleStripped or not textCleanWithouArticle or textCleanWithouArticle == searchTextLower or textCleanWithouArticle == IIfA.EMPTY_STRING then return end
+				--Nothing was found. Remove the leading article (text until first space) from the search term and try again
+				textCleanWithouArticle = zo_strlower(textCleanWithouArticle)
+				updateSearchTextFilterAndDoSearch(textCleanWithouArticle)
+--d(">text 2nd searched: " ..tostring(textCleanWithouArticle))
+			end
+        end
+    end
 end
 
 function IIfA:GuiOnSearchBoxClear(control)
