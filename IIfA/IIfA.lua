@@ -15,7 +15,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.40"
+IIfA.version 			= "3.30"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -36,9 +36,8 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
-LA = LibAsync
-local task = IIfA.task or LA:Create("IIfA_DataCollection")
-IIfA.task = task
+local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+IIfA.task			= task
 
 -- --------------------------------------------------------------
 --	Global Variables and external functions
@@ -332,11 +331,6 @@ function IIfA_onLoad(eventCode, addOnName)
 	IIfA.data 		= ZO_SavedVars:NewAccountWide("IIfA_Data", 1, "Data", defaultGlobal)
 
 	IIfA:RebuildHouseMenuDropdowns()
-
---	if IIfA.data.fontList == nil or IIfA.data.fontList[GetAPIVersion()] == nil then
---		IIfA.data.fontList = {}
---		IIfA.data.fontList[GetAPIVersion()] = BuildFontList()
---	end
 
 	--  nuke non-global positioning settings
 	local ObjSettings = IIfA:GetSettings()
