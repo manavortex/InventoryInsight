@@ -474,7 +474,7 @@ end
 function IIfA:UpdateTooltip(tooltip)
 	-- do we show IIfA info?
 	if IIfA:GetSettings().showToolTipWhen == "Never" or
-		(IIfA:GetSettings().showToolTipWhen == "IIfA" and moc():GetParent():GetName() ~= "IIFA_GUI_ListHolder") then
+		(IIfA:GetSettings().showToolTipWhen == "IIfA" and moc():GetParent() and moc():GetParent():GetName() ~= "IIFA_GUI_ListHolder") then
 		return
 	end
 

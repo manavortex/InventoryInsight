@@ -1,7 +1,6 @@
 local IIfA 			= IIfA or {}
 local _
-LA = LibAsync
-local task 			= IIfA.task or LA:Create("IIfA_DataCollection")
+local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
 IIfA.task			= task
 
 local function p(...)

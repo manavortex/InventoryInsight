@@ -2,6 +2,9 @@
 --IIfA = IIfA		-- necessary for initial load of the lua script, so it know
 
 local LAM = LibAddonMenu2
+if not LAM and LibStub then
+	LAM = LibStub("LibAddonMenu-2.0")
+end
 
 local id, guildName, deleteHouse, restoreHouse, name
 
@@ -32,7 +35,8 @@ local faceValues = {}
 
 local function buildFontRef()
 	local varName, Data
-	for varName, Data in pairs(IIfA.data.fontList[GetAPIVersion()]) do
+
+	for varName, Data in pairs(IIfA:GetFontList()) do
 		if Data ~= 'Tooltip Default' and Data ~= "Custom" then
 			local gData = _G[Data]
 			if gData and gData.GetFontInfo then
@@ -788,18 +792,6 @@ function IIfA:CreateSettingsWindow(savedVars, defaults)
 
 	self:CreateOptionsMenu()
 
-end
-
--- from sidTools, by SirInsidiator
--- hacked up to return just the list of font names
-local function BuildFontList()
-    local fonts = { "Tooltip Default" }
-    for varname, value in zo_insecurePairs(_G) do
-        if(type(value) == "userdata" and value.GetFontInfo) then
-            fonts[#fonts + 1] = varname
-        end
-    end
-    return fonts
 end
 
 function IIfA:GetFontList()
