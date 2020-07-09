@@ -1,8 +1,8 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.30
-## AddOnVersion: 30030
-## APIVersion: 100029 100030
+## Version: 3.40
+## AddOnVersion: 30040
+## APIVersion: 100031
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibStub LibCustomMenu LibAsync LibAddonMenu-2.0
 ## OptionalDependsOn: libFilters pChat FCOItemSaver
