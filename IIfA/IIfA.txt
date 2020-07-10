@@ -1,7 +1,7 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.40
-## AddOnVersion: 30040
+## Version: 3.45
+## AddOnVersion: 30045
 ## APIVersion: 100031
 ## SavedVariables: IIfA_Settings IIfA_Data
 ## DependsOn: LibCustomMenu>=691 LibAsync>=20100 LibAddonMenu-2.0>=28
