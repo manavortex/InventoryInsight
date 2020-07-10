@@ -1,7 +1,7 @@
 local IIfA = IIfA
 IIfA.houseNameToIdTbl = {}
 
-local task 	= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+local task 	= IIfA.task or LibAsync:Create("IIfA_DataCollection")
 IIfA.task	= task
 
 function IIfA:IsCharacterInventoryIgnored()

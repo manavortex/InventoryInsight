@@ -36,7 +36,7 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
-local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+local task 			= IIfA.task or LibAsync:Create("IIfA_DataCollection")
 IIfA.task			= task
 
 -- --------------------------------------------------------------

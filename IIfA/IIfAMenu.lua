@@ -2,9 +2,6 @@
 --IIfA = IIfA		-- necessary for initial load of the lua script, so it know
 
 local LAM = LibAddonMenu2
-if not LAM and LibStub then
-	LAM = LibStub("LibAddonMenu-2.0")
-end
 
 local id, guildName, deleteHouse, restoreHouse, name
 
