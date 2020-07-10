@@ -15,7 +15,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.40"
+IIfA.version 			= "3.45"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
@@ -36,7 +36,7 @@ local POPUPTOOLTIP = ZO_PopupToolTip
 
 local IIFA_COLOR_DEFAULT = ZO_ColorDef:New("3399FF")
 
-local task 			= IIfA.task or LibStub("LibAsync"):Create("IIfA_DataCollection")
+local task 			= IIfA.task or LibAsync:Create("IIfA_DataCollection")
 IIfA.task			= task
 
 -- --------------------------------------------------------------
@@ -554,15 +554,15 @@ function IIfA:MakeBSI()
 				if ((data.bagID == BAG_BACKPACK or data.bagID == BAG_WORN) and locname == IIfA.currentCharacterId) or	-- only index items ON this character if they're in backpack
 					(data.bagID ~= BAG_BACKPACK and data.bagID ~= BAG_WORN) then
 					idx = data.bagID
-					if idx == BAG_GUILDBANK then		-- replace idx with appropriate guild bank name instead of the ID for BAG_GUILDBANK (to differentiate guild banks)
-						idx = locname
-					end
-					if bs[idx] == nil then
-						bs[idx] = {}
-					end
-					if nil ~= idx and nil ~= data.bagSlot then
-						for bagSlot, qty in pairs(data.bagSlot) do
-							bs[idx][bagSlot] = itemKey
+					if nil ~= idx then
+						if idx == BAG_GUILDBANK then		-- replace idx with appropriate guild bank name instead of the ID for BAG_GUILDBANK (to differentiate guild banks)
+							idx = locname
+						end
+						bs[idx] = bs[idx] or {}
+						if nil ~= data.bagSlot then
+							for bagSlot, qty in pairs(data.bagSlot) do
+								bs[idx][bagSlot] = itemKey
+							end
 						end
 					end
 				end
