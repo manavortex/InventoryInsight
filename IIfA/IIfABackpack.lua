@@ -189,14 +189,17 @@ local function getColoredString(color, s)
 end
 local function getQualityDict()
 	if nil == qualityDictionary then
-		qualityDictionary = {}
-		qualityDictionary["Any"] = 99
-		qualityDictionary[getColoredString(ITEM_QUALITY_TRASH,  "Junk")] 			= ITEM_QUALITY_TRASH
-		qualityDictionary[getColoredString(ITEM_QUALITY_NORMAL, "Normal")] 			= ITEM_QUALITY_NORMAL
-		qualityDictionary[getColoredString(ITEM_QUALITY_MAGIC,  "Magic")] 			= ITEM_QUALITY_MAGIC
-		qualityDictionary[getColoredString(ITEM_QUALITY_ARCANE, "Arcane")] 			= ITEM_QUALITY_ARCANE
-		qualityDictionary[getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact")] 		= ITEM_QUALITY_ARTIFACT
-		qualityDictionary[getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary")] 	= ITEM_QUALITY_LEGENDARY
+		qualityDictionary =
+		{
+			["Any"] = 99,
+			[getColoredString(ITEM_DISPLAY_QUALITY_TRASH, "Junk")] = ITEM_DISPLAY_QUALITY_TRASH,
+			[getColoredString(ITEM_DISPLAY_QUALITY_NORMAL, "Normal")] = ITEM_DISPLAY_QUALITY_NORMAL,
+			[getColoredString(ITEM_DISPLAY_QUALITY_MAGIC, "Magic")] = ITEM_DISPLAY_QUALITY_MAGIC,
+			[getColoredString(ITEM_DISPLAY_QUALITY_ARCANE, "Arcane")] = ITEM_DISPLAY_QUALITY_ARCANE,
+			[getColoredString(ITEM_DISPLAY_QUALITY_ARTIFACT, "Artifact")] = ITEM_DISPLAY_QUALITY_ARTIFACT,
+			[getColoredString(ITEM_DISPLAY_QUALITY_LEGENDARY, "Legendary")] = ITEM_DISPLAY_QUALITY_LEGENDARY,
+			[getColoredString(ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE, "Mythic")] = ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE,
+		}
 	end
 	return qualityDictionary
 end
@@ -623,7 +626,7 @@ end
 function IIfA:GetCharacterList()
 	local charList = {}
 	for i=1, GetNumCharacters() do
-		local charName, _, _, _, _, _, _, _ = GetCharacterInfo(i)
+		local charName = GetCharacterInfo(i)
 		charName = charName:sub(1, charName:find("%^") - 1)
 		if (nil == charList[charName]) then
 			table.insert(charList, charName)
@@ -847,14 +850,17 @@ function IIfA:SetupBackpack()
 
 		IIFA_GUI_Header_Dropdown_Quality.comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox or ZO_ComboBox_ObjectFromContainer(IIFA_GUI_Header_Dropdown_Quality)
 
-		local validChoices =  {}
-		table.insert(validChoices, "Any")
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_TRASH, "Junk"))
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_NORMAL, "Normal"))
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_MAGIC, "Magic"))
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_ARCANE, "Arcane"))
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_ARTIFACT, "Artifact"))
-		table.insert(validChoices, getColoredString(ITEM_QUALITY_LEGENDARY, "Legendary"))
+		local validChoices =
+		{
+			"Any",
+			getColoredString(ITEM_DISPLAY_QUALITY_TRASH, "Junk"),
+			getColoredString(ITEM_DISPLAY_QUALITY_NORMAL, "Normal"),
+			getColoredString(ITEM_DISPLAY_QUALITY_MAGIC, "Magic"),
+			getColoredString(ITEM_DISPLAY_QUALITY_ARCANE, "Arcane"),
+			getColoredString(ITEM_DISPLAY_QUALITY_ARTIFACT, "Artifact"),
+			getColoredString(ITEM_DISPLAY_QUALITY_LEGENDARY, "Legendary"),
+			getColoredString(ITEM_DISPLAY_QUALITY_MYTHIC_OVERRIDE, "Mythic"),
+		}
 
 		local comboBox = IIFA_GUI_Header_Dropdown_Quality.comboBox
 

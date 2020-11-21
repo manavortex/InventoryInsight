@@ -472,7 +472,7 @@ function IIfA:EvalBagItem(bagId, slotId, fromXfer, qty, itemLink, itemName, loca
 
 	p("[EvalBagItem] - trying to save <<1>> x<<2>>", itemLink, itemCount)
 
-	local itemQuality = GetItemLinkQuality(itemLink)
+	local itemQuality = GetItemLinkDisplayQuality(itemLink)
 
 	local itemType = GetItemLinkItemType(itemLink)
 
