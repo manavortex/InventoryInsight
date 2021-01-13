@@ -77,7 +77,7 @@ end
 function IIfA:GUIDoubleClick(control, button)
 	if button == MOUSE_BUTTON_INDEX_LEFT and control.itemLink then
 		if control.itemLink ~= IIfA.EMPTY_STRING then
-			ZO_ChatWindowTextEntryEditBox:SetText(ZO_ChatWindowTextEntryEditBox:GetText() .. zo_strformat(SI_TOOLTIP_ITEM_NAME, control.itemLink))
+			ZO_LinkHandler_InsertLink(control.itemLink)
 		end
 	end
 end
