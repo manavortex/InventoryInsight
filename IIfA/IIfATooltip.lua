@@ -294,7 +294,7 @@ function IIfA_TooltipOnTwitch(control, eventNum)
 			return
 		end
 		-- this is called whenever there's any data added to the ingame tooltip
-		if eventNum == TOOLTIP_GAME_DATA_MAX_VALUE then		-- hopefully always called on last data add
+		if eventNum == TOOLTIP_GAME_DATA_STOLEN then		-- hopefully always called on last data add
 --			p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
 			IIfA:UpdateTooltip(control)
 		end
