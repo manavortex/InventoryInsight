@@ -281,7 +281,7 @@ end
 -- do NOT local this function
 function IIfA_TooltipOnTwitch(control, eventNum)
 	if IIfA:GetSettings().bInSeparateFrame then
-		if eventNum == 7 then
+		if eventNum == TOOLTIP_GAME_DATA_ITEM_ICON then --7
 			if control == ItemTooltip then
 				-- item tooltips appear where mouse is
 				return IIfA:UpdateTooltip(IIFA_ITEM_TOOLTIP)
@@ -290,12 +290,28 @@ function IIfA_TooltipOnTwitch(control, eventNum)
 			end
 		end
 	else
+
 		if control == PopupTooltip and control.IIfA_TT_Ext then
 			return
 		end
 		-- this is called whenever there's any data added to the ingame tooltip
-		if eventNum == TOOLTIP_GAME_DATA_STOLEN then		-- hopefully always called on last data add
---			p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
+		--if eventNum == TOOLTIP_GAME_DATA_MAX_VALUE then		-- hopefully always called on last data add
+		--[[
+		For people who have configured the tooltip information to show in the tooltip and not in a separate frame, you can fix the issue introduced in Update 29 this way:
+
+Open IIfATooltip.lua
+Go to line 297
+Change TOOLTIP_GAME_DATA_MAX_VALUE to TOOLTIP_GAME_DATA_STOLEN
+
+
+What changed in Update 29 is that they introduced a new enumeration: TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION. So in the previous patch, when OnAddGameData was called with TOOLTIP_GAME_DATA_STOLEN (the previous max value), it would trigger the tooltip update. But in Update 29, the max value is now TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION, and OnAddGameData is never called with TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION for an item tooltip.
+
+TL;DR: IIfA assumed that TOOLTIP_GAME_DATA_MAX_VALUE would always be valid for an item tooltip, but ZOS broke that assumption by adding a data type for CP 2.0 that doesn't appear in item tooltips.
+Last edited by code65536 : 03/10/21 at 02:09 PM.
+		]]
+		--Current max value 9 2021-10-31 is TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION
+		if eventNum == TOOLTIP_GAME_DATA_MYTHIC_OR_STOLEN then
+--p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
 			IIfA:UpdateTooltip(control)
 		end
 	end
@@ -472,14 +488,18 @@ function IIfA:getLastLink(tooltip)
 end
 
 function IIfA:UpdateTooltip(tooltip)
+--d("[IIfA]UpdateTooltip")
 	-- do we show IIfA info?
+	local mocParent = moc():GetParent()
 	if IIfA:GetSettings().showToolTipWhen == "Never" or
-		(IIfA:GetSettings().showToolTipWhen == "IIfA" and moc():GetParent() and moc():GetParent():GetName() ~= "IIFA_GUI_ListHolder") then
+		(IIfA:GetSettings().showToolTipWhen == "IIfA" and mocParent and mocParent:GetName() ~= "IIFA_GUI_ListHolder") then
 		return
 	end
 
 	local itemLink, itemData
 	itemLink = self:getLastLink(tooltip)
+
+--d(">item: " ..itemLink)
 
 	local queryResults = IIfA:QueryAccountInventory(itemLink)
 	local itemStyleTexArray = getStyleIntel(itemLink)

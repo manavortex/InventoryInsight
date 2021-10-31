@@ -464,6 +464,11 @@ function IIfA:UpdateScrollDataLinesData()
 
 end
 
+--Update the FCOItemSaver marker icons at the IIfA inventory frames
+local function updateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, createFCOISMarkerIcons, iconId)
+	if not FCOIS or not IIfA.UpdateFCOISMarkerIcons then return end
+	IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, createFCOISMarkerIcons, iconId)
+end
 
 local function fillLine(curLine, curItem)
 	local color
@@ -476,9 +481,7 @@ local function fillLine(curLine, curItem)
 		curLine.worn:SetHidden(true)
 		curLine.stolen:SetHidden(true)
 		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua
-		if IIfA.UpdateFCOISMarkerIcons ~= nil then
-			IIfA:UpdateFCOISMarkerIcons(curLine, false, false, -1)
-		end
+		updateFCOISMarkerIcons(curLine, false, false, -1)
 	else
 		local r, g, b, a = 255, 255, 255, 1
 		if (curItem.quality) then
@@ -495,10 +498,7 @@ local function fillLine(curLine, curItem)
 		curLine.worn:SetHidden(not curItem.worn)
 		curLine.stolen:SetHidden(not IsItemLinkStolen(curItem.link))
 		--Show the FCOIS marker icons at the line, if enabled in the settings (create them if needed)  -> File plugins/FCOIS/IIfA_FCOIS.lua
-		if IIfA.UpdateFCOISMarkerIcons ~= nil then
-			local showFCOISMarkerIcons = IIfA:GetSettings().FCOISshowMarkerIcons
-			IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, false, -1)
-		end
+		updateFCOISMarkerIcons(curLine, IIfA:GetSettings().FCOISshowMarkerIcons, false, -1)
 	end
 end
 

@@ -15,7 +15,7 @@ DISCLAIMER
 if IIfA == nil then IIfA = {} end
 
 IIfA.name 				= "Inventory Insight"
-IIfA.version 			= "3.45"
+IIfA.version 			= "3.47"
 IIfA.author 			= "AssemblerManiac & manavortex"
 IIfA.defaultAlertSound 	= nil
 IIfA.colorHandler 		= nil
