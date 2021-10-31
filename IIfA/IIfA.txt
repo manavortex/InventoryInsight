@@ -1,11 +1,11 @@
 ## Title: Inventory Insight
 ## Author: manavortex, AssemblerManiac
-## Version: 3.461
-## AddOnVersion: 30046
-## APIVersion: 100034 100035
+## Version: 3.47
+## AddOnVersion: 30047
+## APIVersion: 101031 101032
 ## SavedVariables: IIfA_Settings IIfA_Data
-## DependsOn: LibCustomMenu>=694 LibAsync>=20201 LibAddonMenu-2.0>=31
-## OptionalDependsOn: LibFilters-3.0>=317 pChat FCOItemSaver>=199
+## DependsOn: LibCustomMenu>=712 LibAsync>=20201 LibAddonMenu-2.0>=32
+## OptionalDependsOn: LibFilters-3.0>=321 pChat FCOItemSaver>=222
 
 ; pChat is optional dependency because it should be loaded BEFORE any other addon so it provides
 ; load time debugging
