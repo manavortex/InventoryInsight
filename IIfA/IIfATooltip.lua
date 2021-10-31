@@ -290,6 +290,7 @@ function IIfA_TooltipOnTwitch(control, eventNum)
 			end
 		end
 	else
+
 		if control == PopupTooltip and control.IIfA_TT_Ext then
 			return
 		end
@@ -308,10 +309,9 @@ What changed in Update 29 is that they introduced a new enumeration: TOOLTIP_GAM
 TL;DR: IIfA assumed that TOOLTIP_GAME_DATA_MAX_VALUE would always be valid for an item tooltip, but ZOS broke that assumption by adding a data type for CP 2.0 that doesn't appear in item tooltips.
 Last edited by code65536 : 03/10/21 at 02:09 PM.
 		]]
-
 		--Current max value 9 2021-10-31 is TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION
-		if eventNum == TOOLTIP_GAME_DATA_CHAMPION_PROGRESSION then
---			p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
+		if eventNum == TOOLTIP_GAME_DATA_MYTHIC_OR_STOLEN then
+--p("Tooltip On Twitch - " .. control:GetName() .. ", " .. eventNum)
 			IIfA:UpdateTooltip(control)
 		end
 	end
@@ -488,14 +488,18 @@ function IIfA:getLastLink(tooltip)
 end
 
 function IIfA:UpdateTooltip(tooltip)
+--d("[IIfA]UpdateTooltip")
 	-- do we show IIfA info?
+	local mocParent = moc():GetParent()
 	if IIfA:GetSettings().showToolTipWhen == "Never" or
-		(IIfA:GetSettings().showToolTipWhen == "IIfA" and moc():GetParent() and moc():GetParent():GetName() ~= "IIFA_GUI_ListHolder") then
+		(IIfA:GetSettings().showToolTipWhen == "IIfA" and mocParent and mocParent:GetName() ~= "IIFA_GUI_ListHolder") then
 		return
 	end
 
 	local itemLink, itemData
 	itemLink = self:getLastLink(tooltip)
+
+--d(">item: " ..itemLink)
 
 	local queryResults = IIfA:QueryAccountInventory(itemLink)
 	local itemStyleTexArray = getStyleIntel(itemLink)
