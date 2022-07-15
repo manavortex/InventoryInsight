@@ -1,0 +1,32 @@
+ZO_CreateStringId("IIFA_FILTER_ALLCATEGORIES_JEWELRY", "All Jewelry")
+ZO_CreateStringId("IIFA_FILTER_ALLCATEGORIES_MISCELLANEOUS", "All Miscellaneous")
+
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_ONEHANDED", "One Handed")
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_TWOHANDED", "Two Handed")
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_DESTRUCTIONSTAVES", "Destruction Staves")
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_VANITY", "Vanity")
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_FURNISHING_ORNAMENTAL", "Ornamental")
+ZO_CreateStringId("IIFA_FILTER_CATEGORY_ITEM_STOLEN", "Stolen")
+
+ZO_CreateStringId("IIFA_HEADER_TOOLTIP_SORT_NAME", "Sort By Name")
+ZO_CreateStringId("IIFA_HEADER_TOOLTIP_SORT_QUALITY", "Sort by Quality")
+ZO_CreateStringId("IIFA_HEADER_TOOLTIP_ITEM_TYPE_FILTER", "Item Type Filter")
+ZO_CreateStringId("IIFA_HEADER_TOOLTIP_FILTER_SET_NAME", "Filter on set name only")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_ALLOW_WINDOW_MOVEMENT", "Allow window movement")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_LOCK_WINDOW", "Lock window in place")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_UNDOCK_WINDOW", "Un-dock window")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_DOCK_WINDOW", "Dock window")
+
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_HIDE_WINDOW", "Hide window")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_MINIMIZE_WINDOW", "Minimize window")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_RESTORE_WINDOW", "Restore window")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_SELECT_INVENTORY_VIEW", "Select inventory to view")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_SELECT_QUALITY", "Select quality")
+ZO_CreateStringId("IIFA_BUTTON_TOOLTIP_CLEAR_SEARCH", "Clear Search Text")
+
+-- ZO_CreateStringId("IIFA_", "
+-- ")
+ZO_CreateStringId("IIFA_ACCOUNT_WIDE_TT", "Should you really wish to move your window around a hundred times, uncheck this box")
+ZO_CreateStringId("IIFA_ACCOUNT_WIDE_NAME", "Use same settings for all characters?")
+ZO_CreateStringId("IIFA_DEBUGGING_TT", "Prints verbose debugging to the ChatFrame. '/ii debug' for quick toggle")
+ZO_CreateStringId("IIFA_DEBUGGING_NAME", "Debugging")
