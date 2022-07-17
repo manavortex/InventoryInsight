@@ -982,7 +982,9 @@
                 <EditBox name="$(parent)Box" inherits="ZO_DefaultEditForBackdrop">
                   <OnTextChanged>IIfA:GuiOnSearchboxText(self)</OnTextChanged>
                   <OnInitialized>
-                    ZO_EditDefaultText_Initialize(self, "Filter by text search")
+                    if GetAPIVersion() >= 101035 then
+                      ZO_EditDefaultText_Initialize(self, "Filter by text search")
+                    end
                   </OnInitialized>
                 </EditBox>
               </Controls>
