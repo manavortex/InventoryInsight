@@ -979,7 +979,7 @@
               <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="5"/>
               <OnInitialized>self:SetHeight(30)</OnInitialized>
               <Controls>
-                <EditBox name="$(parent)Box" inherits="ZO_DefaultEditForBackdrop">
+                <EditBox name="$(parent)Box" inherits="ZO_DefaultEditForBackdrop" defaultText="Filter by text search">
                   <OnTextChanged>IIfA:GuiOnSearchboxText(self)</OnTextChanged>
                   <OnInitialized>
                     if GetAPIVersion() >= 101035 then
