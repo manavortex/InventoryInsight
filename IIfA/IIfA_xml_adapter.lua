@@ -326,7 +326,9 @@ function IIfA:ApplySearchText(text)
     return articelStripped, textWithoutArticle
   end
 
-  IIfA.GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
+  if IIfA.GUI_SearchBoxText ~= nil then
+    IIfA.GUI_SearchBoxText:SetHidden(text ~= nil and text > IIfA.EMPTY_STRING)
+  end
 
   local searchTextLower = zo_strlower(text)
   local foundCount = updateSearchTextFilterAndDoSearch(searchTextLower)
@@ -353,7 +355,9 @@ end
 
 function IIfA:GuiOnSearchBoxClear(control)
   IIfA.GUI_SearchBox:SetText(IIfA.EMPTY_STRING)
-  IIfA.GUI_SearchBoxText:SetHidden(false)
+  if IIfA.GUI_SearchBoxText ~= nil then
+    IIfA.GUI_SearchBoxText:SetHidden(false)
+  end
   IIfA.searchFilter = IIfA.EMPTY_STRING
   IIfA:RefreshInventoryScroll()
 end

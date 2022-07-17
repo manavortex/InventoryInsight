@@ -1115,7 +1115,9 @@ function IIfA:FilterByItemName(control)
   local itemName= zo_strformat(SI_TOOLTIP_ITEM_NAME, GetItemLinkName(control.itemLink))
   IIfA.searchFilter = checkSearchFilter(itemName)
   IIfA.GUI_SearchBox:SetText(IIfA.searchFilter)
-  IIfA.GUI_SearchBoxText:SetHidden(true)
+  if IIfA.GUI_SearchBoxText ~= nil then
+    IIfA.GUI_SearchBoxText:SetHidden(true)
+  end
   IIfA.bFilterOnSetName = false
   IIfA:RefreshInventoryScroll()
 end
@@ -1132,7 +1134,9 @@ function IIfA:FilterByItemSet(control, setName)
     IIfA.searchFilter = checkSearchFilter(setName)
     -- fill in the GUI portion here
     IIfA.GUI_SearchBox:SetText(IIfA.searchFilter)
-    IIfA.GUI_SearchBoxText:SetHidden(true)
+    if IIfA.GUI_SearchBoxText ~= nil then
+      IIfA.GUI_SearchBoxText:SetHidden(true)
+    end
     IIfA.bFilterOnSetName = true
     IIfA:RefreshInventoryScroll()
   end
